@@ -151,3 +151,35 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+    
+
+from .forms import LessonRequestForm
+from .models import LessonRequest
+
+def dashboard(request):
+    if request.method == 'POST':
+        form = LessonRequestForm(request.POST)
+        if form.is_valid():
+            # Handle form submission (e.g., save to the database, send notifications)
+            # For now, just print the cleaned data for testing.
+            print(form.cleaned_data)
+            return redirect('dashboard')  # Redirect to prevent re-submitting the form
+    else:
+        form = LessonRequestForm()
+
+    return render(request, 'dashboard.html', {'form': form})
+#......
+
+def lesson_request(request):
+    if request.method == 'POST':
+        form = LessonRequestForm(request.POST)
+        if form.is_valid():
+    
+            lesson_request = form.save(commit=False)
+            lesson_request.student = request.user 
+            lesson_request.save()  # Save to the database
+            return redirect('dashboard')  
+    else:
+        form = LessonRequestForm()
+
+    return render(request, 'lesson_request.html', {'form': form})

@@ -108,3 +108,54 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
         return user
+    
+
+from .models import LessonRequest  
+
+class LessonRequestForm(forms.ModelForm):
+    KNOWLEDGE_AREAS = [
+        ('c++', 'C++'),
+        ('scala', 'Scala'),
+        ('java', 'Java'),
+        ('python', 'Python'),
+        ('ruby', 'Ruby'),
+    ]
+    TERMS = [
+        ('sept-dec', 'September - December'),
+        ('jan-april', 'January - April'),
+        ('may-july', 'May - July'),
+    ]
+    VENUE_PREFERENCES = [
+        ('online', 'Online'),
+        ('onsite', 'Onsite'),
+    ]
+    DURATIONS    = [
+        ('30', '30 min'),
+        ('60', '60 min '),
+        ('90', '90 min'),
+        ('120', '120 min'),
+    ]
+
+    # Fields will now correspond to the model fields
+    knowledge_area = forms.ChoiceField(choices=KNOWLEDGE_AREAS, label="Knowledge Area")
+    term = forms.ChoiceField(choices=TERMS, label="Term")
+    frequency = forms.IntegerField(min_value=1, max_value=7, label="Frequency (sessions per week)")
+    duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
+    availability = forms.MultipleChoiceField(
+        choices=[
+            ('mon', 'Monday'),
+            ('tue', 'Tuesday'),
+            ('wed', 'Wednesday'),
+            ('thu', 'Thursday'),
+            ('fri', 'Friday'),
+            ('sat', 'Saturday'),
+            ('sun', 'Sunday'),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        label="Availability (select days)",
+    )
+    venue_preference = forms.ChoiceField(choices=VENUE_PREFERENCES, label="Venue Preference")
+
+    class Meta:
+        model = LessonRequest  # Connect the form to the LessonRequest model
+        fields = ['knowledge_area', 'term', 'frequency', 'duration', 'availability', 'venue_preference']
