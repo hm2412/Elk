@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Lesson Requests</title>
+</head>
+<body>
+    <h1>Your Lesson Requests</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Knowledge Area</th>
+                <th>Term</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+                <th>Venue Preference</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in lesson_requests %}
+                <tr>
+                    <td>{{ request.knowledge_area }}</td>
+                    <td>{{ request.term }}</td>
+                    <td>{{ request.frequency }}</td>
+                    <td>{{ request.duration }} hours</td>
+                    <td>{{ request.venue_preference }}</td>
+                    <td>{{ request.status }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">You have no lesson requests at the moment.</td>
+                </tr>
+               
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+</body>
+
+</html>

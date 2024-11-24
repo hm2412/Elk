@@ -160,15 +160,13 @@ def dashboard(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
-            # Handle form submission (e.g., save to the database, send notifications)
-            # For now, just print the cleaned data for testing.
             print(form.cleaned_data)
-            return redirect('dashboard')  # Redirect to prevent re-submitting the form
+            return redirect('dashboard')  
     else:
         form = LessonRequestForm()
 
     return render(request, 'dashboard.html', {'form': form})
-#......
+
 
 def lesson_request(request):
     if request.method == 'POST':
@@ -177,9 +175,13 @@ def lesson_request(request):
     
             lesson_request = form.save(commit=False)
             lesson_request.student = request.user 
-            lesson_request.save()  # Save to the database
+            lesson_request.save()  
             return redirect('dashboard')  
     else:
         form = LessonRequestForm()
 
     return render(request, 'lesson_request.html', {'form': form})
+
+def view_lesson_request(request):
+   lesson_request = LessonRequest.objects.filter(student=request.user)
+   return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})

@@ -5,6 +5,7 @@
     <div class="col-12">
       <h1>Welcome to your student dashboard {{ user.username }}</h1>
       <a href="{% url 'lesson_request' %}" class="btn btn-primary">Create a Lesson Request</a>
+      <a href="{% url 'view_lesson_request' %}" class="btn btn-primary">View Submitted Requests</a>
     </div>
   </div>
 </div>
