@@ -110,7 +110,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         return user
     
 
-from .models import LessonRequest  
+from .models import Lesson 
 
 class LessonRequestForm(forms.ModelForm):
     KNOWLEDGE_AREAS = [
@@ -141,7 +141,7 @@ class LessonRequestForm(forms.ModelForm):
     term = forms.ChoiceField(choices=TERMS, label="Term")
     frequency = forms.IntegerField(min_value=1, max_value=7, label="Frequency (sessions per week)")
     duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
-    availability = forms.MultipleChoiceField(
+    days = forms.MultipleChoiceField(
         choices=[
             ('mon', 'Monday'),
             ('tue', 'Tuesday'),
@@ -152,10 +152,10 @@ class LessonRequestForm(forms.ModelForm):
             ('sun', 'Sunday'),
         ],
         widget=forms.CheckboxSelectMultiple,
-        label="Availability (select days)",
+        label="Days (select days)",
     )
     venue_preference = forms.ChoiceField(choices=VENUE_PREFERENCES, label="Venue Preference")
 
     class Meta:
-        model = LessonRequest  # Connect the form to the LessonRequest model
-        fields = ['knowledge_area', 'term', 'frequency', 'duration', 'availability', 'venue_preference']
+        model = Lesson  # Connect the form to the LessonRequest model
+        fields = ['knowledge_area', 'term', 'frequency', 'duration', 'days', 'venue_preference']

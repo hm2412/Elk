@@ -154,9 +154,11 @@ class SignUpView(LoginProhibitedMixin, FormView):
     
 
 from .forms import LessonRequestForm
-from .models import LessonRequest
+from .models import Lesson
 
 def dashboard(request):
+    lessons = Lesson.objects.filter(student=request.user)
+
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
@@ -165,14 +167,13 @@ def dashboard(request):
     else:
         form = LessonRequestForm()
 
-    return render(request, 'dashboard.html', {'form': form})
+    return render(request, 'dashboard.html', {'form': form, 'lessons': lessons})
 
 
-def lesson_request(request):
+def create_lesson_request(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
-    
             lesson_request = form.save(commit=False)
             lesson_request.student = request.user 
             lesson_request.save()  
@@ -183,5 +184,9 @@ def lesson_request(request):
     return render(request, 'lesson_request.html', {'form': form})
 
 def view_lesson_request(request):
-   lesson_request = LessonRequest.objects.filter(student=request.user)
+   lesson_request = Lesson.objects.filter(student=request.user)
    return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
+
+def week_schedule_view(request):
+    lessons = Lesson.objects.filter(student=request.user)
+    return render(request, 'week_schedule.html', {'lessons': lessons})

@@ -43,14 +43,15 @@ class User(AbstractUser):
     
 from django.conf import settings
 
-class LessonRequest(models.Model):
+class Lesson(models.Model):
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_request')
-    knowledge_area = models.CharField(max_length=100)
+    knowledge_area = models.CharField(max_length=50)
     term = models.CharField(max_length=50)
     frequency = models.IntegerField()  
     duration = models.IntegerField()  
-    availability = models.JSONField()  
+    days = models.JSONField()  
     venue_preference = models.CharField(max_length=100)
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

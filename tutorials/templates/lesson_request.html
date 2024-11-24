@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Lesson Request</title>
-</head>
-<body>
-    <h1>Create a Lesson Request</h1>
+{% extends 'base_content.html' %}
+{% block content %}
 
+    <h1>Create a Lesson Request</h1>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}  <!-- Render the form fields as paragraphs -->
         <button type="submit">Submit Request</button>
     </form>
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-</body>
-</html>
+{% endblock %}

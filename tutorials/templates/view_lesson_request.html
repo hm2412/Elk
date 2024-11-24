@@ -16,6 +16,7 @@
                 <th>Frequency</th>
                 <th>Duration</th>
                 <th>Venue Preference</th>
+                <th>Days</th>
             </tr>
         </thead>
         <tbody>
@@ -23,9 +24,10 @@
                 <tr>
                     <td>{{ request.knowledge_area }}</td>
                     <td>{{ request.term }}</td>
-                    <td>{{ request.frequency }}</td>
-                    <td>{{ request.duration }} hours</td>
+                    <td>{{ request.frequency }} times/week</td>
+                    <td>{{ request.duration }} minutes</td>
                     <td>{{ request.venue_preference }}</td>
+                    <td>{{ request.days }}</td>
                     <td>{{ request.status }}</td>
                 </tr>
             {% empty %}
