@@ -1,4 +1,5 @@
-<table class="table table-bordered">
+<table class="table table-bordered caption-top">
+  <caption>Weekly Schedule: </caption>
   <thead>
       <tr>
           <th scope="col">Monday</th>
@@ -21,26 +22,26 @@
               {% endif %}
             </td>
             <td>
-              {% if 'mon' in lesson.days %}
-                {{ lesson.knowledge_area }}
+              {% if 'tue' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
                 {{ lesson.duration }} minutes
               {% endif %}
             </td>
             <td>
-              {% if 'mon' in lesson.days %}
-                {{ lesson.knowledge_area }}
+              {% if 'wed' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
                 {{ lesson.duration }} minutes
               {% endif %}
             </td>
             <td>
-              {% if 'mon' in lesson.days %}
-                {{ lesson.knowledge_area }}
+              {% if 'thu' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
                 {{ lesson.duration }} minutes
               {% endif %}
             </td>
             <td>
-              {% if 'mon' in lesson.days %}
-                {{ lesson.knowledge_area }}
+              {% if 'fri' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
                 {{ lesson.duration }} minutes
               {% endif %}
             </td>

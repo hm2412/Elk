@@ -152,6 +152,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
     
+""" Views for Student Dashboard below"""
 
 from .forms import LessonRequestForm
 from .models import Lesson
@@ -167,7 +168,10 @@ def dashboard(request):
     else:
         form = LessonRequestForm()
 
-    return render(request, 'dashboard.html', {'form': form, 'lessons': lessons})
+    return render(request, 'dashboard.html', {
+        'form': form, 
+        'lessons': lessons,
+        'user_role': 'Student Dashboard'})
 
 
 def create_lesson_request(request):
@@ -190,3 +194,5 @@ def view_lesson_request(request):
 def week_schedule_view(request):
     lessons = Lesson.objects.filter(student=request.user)
     return render(request, 'week_schedule.html', {'lessons': lessons})
+
+
