@@ -157,18 +157,18 @@ class SignUpView(LoginProhibitedMixin, FormView):
 from .forms import LessonRequestForm
 from .models import Lesson
 
-def dashboard(request):
+def student_dashboard_view(request):
     lessons = Lesson.objects.filter(student=request.user)
 
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            return redirect('dashboard')  
+            return redirect('student_dashboard')  
     else:
         form = LessonRequestForm()
 
-    return render(request, 'dashboard.html', {
+    return render(request, 'student_dashboard.html', {
         'form': form, 
         'lessons': lessons,
         'user_role': 'Student Dashboard'})
@@ -181,7 +181,7 @@ def create_lesson_request(request):
             lesson_request = form.save(commit=False)
             lesson_request.student = request.user 
             lesson_request.save()  
-            return redirect('dashboard')  
+            return redirect('student_dashboard')  
     else:
         form = LessonRequestForm()
 
