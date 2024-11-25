@@ -45,6 +45,18 @@
                 {{ lesson.duration }} minutes
               {% endif %}
             </td>
+            <td>
+              {% if 'sat' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
+                {{ lesson.duration }} minutes
+              {% endif %}
+            </td>
+            <td>
+              {% if 'sun' in lesson.days %}
+                {{ lesson.knowledge_area }}<br>
+                {{ lesson.duration }} minutes
+              {% endif %}
+            </td>
           </tr>
       {% empty %}
           <tr>
