@@ -90,6 +90,13 @@ class PasswordForm(NewPasswordMixin):
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
+    user_type = forms.ChoiceField(
+        choices = User.USER_TYPE,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+
     class Meta:
         """Form options."""
 
@@ -106,5 +113,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             last_name=self.cleaned_data.get('last_name'),
             email=self.cleaned_data.get('email'),
             password=self.cleaned_data.get('new_password'),
+            user_type=self.cleaned_data.get('user_type'),
         )
+
         return user

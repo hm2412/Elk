@@ -14,9 +14,14 @@ class User(AbstractUser):
             message='Username must consist of @ followed by at least three alphanumericals'
         )]
     )
+    USER_TYPE = [
+        ('tutor', 'Tutor'),
+        ('student', 'Student'),
+    ]
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
+    user_type = models.CharField(max_length=7, choices=USER_TYPE, default='student')
 
 
     class Meta:

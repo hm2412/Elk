@@ -17,15 +17,19 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
 
+    if current_user.user_type == 'tutor':
+        return render(request, 'tutor_dashboard.html', {'user': current_user})
+    elif current_user.user_type == 'student':
+        return render(request, 'student_dashboard.html', {'user': current_user})
+    else:
+        return render(request, 'dashboard.html', {'user': current_user})
 
 @login_prohibited
 def home(request):
     """Display the application's start/home screen."""
 
     return render(request, 'home.html')
-
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
