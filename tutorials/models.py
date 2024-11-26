@@ -49,11 +49,19 @@ class User(AbstractUser):
 from django.conf import settings
 
 class Lesson(models.Model):
+    TIME_OF_DAY_CHOICES = [
+        ('morning', 'Morning'),
+        ('afternoon', 'Afternoon'),
+        ('evening', 'Evening'),
+    ]
+
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_request')
     knowledge_area = models.CharField(max_length=50)
     term = models.CharField(max_length=50)
-    frequency = models.IntegerField()  
+    frequency = models.IntegerField()
+    time_of_day = models.CharField(max_length=10, choices=TIME_OF_DAY_CHOICES, default='morning')
     duration = models.IntegerField()  
+    start_time = models.TimeField(null = True, blank = True)  
     days = models.JSONField()  
     venue_preference = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)

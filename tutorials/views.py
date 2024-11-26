@@ -13,6 +13,7 @@ from tutorials.helpers import login_prohibited
 
 
 @login_required
+
 def dashboard(request):
     """Display the current user's dashboard."""
 
@@ -24,6 +25,7 @@ def dashboard(request):
         return render(request, 'student_dashboard.html', {'user': current_user})
     else:
         return render(request, 'dashboard.html', {'user': current_user})
+
 
 @login_prohibited
 def home(request):
