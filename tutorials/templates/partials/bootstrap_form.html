@@ -2,6 +2,17 @@
 {% for field in form %}
   <div class="mb-3">
     {{ field.label_tag }}
+
+    {% if field.field.widget.input_type == "checkbox" %}
+      <div class="form-check">
+        {% for widget in field %}
+          <div class="form-check">
+            {{ widget }}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+
     {% if form.is_bound %}
       {% if field.errors %}
         {% render_field field class="form-control is-invalid" %}
@@ -17,5 +28,6 @@
     <div class="invalid-feedback">
       {{ field.errors }}
     </div>
+    {% endif %}
   </div>
 {% endfor %}
