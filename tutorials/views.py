@@ -11,14 +11,26 @@ from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 
-
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
 
+    print("current user is: " + current_user.user_type)
+
+    user_type = current_user.user_type
+
+    if user_type == 'Tutor':
+        template = 'tutor/dashboard_tutor.html'
+    elif user_type == 'Student':
+        template = 'student/dashboard_student.html'
+    elif user_type == 'Admin':
+        template = 'admin/dashboard_admin.html'
+    else:
+        template = 'student/dashboard_student.html'
+    
+    return render(request, template, {'user': current_user})
 
 @login_prohibited
 def home(request):
@@ -151,3 +163,26 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+    
+
+class TutorView(LoginRequiredMixin, View):
+    """Display the tutor dashboard."""
+    
+    template_name = 'tutor_dashboard.html'
+
+    # def get(self, request):
+    #     """Display tutor dashboard."""
+    #     current_user = request.user
+    #     return render(request, self.template_name, {'user': current_user})
+    def get(self, request):
+        """Display tutor dashboard with list of tutors."""
+        current_user = request.user
+        # Get tutor group and all users in it
+        tutor_group = Group.objects.get(name='Tutor')
+        tutors = tutor_group.user_set.all()
+        
+        context = {
+            'user': current_user,
+            'tutors': tutors,
+        }
+        return render(request, self.template_name, context)
