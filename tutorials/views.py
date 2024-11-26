@@ -17,6 +17,11 @@ def dashboard(request):
 
     current_user = request.user
 
+    context = {
+        'user': current_user,
+        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    }
+
     print("current user is: " + current_user.user_type)
 
     user_type = current_user.user_type
@@ -30,7 +35,8 @@ def dashboard(request):
     else:
         template = 'student/dashboard_student.html'
     
-    return render(request, template, {'user': current_user})
+    # return render(request, template, {'user': current_user})
+    return render(request, template, context)
 
 @login_prohibited
 def home(request):
@@ -168,12 +174,8 @@ class SignUpView(LoginProhibitedMixin, FormView):
 class TutorView(LoginRequiredMixin, View):
     """Display the tutor dashboard."""
     
-    template_name = 'tutor_dashboard.html'
+    template_name = 'tutor/dashboard_tutor.html'
 
-    # def get(self, request):
-    #     """Display tutor dashboard."""
-    #     current_user = request.user
-    #     return render(request, self.template_name, {'user': current_user})
     def get(self, request):
         """Display tutor dashboard with list of tutors."""
         current_user = request.user
@@ -184,5 +186,6 @@ class TutorView(LoginRequiredMixin, View):
         context = {
             'user': current_user,
             'tutors': tutors,
+            'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         }
         return render(request, self.template_name, context)

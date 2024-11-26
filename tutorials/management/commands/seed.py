@@ -86,32 +86,3 @@ class Command(BaseCommand):
             user_type=group
         )
         
-        # group = data.get('group', 'Student') # get the group or default to Student
-        # user.user_type = group
-
-        # if group in self.groups:
-        #     user.groups.add(self.groups[group])
-        #     if group == 'Admin':
-        #         user.is_superuser = True
-        #         user.is_staff = True
-        #     elif group == 'Tutor':
-        #         user.is_staff = True
-        
-        # user.save()
-        # return user
-
-
-        # if 'user_type' in data:
-        #     group = self.groups[data['user_type']]
-        #     user.groups.add(group)
-        #     if group.name == 'Admin':
-        #         user.is_superuser = True
-        #         user.is_staff = True
-        #         user.user_type = 'Admin'
-        #     elif group.name == 'Tutor':
-        #         user.is_staff = True
-        #         user.user_type = 'Tutor'
-        #     else:
-        #         user.user_type = 'Student'
-
-        #     user.save()
