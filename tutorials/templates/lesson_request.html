@@ -1,10 +1,9 @@
 {% extends 'base_content.html' %}
 {% block content %}
-
     <h1>Create a Lesson Request</h1>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}  <!-- Render the form fields as paragraphs -->
+        {% include 'partials/bootstrap_form.html' with form=form %}
         <button type="submit">Submit Request</button>
     </form>
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
