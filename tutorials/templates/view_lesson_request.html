@@ -1,8 +1,8 @@
 {% extends 'base_content.html' %}
 {% block content %}
     <h1>Your Lesson Requests</h1>
-    <table>
-        <thead>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
             <tr>
                 <th>Knowledge Area</th>
                 <th>Term</th>
@@ -10,6 +10,7 @@
                 <th>Duration</th>
                 <th>Venue Preference</th>
                 <th>Days</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -17,7 +18,7 @@
                 <tr>
                     <td>{{ request.knowledge_area }}</td>
                     <td>{{ request.term }}</td>
-                    <td>{{ request.frequency }} weekly</td>
+                    <td>{{ request.frequency }} </td>
                     <td>{{ request.duration }} minutes</td>
                     <td>{{ request.venue_preference }}</td>
                     <td>{{ request.days }}</td>
@@ -25,11 +26,10 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="6">You have no lesson requests at the moment.</td>
+                    <td colspan="7" class="text-center">You have no lesson requests at the moment.</td>
                 </tr>   
             {% endfor %}
         </tbody>
     </table>
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-</body>
 {% endblock %}
