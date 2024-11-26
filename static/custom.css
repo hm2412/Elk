@@ -1,38 +1,54 @@
 /*
- * Alerts
+ * General Styles
  */
 
-.alert {
-  border-radius: 0px;
-}
-
-
-/*
- * Cover page
- */
-
-.content {
-  padding-top: 10px;
-}
-
-.h-100 {
-  min-height: 100vh;
-  height: 100vh;
-}
-
-.vcenter-item{
-    display: flex;
-    align-items: center;
+ body {
+  font-family: 'Rubik', sans-serif;
 }
 
 /*
- * Cover page
+ * Header Section with logo and buttons
  */
+
 h1.cover-heading {
   font-size: 4rem;
+  margin: 0;
 }
 
-p.cover-text {
+/* Logo styling */
+.logo {
+  width: auto; /* Let the width scale automatically */
+  max-width: 200px; /* Adjust this value as needed */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto; /* Center the logo horizontally */
+}
+
+.full-width-line {
+  margin-top: -20px;  /* Move the line upwards */
+  border: none;
+  border-top: 2px solid #000;
+  width: 100vw;
+  margin: 0;
+  position: relative;
+  left: -110px;
+  top: 0;
+}
+
+.bg-red {
+  background-color: rgba(122, 12, 12, 1);
+  height: 100vh; /* Ensure it takes the full height of the viewport */
+}
+
+.cover-text {
+  font-family: 'Rubik', sans-serif;
+  font-size: 115px !important;  /* Use !important to force the font size */
+  text-align: center;
+  color: white;
+}
+
+/* Tagline Section */
+.cover-text {
   font-size: 1.7rem;
 }
 
@@ -46,12 +62,11 @@ p.cover-text {
   border-radius: 15%;
 }
 .cover-card-block {
-  opacity: 1
+  opacity: 1;
 }
 
-
 /*
- * forms
+ * Forms
  */
 .nolabel label {
   display: none;
@@ -64,31 +79,17 @@ ul.errorlist {
 }
 
 /*
- * Typefaces
- */
-
-.low-key {
-  color: #777777;
-  font-weight: 300;
-}
-
-.list-title {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-/*
  * Profile
  */
 .profile-image {
   width: 120px;
-  clear:both;
-  float:left;
+  clear: both;
+  float: left;
 }
 
 .profile-text {
-  overflow:hidden;
-  padding-left:20px
+  overflow: hidden;
+  padding-left: 20px;
 }
 
 h3.profile-title {
@@ -101,7 +102,6 @@ h3.profile-title {
   font-style: italic;
 }
 
-
 /*
  * Hyperlinks
  */
@@ -112,4 +112,119 @@ h3.profile-title {
 .content a:hover {
   text-decoration: underline;
   color: #0d6efd;
+}
+
+/*
+ * Home page
+ */
+
+.btn-secondary {
+  background-color: rgb(156, 17, 17);
+  border-color: #6c757d;
+  font-size: 1.25rem;
+  padding: 12px 24px;
+  border-radius: 8px;
+}
+
+.btn-secondary:hover {
+  background-color: rgb(94, 10, 10);
+  border-color: #545b62;
+}
+
+.logo {
+  max-width: 150px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.full-width-line {
+  border: none;
+  border-top: 2px solid #000;
+  width: 102vw;
+  position: relative;
+  left: -108px;
+  display: flex;
+  top: 0;
+}
+
+.tagline {
+  font-family: 'Rubik', sans-serif;   /* Imported font */
+  font-size: 6rem !important;
+  text-align: center;
+  color: black;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.description {
+  text-align: justify;
+  font-size: 1.5rem;
+  color: #333;
+  margin-top: 75px;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 100px;
+}
+
+.bottom-section {
+  background-color: rgba(156, 17, 17);
+  height: 140px;
+  width: 102vw;
+  position: relative;
+  left: -108px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.bottom-section p {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.reviews-section {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.reviews-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.reviews {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.review-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  text-align: left;
+}
+
+.review-card p {
+  margin: 0;
+  font-style: italic;
+}
+
+.review-card p:first-child {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.stars i {
+  color: #FFD700;
+  margin-right: 5px;
 }
