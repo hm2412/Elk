@@ -167,6 +167,8 @@ def student_dashboard_view(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
+            form.save(commit=False).student = request.user
+            form.save()
             print(form.cleaned_data)
             return redirect('student_dashboard')  
     else:
