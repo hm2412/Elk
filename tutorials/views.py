@@ -22,7 +22,7 @@ def dashboard(request):
     if current_user.user_type == 'tutor':
         return render(request, 'tutor_dashboard.html', {'user': current_user})
     elif current_user.user_type == 'student':
-        return render(request, 'student_dashboard.html', {'user': current_user})
+        return render(request, 'student_dashboard.html', {'user': current_user, 'user_role': current_user.user_type})
     else:
         return render(request, 'dashboard.html', {'user': current_user})
 
@@ -189,7 +189,7 @@ def create_lesson_request(request):
             lesson_request = form.save(commit=False)
             lesson_request.student = request.user 
             lesson_request.save()  
-            return redirect('student_dashboard')  
+            return redirect('dashboard')  
     else:
         form = LessonRequestForm()
 
@@ -201,6 +201,20 @@ def view_lesson_request(request):
 
 def week_schedule_view(request):
     lessons = Lesson.objects.filter(student=request.user)
-    return render(request, 'week_schedule.html', {'lessons': lessons})
+
+    lessons_by_time_and_day = {
+        'morning': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+        'afternoon': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+        'evening': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+    }
+
+    for lesson in lessons:
+        for day in lesson.days:  
+            if lesson.time_of_day in lessons_by_time_and_day:
+                if day in lessons_by_time_and_day[lesson.time_of_day]:
+                    lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
+
+    
+    return render(request, 'week_schedule.html', {'lessons': lessons_by_time_and_day})
 
 

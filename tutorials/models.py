@@ -48,6 +48,8 @@ class User(AbstractUser):
     
 from django.conf import settings
 
+
+"""Model for Lessons"""
 class Lesson(models.Model):
     TIME_OF_DAY_CHOICES = [
         ('morning', 'Morning'),
