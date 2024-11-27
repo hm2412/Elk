@@ -215,6 +215,6 @@ def week_schedule_view(request):
                     lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
 
     
-    return render(request, 'week_schedule.html', {'lessons': lessons_by_time_and_day})
+    return render(request, 'partials/week_schedule.html', {'lessons': lessons_by_time_and_day})
 
 
