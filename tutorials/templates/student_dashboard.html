@@ -1,21 +1,46 @@
 {% extends 'dashboard.html' %}
-
 {% block dashboard_content %}
-<div class="row">
+{% load static %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'student_dashboard.css' %}">
+</head>
+
+<div class="dashboard">  
+    <!-- the profile info-->
     <div class="profile-info">
-        <h2>Profile Information</h2>
-        <p><strong>Full name:</strong> {{ user.full_name }} </p>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <img src="{{ user.gravatar }}" alt="Profile Picture" class="gravatar">
+        <h2 class="profile-heading">Profile Information</h2>
+        <div class="profile-details">
+            <div class="profile-image">
+                <img src="{{ user.gravatar }}" alt="Profile Picture" class="gravatar">
+            </div>
+            <div class="profile-text">
+                <p><strong>Full name:</strong> {{ user.full_name }}</p>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-12 col-md-8">
-        {% include 'partials/week_schedule.html' %}
+
+    <!-- boxes on the dashboard-->
+    <br>
+    <div class="dashboard-grid">
+       
+        <a href="{% url 'week_schedule' %}" class="dashboard-box">
+            <h2>View Schedule</h2>
+            <p>Check your weekly schedule and planned lessons.</p>
+        </a>
+
+        <a href="{% url 'lesson_request' %}" class="dashboard-box">
+            <h2>Make Lesson Request</h2>
+            <p>Request a new lesson.</p>
+        </a>
+
+        <a href="{% url 'view_lesson_request' %}" class="dashboard-box">
+            <h2>View Lessons</h2>
+            <p>See the list of all your upcoming lessons.</p>
+        </a>
     </div>
-    <div class="col-sm-12 col-md-2">
-        <a href="{% url 'lesson_request' %}" class="btn btn-primary">Create a Lesson Request</a>
-        <br><br>
-        <a href="{% url 'view_lesson_request' %}" class="btn btn-primary">View Submitted Requests</a>
-    </div>
+    <br/>  
 </div>
+
 {% endblock %}
