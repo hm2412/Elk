@@ -122,6 +122,9 @@ class UserModelTestCase(TestCase):
         self.user.email = 'johndoe@@example.org'
         self._assert_user_is_invalid()
 
+    def test_type_must_not_be_blank(self):
+        self.user.USER_TYPE = ''
+        self._assert_user_is_invalid()
 
     def test_full_name_must_be_correct(self):
         full_name = self.user.full_name()

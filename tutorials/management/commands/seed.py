@@ -5,13 +5,13 @@ from tutorials.models import User
 import pytz
 from faker import Faker
 from random import randint, random
+import random
 
 user_fixtures = [
     {'username': '@johndoe', 'email': 'john.doe@example.org', 'first_name': 'John', 'last_name': 'Doe'},
     {'username': '@janedoe', 'email': 'jane.doe@example.org', 'first_name': 'Jane', 'last_name': 'Doe'},
     {'username': '@charlie', 'email': 'charlie.johnson@example.org', 'first_name': 'Charlie', 'last_name': 'Johnson'},
 ]
-
 
 class Command(BaseCommand):
     """Build automation command to seed the database."""
@@ -44,11 +44,13 @@ class Command(BaseCommand):
         print("User seeding complete.      ")
 
     def generate_user(self):
+        types = ['tutor', 'student']
         first_name = self.faker.first_name()
         last_name = self.faker.last_name()
         email = create_email(first_name, last_name)
         username = create_username(first_name, last_name)
-        self.try_create_user({'username': username, 'email': email, 'first_name': first_name, 'last_name': last_name})
+        user_type = random.choice(types)
+        self.try_create_user({'username': username, 'email': email, 'first_name': first_name, 'last_name': last_name, 'user_type': user_type})
        
     def try_create_user(self, data):
         try:
