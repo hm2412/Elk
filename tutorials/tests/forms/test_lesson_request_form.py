@@ -46,20 +46,6 @@ class LessonRequestFormTest(TestCase):
         self.assertIn('knowledge_area', form.errors)
         self.assertEqual(form.errors['knowledge_area'], ['Select a valid choice. science is not one of the available choices.'])
 
-    def test_invalid_lower_frequency(self):
-        self.form_input['frequency'] = 0  
-        form = LessonRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
-        self.assertIn('frequency', form.errors)
-        self.assertEqual(form.errors['frequency'], ['Ensure this value is greater than or equal to 1.'])
-
-    def test_invalid_upper_frequency(self):
-        self.form_input['frequency'] = 15 
-        form = LessonRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
-        self.assertIn('frequency', form.errors)
-        self.assertEqual(form.errors['frequency'], ['Ensure this value is less than or equal to 7.'])
-
     def test_invalid_upper_duration(self):
         self.form_input['duration'] = '999'  
         form = LessonRequestForm(data=self.form_input)
@@ -101,14 +87,7 @@ class LessonRequestFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('term', form.errors)
         self.assertEqual(form.errors['term'], ['This field is required.'])
-
-    def test_empty_frequency(self):
-        self.form_input['frequency'] = ''  
-        form = LessonRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
-        self.assertIn('frequency', form.errors)
-        self.assertEqual(form.errors['frequency'], ['This field is required.'])
-
+        
     def test_empty_duration(self):
         self.form_input['duration'] = ''  
         form = LessonRequestForm(data=self.form_input)

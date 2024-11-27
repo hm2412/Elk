@@ -154,7 +154,6 @@ class LessonRequestForm(forms.ModelForm):
     # Fields will now correspond to the model fields
     knowledge_area = forms.ChoiceField(choices=KNOWLEDGE_AREAS, label="Knowledge Area")
     term = forms.ChoiceField(choices=TERMS, label="Term")
-    frequency = forms.IntegerField(min_value=1, max_value=7, label="Frequency (sessions per week)")
     time_of_day = forms.ChoiceField(choices=TIME_OF_DAY, initial='morning', label="Preferred Time of Day")
     duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
     start_time = forms.TimeField(
@@ -178,4 +177,4 @@ class LessonRequestForm(forms.ModelForm):
 
     class Meta:
         model = Lesson  # Connect the form to the LessonRequest model
-        fields = ['knowledge_area', 'term', 'frequency', 'time_of_day', 'duration', 'start_time', 'days', 'venue_preference']
+        fields = ['knowledge_area', 'term', 'time_of_day', 'duration', 'start_time', 'days', 'venue_preference']
