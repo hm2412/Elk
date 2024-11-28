@@ -2,8 +2,8 @@
   <div class="container">
     <a class="navbar-brand" href="{% url 'dashboard' %}">
       LOGO
-      {% if user_role %}
-        {{ user_role }}
+      {% if user %}
+        {{ user.user_type|capfirst }}
       {% else %}
         Task Manager
       {% endif %}
