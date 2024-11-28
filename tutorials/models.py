@@ -14,14 +14,17 @@ class User(AbstractUser):
             message='Username must consist of @ followed by at least three alphanumericals'
         )]
     )
-    USER_TYPE = [
-        ('tutor', 'Tutor'),
-        ('student', 'Student'),
+
+    USER_TYPES = [
+        ('Student', 'Student'),
+        ('Tutor', 'Tutor'),
+        ('Admin', 'Admin')
     ]
+
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
-    user_type = models.CharField(max_length=7, choices=USER_TYPE, default='student')
+    user_type = models.CharField(max_length=7, choices=USER_TYPES, default='Student')
 
 
     class Meta:
@@ -45,3 +48,47 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
+    
+class Meeting(models.Model):
+    """Model for scheduling meetings between tutors and students."""
+    
+    STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ]
+
+    tutor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tutor_meetings',
+        limit_choices_to={'user_type': 'Tutor'}
+    )
+
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='student_meetings',
+        limit_choices_to={'user_type': 'Student'}
+    )
+
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    topic = models.CharField(max_length=200)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='scheduled'
+    )
+
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['date', 'start_time']
+
+    def __str__(self):
+        return f"Meeting: {self.tutor.username} with {self.student.username} on {self.date}"
+    
