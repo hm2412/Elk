@@ -11,7 +11,6 @@ from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 
-
 @login_required
 
 def dashboard(request):
@@ -19,12 +18,26 @@ def dashboard(request):
 
     current_user = request.user
 
-    if current_user.user_type == 'tutor':
-        return render(request, 'tutor_dashboard.html', {'user': current_user})
-    elif current_user.user_type == 'student':
-        return render(request, 'student_dashboard.html', {'user': current_user, 'user_role': current_user.user_type})
+    context = {
+        'user': current_user,
+        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    }
+
+    print("current user is: " + current_user.user_type)
+
+    user_type = current_user.user_type
+
+    if user_type == 'Tutor':
+        template = 'tutor/dashboard_tutor.html'
+    elif user_type == 'Student':
+        template = 'student/dashboard_student.html'
+    elif user_type == 'Admin':
+        template = 'admin/dashboard_admin.html'
     else:
-        return render(request, 'dashboard.html', {'user': current_user})
+        template = 'student/dashboard_student.html'
+    
+    # return render(request, template, {'user': current_user})
+    return render(request, template, context)
 
 
 @login_prohibited
@@ -218,3 +231,21 @@ def week_schedule_view(request):
     return render(request, 'partials/week_schedule.html', {'lessons': lessons_by_time_and_day})
 
 
+"""
+class TutorView(LoginRequiredMixin, View):
+    
+    template_name = 'tutor/dashboard_tutor.html'
+
+    def get(self, request)
+        current_user = request.user
+        # Get tutor group and all users in it
+        tutor_group = Group.objects.get(name='Tutor')
+        tutors = tutor_group.user_set.all()
+        
+        context = {
+            'user': current_user,
+            'tutors': tutors,
+            'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        }
+        return render(request, self.template_name, context)
+"""

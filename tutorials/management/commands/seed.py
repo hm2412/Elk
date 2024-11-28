@@ -1,17 +1,22 @@
 from django.core.management.base import BaseCommand, CommandError
-
+from django.contrib.auth.models import Group
 from tutorials.models import User
 
 import pytz
 from faker import Faker
-from random import randint, random
+from random import randint, random, choice
 
 user_fixtures = [
-    {'username': '@johndoe', 'email': 'john.doe@example.org', 'first_name': 'John', 'last_name': 'Doe'},
-    {'username': '@janedoe', 'email': 'jane.doe@example.org', 'first_name': 'Jane', 'last_name': 'Doe'},
-    {'username': '@charlie', 'email': 'charlie.johnson@example.org', 'first_name': 'Charlie', 'last_name': 'Johnson'},
+    {'username': '@johndoe', 'email': 'john.doe@example.org', 'first_name': 'John', 'last_name': 'Doe', 'group': 'Admin'},
+    {'username': '@janedoe', 'email': 'jane.doe@example.org', 'first_name': 'Jane', 'last_name': 'Doe', 'group': 'Tutor'},
+    {'username': '@charlie', 'email': 'charlie.johnson@example.org', 'first_name': 'Charlie', 'last_name': 'Johnson', 'group': 'Student'},
 ]
 
+def create_username(first_name, last_name):
+    return '@' + first_name.lower() + last_name.lower()
+
+def create_email(first_name, last_name):
+    return first_name + '.' + last_name + '@example.org'
 
 class Command(BaseCommand):
     """Build automation command to seed the database."""
@@ -21,12 +26,12 @@ class Command(BaseCommand):
     help = 'Seeds the database with sample data'
 
     def __init__(self):
+        super().__init__()
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
         self.create_users()
-        self.users = User.objects.all()
-
+    
     def create_users(self):
         self.generate_user_fixtures()
         self.generate_random_users()
@@ -37,7 +42,8 @@ class Command(BaseCommand):
 
     def generate_random_users(self):
         user_count = User.objects.count()
-        while  user_count < self.USER_COUNT:
+
+        while user_count < self.USER_COUNT:
             print(f"Seeding user {user_count}/{self.USER_COUNT}", end='\r')
             self.generate_user()
             user_count = User.objects.count()
@@ -48,25 +54,35 @@ class Command(BaseCommand):
         last_name = self.faker.last_name()
         email = create_email(first_name, last_name)
         username = create_username(first_name, last_name)
-        self.try_create_user({'username': username, 'email': email, 'first_name': first_name, 'last_name': last_name})
+        self.try_create_user({
+            'username': username, 
+            'email': email, 
+            'first_name': first_name, 
+            'last_name': last_name,
+        })
+
        
     def try_create_user(self, data):
         try:
+            if User.objects.filter(username=data['username']).exists():
+                print('User already exists')
+                return
+            if User.objects.filter(email=data['email']).exists():
+                print('Email already exists')
+                return
+
             self.create_user(data)
-        except:
-            pass
+        except Exception as e:
+            print(f'Failed to create user: {data} with error message: {e}')
 
     def create_user(self, data):
-        User.objects.create_user(
+        group = data.get('group', 'Student')
+        user = User.objects.create_user(
             username=data['username'],
             email=data['email'],
             password=Command.DEFAULT_PASSWORD,
             first_name=data['first_name'],
             last_name=data['last_name'],
+            user_type=group
         )
-
-def create_username(first_name, last_name):
-    return '@' + first_name.lower() + last_name.lower()
-
-def create_email(first_name, last_name):
-    return first_name + '.' + last_name + '@example.org'
+        

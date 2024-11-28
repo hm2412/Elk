@@ -91,7 +91,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
     user_type = forms.ChoiceField(
-        choices = User.USER_TYPE,
+        choices = User.USER_TYPES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
