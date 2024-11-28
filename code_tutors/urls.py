@@ -32,7 +32,6 @@ urlpatterns = [
 
     path('dashboard/lesson-request/', views.create_lesson_request, name='lesson_request'),
     path('dashboard/view-lesson-request/', views.view_lesson_request, name='view_lesson_request'),
-    path('week_schedule/', views.week_schedule_view, name='week_schedule'),
     # ADMIN paths
 
     # STUDENT paths

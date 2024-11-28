@@ -50,26 +50,39 @@ class User(AbstractUser):
         return self.gravatar(size=60)
     
 from django.conf import settings
+from datetime import time, timedelta, datetime
 
-"""Model for Lessons"""
 class Lesson(models.Model):
-    TIME_OF_DAY_CHOICES = [
-        ('morning', 'Morning'),
-        ('afternoon', 'Afternoon'),
-        ('evening', 'Evening'),
-    ]
 
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_request')
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_request'
+    )
     knowledge_area = models.CharField(max_length=50)
     term = models.CharField(max_length=50)
-    frequency = models.IntegerField()
-    time_of_day = models.CharField(max_length=10, choices=TIME_OF_DAY_CHOICES, default='morning')
+    start_time = models.TimeField(null = True, blank = True) 
     duration = models.IntegerField()  
-    start_time = models.TimeField(null = True, blank = True)  
+    end_time = models.TimeField(null=True, editable=False)
     days = models.JSONField()  
+    time_of_day = models.CharField(max_length=10, editable=False)
     venue_preference = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.start_time and self.duration is not None:
+            self.time_of_day = self.get_time_of_day()
+            start_dt = datetime.combine(datetime.today(), self.start_time)
+            self.end_time = (start_dt + timedelta(minutes=self.duration)).time()
+        super().save(*args, **kwargs)
+
+    def get_time_of_day(self):
+        if time(8, 0) <= self.start_time < time(12, 0):
+            return 'morning'
+        if time(12, 0) <= self.start_time < time(16, 0):
+            return 'afternoon'
+        if time(16, 0) <= self.start_time < time(20, 0):
+            return 'evening'
+        
 
     def __str__(self):
         return f"{self.student}'s request for {self.knowledge_area} tutoring"

@@ -120,6 +120,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     
 
 from .models import Lesson 
+from datetime import datetime, timedelta
 
 class LessonRequestForm(forms.ModelForm):
     KNOWLEDGE_AREAS = [
@@ -145,20 +146,28 @@ class LessonRequestForm(forms.ModelForm):
         ('120', '120 min'),
     ]
 
-    TIME_OF_DAY = [
-        ('morning', 'Morning'),
-        ('afternoon', 'Afternoon'),
-        ('evening', 'Evening'),
+    TIME_CHOICES = [
+        (datetime.strptime(f"{hour:02d}:{minute:02d}", "%H:%M").time(), f"{hour:02d}:{minute:02d}")
+        for hour in range(8, 21) 
+        for minute in range(0, 60, 10)
     ]
 
     # Fields will now correspond to the model fields
     knowledge_area = forms.ChoiceField(choices=KNOWLEDGE_AREAS, label="Knowledge Area")
     term = forms.ChoiceField(choices=TERMS, label="Term")
-    time_of_day = forms.ChoiceField(choices=TIME_OF_DAY, initial='morning', label="Preferred Time of Day")
     duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
     start_time = forms.TimeField(
-        widget=forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
-        label="Preferred Start Time (HH:MM)"
+        widget=forms.TimeInput(
+            attrs={
+                'type': 'time',
+                'min': '08:00', 
+                'max': '20:00', 
+                'step': '600',  
+            },
+            format='%H:%M',
+        ),
+        label="Preferred Start Time (HH:MM)",
+        input_formats=['%H:%M'], 
     )
     days = forms.MultipleChoiceField(
         choices=[
@@ -177,4 +186,4 @@ class LessonRequestForm(forms.ModelForm):
 
     class Meta:
         model = Lesson  # Connect the form to the LessonRequest model
-        fields = ['knowledge_area', 'term', 'time_of_day', 'duration', 'start_time', 'days', 'venue_preference']
+        fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']

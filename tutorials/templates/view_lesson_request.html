@@ -6,11 +6,10 @@
             <tr>
                 <th>Knowledge Area</th>
                 <th>Term</th>
-                <th>Time of Day</th>
                 <th>Duration</th>
-                <th>Start Time</th>
                 <th>Venue Preference</th>
                 <th>Days</th>
+                <th>Time of Day</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -19,11 +18,10 @@
                 <tr>
                     <td>{{ request.knowledge_area }}</td>
                     <td>{{ request.term }}</td>
-                    <td>{{ request.time_of_day}}</td>
                     <td>{{ request.duration }} minutes</td>
-                    <td>{{ request.start_time }}</td>
                     <td>{{ request.venue_preference }}</td>
                     <td>{{ request.days }}</td>
+                    <td>{{ request.time_of_day }}</td>
                     <td>{{ request.status }}</td>
                 </tr>
             {% empty %}

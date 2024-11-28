@@ -17,10 +17,12 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
+    #lessons = get_lessons_sorted(current_user)
 
     context = {
         'user': current_user,
-        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        #'lessons_time_and_day': lessons,
     }
 
     print("current user is: " + current_user.user_type)
@@ -176,6 +178,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
 from .forms import LessonRequestForm
 from .models import Lesson
 
+"""
 def student_dashboard_view(request):
     lessons = Lesson.objects.filter(student=request.user)
 
@@ -193,6 +196,7 @@ def student_dashboard_view(request):
         'form': form, 
         'lessons': lessons,
         'user_role': 'Student Dashboard'})
+"""
 
 
 def create_lesson_request(request):
@@ -209,11 +213,12 @@ def create_lesson_request(request):
     return render(request, 'lesson_request.html', {'form': form})
 
 def view_lesson_request(request):
-   lesson_request = Lesson.objects.filter(student=request.user)
-   return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
+    lesson_request = Lesson.objects.filter(student=request.user)
+    return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
 
-def week_schedule_view(request):
-    lessons = Lesson.objects.filter(student=request.user)
+def get_lessons_sorted(user):
+    """Organize lessons by time of day and day of the week."""
+    lessons = Lesson.objects.filter(student=user)
 
     lessons_by_time_and_day = {
         'morning': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
@@ -222,17 +227,13 @@ def week_schedule_view(request):
     }
 
     for lesson in lessons:
-        for day in lesson.days:  
+        for day in lesson.days:
             if lesson.time_of_day in lessons_by_time_and_day:
-                if day in lessons_by_time_and_day[lesson.time_of_day]:
-                    lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
-
+                lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
     
-    return render(request, 'partials/week_schedule.html', {'lessons': lessons_by_time_and_day})
-
-
+    return lessons_by_time_and_day
 """
-class TutorView(LoginRequiredMixin, View):
+class TutorView(LoginRequiredMixin, View):s
     
     template_name = 'tutor/dashboard_tutor.html'
 
