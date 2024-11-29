@@ -1,175 +1,192 @@
-<table class="table table-bordered caption-top">
-  <caption>Weekly Schedule: </caption>
-  <thead>
-    <tr>
-      <th>Time of Day</th>
-      <th>Monday</th>
-      <th>Tuesday</th>
-      <th>Wednesday</th>
-      <th>Thursday</th>
-      <th>Friday</th>
-      <th>Saturday</th>
-      <th>Sunday</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Morning</td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.mon %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.tue %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.wed %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.thu %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.fri %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.sat %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.morning.sun %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-  </tr>
-  <tr>
-      <td>Afternoon</td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.mon %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.tue %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.wed %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.thu %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.fri %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.sat %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.afternoon.sun %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-  </tr>
-  <tr>
-      <td>Evening</td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.mon %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.tue %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.wed %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.thu %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.fri %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.sat %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-      <td>
-          {% for lesson in lessons_by_time_and_day.evening.sun %}
-              <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-          {% empty %}
-              No lessons
-          {% endfor %}
-      </td>
-    </tr>
-  </tbody>
-</table>
+{% extends 'base_content.html' %}
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">Weekly Schedule</h1>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <table class="table table-bordered caption-top table-hover">
+                    <caption class="font-weight-bold">Weekly Schedule:</caption>
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Time of Day</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Morning Row -->
+                        <tr>
+                            <td>Morning</td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.mon %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.tue %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.wed %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.thu %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.fri %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.sat %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.morning.sun %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <!-- Afternoon Row -->
+                        <tr>
+                            <td>Afternoon</td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.mon %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.tue %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.wed %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.thu %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.fri %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.sat %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.afternoon.sun %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <!-- Evening Row -->
+                        <tr>
+                            <td>Evening</td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.mon %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.tue %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.wed %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.thu %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.fri %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.sat %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for lesson in lessons_by_time_and_day.evening.sun %}
+                                    <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                                {% empty %}
+                                    No lessons
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+        <!-- Back to Dashboard Button -->
+        <div class="mt-3 text-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Back to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}
