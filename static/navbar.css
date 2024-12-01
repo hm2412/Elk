@@ -2,67 +2,74 @@
 
 /* Navbar Background */
 .navbar {
-    height: 100px;
-    background-color: #e8e8e8; /* Dark gray */
-    border-bottom: 1px solid black; /* Border */
-    padding: 5px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background-color: rgba(156, 17, 17); 
 }
 
 /* Navbar Brand Styling */
 .navbar-brand {
-    color: rgb(156, 17, 17); 
-    font-size: 1.5rem;
-    font-weight: bold;
     display: flex;
     align-items: center;
     text-transform: uppercase;
 }
 
-.navbar-brand:hover {
-    color: rgb(156, 17, 17);
-}
-
-/* Navbar Links Styling */
-.navbar-nav .nav-link {
-    color: rgb(156, 17, 17); 
-    font-weight: 500;
-    text-transform: capitalize;
-    margin-right: 10px;
-}
-
-/* Hover Effect for Nav Links */
-.navbar-nav .nav-link:hover {
-    color: rgb(94, 10, 10);
-}
-
-/* Active Link Styling */
-.navbar-nav .nav-link.active {
-    color: rgb(156, 17, 17);
-    font-weight: bold;
-}
-
-/* Navbar Toggler */
-.navbar-toggler {
-    border-color: rgb(156, 17, 17); 
-}
-
-.navbar-toggler-icon {
-    background-color: rgb(156, 17, 17);
-}
-
-/* Logo Styling */
 .navbar-brand img {
-    height: 90px; 
-    width: auto;
+    max-height: 60px; 
+    width: auto; 
+    filter: brightness(0) invert(1); 
+    transition: transform 0.3s ease; 
     margin-right: 20px;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .navbar-nav {
-        text-align: center;
-    }
+/* Hover effect for the logo */
+.navbar-brand img:hover {
+    transform: scale(1.05); 
+}
+
+/* Button Styling for Navbar Toggler */
+.navbar-toggler {
+    border-color: transparent; 
+}
+
+/* Navbar Toggler Icon Styling */
+.navbar-toggler-icon {
+    background-color: transparent;
+}
+
+.offcanvas-header {
+    background-color: rgb(156, 17, 17); 
+    color: white; 
+}
+
+/* Offcanvas Body */
+.offcanvas-body {
+    background-color: #f8f9fa;
+}
+
+/* List Group Items Styling */
+.list-group-item {
+    font-size: 1rem;
+}
+
+/* Specific Text for Links */
+.text-danger {
+    color: red !important; 
+}
+
+.text-decoration-none {
+    text-decoration: none;
+}
+
+.list-group-item-action {
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for menu items */
+.list-group-item:hover {
+    background-color: rgba(156, 17, 17, 0.1); /* Slight hover effect on list items */
+}
+
+/* Active state for menu items */
+.list-group-item.active {
+    background-color: rgb(156, 17, 17); 
+    color: white;
 }
