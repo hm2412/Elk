@@ -178,27 +178,6 @@ class SignUpView(LoginProhibitedMixin, FormView):
 from .forms import LessonRequestForm
 from .models import Lesson
 
-"""
-def student_dashboard_view(request):
-    lessons = Lesson.objects.filter(student=request.user)
-
-    if request.method == 'POST':
-        form = LessonRequestForm(request.POST)
-        if form.is_valid():
-            form.save(commit=False).student = request.user
-            form.save()
-            print(form.cleaned_data)
-            return redirect('student_dashboard')  
-    else:
-        form = LessonRequestForm()
-
-    return render(request, 'student_dashboard.html', {
-        'form': form, 
-        'lessons': lessons,
-        'user_role': 'Student Dashboard'})
-"""
-
-
 def create_lesson_request(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
@@ -234,11 +213,11 @@ def get_lessons_sorted(user):
     return lessons_by_time_and_day
 
 """
-class TutorView(LoginRequiredMixin, View):s
+class TutorView(LoginRequiredMixin, View):
     
     template_name = 'tutor/dashboard_tutor.html'
 
-    def get(self, request)
+    def get(self, request):
         current_user = request.user
         # Get tutor group and all users in it
         tutor_group = Group.objects.get(name='Tutor')

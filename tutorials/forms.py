@@ -120,7 +120,8 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     
 
 from .models import Lesson 
-from datetime import datetime, timedelta
+from datetime import datetime, time
+from django.core.exceptions import ValidationError
 
 class LessonRequestForm(forms.ModelForm):
     KNOWLEDGE_AREAS = [
@@ -183,6 +184,17 @@ class LessonRequestForm(forms.ModelForm):
         label="Days (select days)",
     )
     venue_preference = forms.ChoiceField(choices=VENUE_PREFERENCES, label="Venue Preference")
+
+    def clean_start_time(self):
+        start_time = self.cleaned_data.get('start_time')
+
+        min_time = time(8, 0)  
+        max_time = time(20, 0)  
+        
+        if not min_time <= start_time <= max_time:
+            raise ValidationError("The start time must be between 08:00 and 20:00.")
+
+        return start_time
 
     class Meta:
         model = Lesson  # Connect the form to the LessonRequest model
