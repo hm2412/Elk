@@ -91,4 +91,13 @@ class Meeting(models.Model):
 
     def __str__(self):
         return f"Meeting: {self.tutor.username} with {self.student.username} on {self.date}"
-    
+
+
+'''This is a PLACEHOLDER for request handling'''
+class Request(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requests')
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Request by {self.student.username}: {self.title}"

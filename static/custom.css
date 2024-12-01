@@ -243,6 +243,7 @@ h3.profile-title {
   justify-content: center;
   align-items: center;
   text-align: center;
+  background-color: #9c1111
 }
 
 .admin-dashboard .icon {
@@ -252,8 +253,18 @@ h3.profile-title {
 
 .admin-dashboard .stats-title {
   font-size: 25px; /* Adjust font size as needed */
+  color: white;
 }
 
 .admin-dashboard .stats-number {
   font-size: 45px; /* Adjust size for the bottom text */
+  color: white;
+}
+
+.admin-dashboard .requests {
+  background-color: #9c1111;
+}
+
+.admin-dashboard .requests-title {
+  color: white;
 }
