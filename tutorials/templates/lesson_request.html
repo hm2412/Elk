@@ -1,18 +1,20 @@
 {% extends 'base_content.html' %}
 {% block content %}
     <div class="container mt-5">
-        <h1 class="mb-4">Create a Lesson Request</h1>
-        <form method="POST" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-8">
-                    {% include 'partials/bootstrap_form.html' with form=form %}
+        <h1 class="mb-4 text-center">Create a Lesson Request</h1>
+        <div class="d-flex justify-content-center">
+            <form method="POST" class="needs-validation" novalidate style="width: 100%; max-width: 600px;">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-12">
+                        {% include 'partials/bootstrap_form.html' with form=form %}
+                    </div>
                 </div>
-            </div>
-            <div class="mt-4">
-                <button type="submit" class="btn btn-secondary btn-lg">Submit Request</button>
-                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
-            </div>
-        </form>
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-secondary btn-lg">Submit Request</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}
