@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
+from .models import User
 
 def login_prohibited(view_function):
     """Decorator for view functions that redirect users away if they are logged in."""
@@ -24,3 +25,17 @@ def user_role_required(type):
                 raise PermissionDenied
         return modified_view_function
     return decorator
+
+def admin_dashboard_context():
+    total_students = User.objects.filter(user_type='Student').count()
+    total_tutors = User.objects.filter(user_type='Tutor').count()
+    return {
+        'total_students': total_students,
+        'total_tutors': total_tutors,
+    }
+
+def return_total_students():
+    return User.objects.filter(user_type='Student').count()
+
+def return_total_tutors():
+    return User.objects.filter(user_type='Tutor').count()

@@ -10,27 +10,28 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
+from tutorials.helpers import admin_dashboard_context
 
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
+    user_type = current_user.user_type
 
     context = {
         'user': current_user,
         'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     }
 
-    print("current user is: " + current_user.user_type)
-
-    user_type = current_user.user_type
+    print("current user is: " + user_type)
 
     if user_type == 'Tutor':
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
     elif user_type == 'Admin':
+        context.update(admin_dashboard_context())
         template = 'admin/dashboard_admin.html'
     else:
         template = 'student/dashboard_student.html'
