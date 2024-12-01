@@ -28,9 +28,10 @@
           {% for days, lessons in lessons_time_and_day.morning.items %}
             <td>
               {% if lessons %}
-                  {% for lesson in lessons %}
-                      {{ lesson.knowledge_area }} - {{ lesson.duration }}<br>
-                  {% endfor %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
               {% endif %}
             </td>
           {% endfor %}
@@ -40,9 +41,10 @@
           {% for days, lessons in lessons_time_and_day.afternoon.items %}
             <td>
               {% if lessons %}
-                  {% for lesson in lessons %}
-                      <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-                  {% endfor %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
               {% endif %}
             </td>
           {% endfor %}
@@ -52,9 +54,10 @@
           {% for days, lessons in lessons_time_and_day.evening.items %}
             <td>
               {% if lessons %}
-                  {% for lesson in lessons %}
-                      <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
-                  {% endfor %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
               {% endif %}
             </td>
           {% endfor %}
