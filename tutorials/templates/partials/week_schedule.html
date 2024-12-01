@@ -20,7 +20,8 @@
         <td>
           {% if lessons %}
               {% for lesson in lessons %}
-                  <strong>{{ lesson.knowledge_area }}</strong> - {{ lesson.duration }}<br>
+                  {{ lesson.knowledge_area }}
+                   - {{ lesson. }}<br>
               {% endfor %}
           {% else %}
               No lessons

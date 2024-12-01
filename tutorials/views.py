@@ -17,12 +17,12 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    #lessons = get_lessons_sorted(current_user)
+    lessons = get_lessons_sorted(current_user)
 
     context = {
         'user': current_user,
         'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        #'lessons_time_and_day': lessons,
+        'lessons_time_and_day': lessons,
     }
 
     print("current user is: " + current_user.user_type)
@@ -232,6 +232,7 @@ def get_lessons_sorted(user):
                 lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
     
     return lessons_by_time_and_day
+
 """
 class TutorView(LoginRequiredMixin, View):s
     
