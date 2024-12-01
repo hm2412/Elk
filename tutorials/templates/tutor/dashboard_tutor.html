@@ -12,8 +12,11 @@
                     <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#availabilityModal">
                         Set Weekly Availability
                     </button>
-                    <button type="button" class="btn btn-primary btn-lg ms-5" data-bs-toggle="modal" data-bs-target="#hourlyRateModal">
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#hourlyRateModal">
                         Set Hourly Rate
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#teachingSubjectsModal">
+                        Set Teaching Subjects
                     </button>
                 </div>
 
@@ -164,6 +167,113 @@
     </div>
 </div>
 
+<!-- Teaching Subjects Modal -->
+<div class="modal fade" id="teachingSubjectsModal" tabindex="-1" aria-labelledby="teachingSubjectsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="teachingSubjectsModalLabel">Set Teaching Subjects</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="subjectSelectionForm">
+                    <!-- Science Subjects -->
+                    <div class="mb-4">
+                        <h6>STEM</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="mathematics" id="mathematics">
+                            <label class="form-check-label" for="mathematics">Mathematics</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="compsci" id="compsci">
+                            <label class="form-check-label" for="compsci">Computer Science</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="physics" id="physics">
+                            <label class="form-check-label" for="physics">Physics</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="chemistry" id="chemistry">
+                            <label class="form-check-label" for="chemistry">Chemistry</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="biology" id="biology">
+                            <label class="form-check-label" for="biology">Biology</label>
+                        </div>
+                    </div>
+                
+                    <!-- Language Subjects -->
+                    <div class="mb-4">
+                        <h6>Languages</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="english" id="english">
+                            <label class="form-check-label" for="english">English</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="spanish" id="spanish">
+                            <label class="form-check-label" for="spanish">Spanish</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="french" id="french">
+                            <label class="form-check-label" for="french">French</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="german" id="german">
+                            <label class="form-check-label" for="german">German</label>
+                        </div>
+                    </div>
+
+                    <!-- Humanities Subjects -->
+                    <div class="mb-4">
+                        <h6>Humanities</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="geography" id="geography">
+                            <label class="form-check-label" for="geography">Geography</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="history" id="history">
+                            <label class="form-check-label" for="history">History</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="philosophy" id="philosophy">
+                            <label class="form-check-label" for="philosophy">Philosophy</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="religiousstudies" id="religiousstudies">
+                            <label class="form-check-label" for="religiousstudies">Religious Studies</label>
+                        </div>
+                    </div>
+
+                    <!-- Custom Subjects -->
+                    <div class="mb-4" id="customSubjectsSection" style="display: none;">
+                        <h6>Custom</h6>
+                        <div id="customSubjectsList">
+                            <!-- Custom subjects will be added here -->    
+                        </div>
+                    </div>  
+                
+                    <!-- Custom Subject -->
+                    <div class="mb-3">
+                        <label for="customSubject" class="form-label">Add Custom Subject</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="customSubject" placeholder="Enter subject name">
+                            <button class="btn btn-outline-secondary" type="button" id="addCustomSubject">Add</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="savesubjects">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    Save Subjects
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Include FullCalendar.js -->
 <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.0/main.min.css' rel='stylesheet' />
 <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.0/main.min.css' rel='stylesheet' />
@@ -184,59 +294,103 @@
             events: [] // Will be populated from backend
         });
         calendar.render();
-    });
 
-    document.getElementById('saveHourlyRate').addEventListener('click', function() {
-        const form = document.getElementById('hourlyRateForm');
-        const rate = form.querySelector('#hourlyRate').value;
-        const submitButton = this;
-        
-        // Show loading state
-        submitButton.disabled = true;
-        submitButton.querySelector('.spinner-border').classList.remove('d-none');
-        
-        fetch('/api/set-hourly-rate/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({ hourly_rate: rate })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('hourlyRateModal'));
-                modal.hide();
-                location.reload();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to save hourly rate');
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.querySelector('.spinner-border').classList.add('d-none');
+        const addCustomSubjectBtn = document.getElementById('addCustomSubject');
+        const customSubjectInput = document.getElementById('customSubject');
+        const customSubjectsSection = document.getElementById('customSubjectsSection');
+        const customSubjectsList = document.getElementById('customSubjectsList');
+
+        if (addCustomSubjectBtn && customSubjectInput) {
+            addCustomSubjectBtn.addEventListener('click', function() {
+                addCustomSubject();
+            });
+
+            customSubjectInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomSubject();
+                }
+            });
+        }
+
+        document.getElementById('saveHourlyRate').addEventListener('click', function() {
+            const form = document.getElementById('hourlyRateForm');
+            const rate = form.querySelector('#hourlyRate').value;
+            const submitButton = this;
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.querySelector('.spinner-border').classList.remove('d-none');
+            
+            fetch('/api/set-hourly-rate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ hourly_rate: rate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('hourlyRateModal'));
+                    modal.hide();
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save hourly rate');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.querySelector('.spinner-border').classList.add('d-none');
+            });
         });
-    });
 
-    document.querySelectorAll('.day-toggle').forEach(toggle => {
-        toggle.addEventListener('change', function() {
-            const day = this.id.replace('_enabled', '');
-            const timeSlots = document.getElementById(`${day}_times`);
-            timeSlots.style.display = this.checked ? 'block' : 'none';
+        document.querySelectorAll('.day-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const day = this.id.replace('_enabled', '');
+                const timeSlots = document.getElementById(`${day}_times`);
+                timeSlots.style.display = this.checked ? 'block' : 'none';
+            });
         });
-    });
 
-    document.querySelectorAll('.availability-toggle').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const timeSlot = document.getElementById(this.id.replace('enabled', 'times'));
-            timeSlot.style.display = this.checked ? 'block' : 'none';
+        document.querySelectorAll('.availability-toggle').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const timeSlot = document.getElementById(this.id.replace('enabled', 'times'));
+                timeSlot.style.display = this.checked ? 'block' : 'none';
+            });
         });
-    });
 
-    document.addEventListener('DOMContentLoaded', function() {
+        // Create new time slot element
+        function createTimeSlot() {
+            const div = document.createElement('div');
+            div.className = 'time-slot mb-3';
+            div.innerHTML = `
+                <div class="row">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" class="form-control start-time">
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" class="form-control end-time">
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-slot">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
         // Handle adding new time slots
         document.querySelectorAll('.add-slot').forEach(button => {
             button.addEventListener('click', function() {
@@ -269,69 +423,151 @@
             }
         });
 
-        // Create new time slot element
-        function createTimeSlot() {
-            const div = document.createElement('div');
-            div.className = 'time-slot mb-3';
-            div.innerHTML = `
-                <div class="row">
-                    <div class="col-5">
-                        <div class="form-group">
-                            <label>Start Time</label>
-                            <input type="time" class="form-control start-time">
-                        </div>
-                    </div>
-                    <div class="col-5">
-                        <div class="form-group">
-                            <label>End Time</label>
-                            <input type="time" class="form-control end-time">
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger btn-sm remove-slot">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            return div;
+        document.getElementById('saveAvailability').addEventListener('click', function() {
+            const button = this;
+            const spinner = button.querySelector('.spinner-border');
+            
+            // Show spinner, disable button
+            spinner.classList.remove('d-none');
+            button.disabled = true;
+            
+            // Get form data and submit
+            const formData = new FormData(document.getElementById('availabilityForm'));
+            
+            fetch('/api/set-availability/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save availability'); // Fixed error message
+            })
+            .finally(() => {
+                spinner.classList.add('d-none');
+                button.disabled = false;
+            });
+        });
+
+        function addCustomSubject() {
+            const subjectName = customSubjectInput.value.trim();
+            
+            if (subjectName) {
+                // Show the custom subjects section
+                customSubjectsSection.style.display = 'block';
+                
+                // Create new checkbox item
+                const div = document.createElement('div');
+                div.className = 'form-check custom-subject-item';
+
+                const checkboxContainer = document.createElement('div');
+                
+                const input = document.createElement('input');
+                input.className = 'form-check-input';
+                input.type = 'checkbox';
+                input.id = `custom_${subjectName.toLowerCase().replace(/\s+/g, '_')}`;
+                input.value = subjectName;
+                input.checked = true;
+                
+                const label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.htmlFor = input.id;
+                label.textContent = subjectName;
+
+                checkboxContainer.appendChild(input);
+                checkboxContainer.appendChild(label);
+
+                // Create delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn btn-danger btn-sm remove-subject';
+                deleteBtn.innerHTML = '<i class="fas fa-minus"></i>';
+                
+                // Add everything to the main container
+                div.appendChild(checkboxContainer);
+                div.appendChild(deleteBtn);
+                customSubjectsList.appendChild(div);
+                
+                // Clear the input
+                customSubjectInput.value = '';
+            }
         }
 
-        // Modify your existing save functionality to handle multiple time slots
-        document.getElementById('saveAvailability').addEventListener('click', function() {
-        const button = this;
-        const spinner = button.querySelector('.spinner-border');
-        
-        // Show spinner, disable button
-        spinner.classList.remove('d-none');
-        button.disabled = true;
-        
-        // Get form data and submit
-        const formData = new FormData(document.getElementById('availabilityForm'));
-        
-        fetch('/api/set-availability/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify(Object.fromEntries(formData))
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
+        const saveSubjectsBtn = document.getElementById('savesubjects');
+    
+        if (saveSubjectsBtn) {
+            saveSubjectsBtn.addEventListener('click', function() {
+                const spinner = this.querySelector('.spinner-border');
+                const button = this;
+                spinner.classList.remove('d-none');
+                button.disabled = true;
+
+                // Get all selected subjects
+                const selectedSubjects = [];
+                
+                // Get standard subjects
+                document.querySelectorAll('#subjectSelectionForm input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedSubjects.push(checkbox.value);
+                });
+
+                // Send to server
+                fetch('/save-subjects/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        subjects: selectedSubjects
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('teachingSubjectsModal'));
+                        modal.hide();
+                        location.reload();
+                    } else {
+                        throw new Error('Failed to save subjects');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to save subjects');
+                })
+                .finally(() => {
+                    spinner.classList.add('d-none');
+                    button.disabled = false;
+                });
+            });
+        }
+
+        // Handle removing custom subjects
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-subject') || 
+                (e.target.parentElement && e.target.parentElement.classList.contains('remove-subject'))) {
+                const button = e.target.classList.contains('remove-subject') ? e.target : e.target.parentElement;
+                const subjectItem = button.closest('.custom-subject-item');
+                
+                if (subjectItem) {
+                    subjectItem.remove();
+                    
+                    // Hide the custom subjects section if no more custom subjects
+                    if (customSubjectsList.children.length === 0) {
+                        customSubjectsSection.style.display = 'none';
+                    }
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to save availability'); // Fixed error message
-        })
-        .finally(() => {
-            spinner.classList.add('d-none');
-            button.disabled = false;
         });
-    });
     });
 </script>
 
