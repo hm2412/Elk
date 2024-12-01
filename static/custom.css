@@ -227,3 +227,15 @@ h3.profile-title {
   color: #FFD700;
   margin-right: 5px;
 }
+
+
+/*
+* Admin dashboard
+*/
+
+.admin-dashboard .square{
+  aspect-ratio: 1 / 1; /* Ensures the div is square */
+  height: auto;        /* Responsive height */
+  max-width: 100%;     /* Avoids overflowing */
+  padding: 10px;       /* Space between squares if necessary */
+}
