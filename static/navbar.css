@@ -1,0 +1,68 @@
+/* navbar.css */
+
+/* Navbar Background */
+.navbar {
+    height: 100px;
+    background-color: #e8e8e8; /* Dark gray */
+    border-bottom: 1px solid black; /* Border */
+    padding: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Navbar Brand Styling */
+.navbar-brand {
+    color: rgb(156, 17, 17); 
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.navbar-brand:hover {
+    color: rgb(156, 17, 17);
+}
+
+/* Navbar Links Styling */
+.navbar-nav .nav-link {
+    color: rgb(156, 17, 17); 
+    font-weight: 500;
+    text-transform: capitalize;
+    margin-right: 10px;
+}
+
+/* Hover Effect for Nav Links */
+.navbar-nav .nav-link:hover {
+    color: rgb(94, 10, 10);
+}
+
+/* Active Link Styling */
+.navbar-nav .nav-link.active {
+    color: rgb(156, 17, 17);
+    font-weight: bold;
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+    border-color: rgb(156, 17, 17); 
+}
+
+.navbar-toggler-icon {
+    background-color: rgb(156, 17, 17);
+}
+
+/* Logo Styling */
+.navbar-brand img {
+    height: 90px; 
+    width: auto;
+    margin-right: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+    }
+}
