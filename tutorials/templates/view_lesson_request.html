@@ -1,35 +1,47 @@
 {% extends 'base_content.html' %}
+
 {% block content %}
-    <h1>Your Lesson Requests</h1>
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th>Knowledge Area</th>
-                <th>Term</th>
-                <th>Duration</th>
-                <th>Venue Preference</th>
-                <th>Days</th>
-                <th>Time of Day</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in lesson_requests %}
-                <tr>
-                    <td>{{ request.knowledge_area }}</td>
-                    <td>{{ request.term }}</td>
-                    <td>{{ request.duration }} minutes</td>
-                    <td>{{ request.venue_preference }}</td>
-                    <td>{{ request.days }}</td>
-                    <td>{{ request.time_of_day }}</td>
-                    <td>{{ request.status }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center">You have no lesson requests at the moment.</td>
-                </tr>   
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    <div class="container my-5">
+        <!-- Header -->
+        <h1 class="mb-4 text-center text">Your Lesson Requests</h1>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Knowledge Area</th>
+                        <th>Term</th>
+                        <th>Duration</th>
+                        <th>Venue Preference</th>
+                        <th>Days</th>
+                        <th>Time of Day</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in lesson_requests %}
+                        <tr>
+                            <td>{{ request.knowledge_area }}</td>
+                            <td>{{ request.term }}</td>
+                            <td>{{ request.duration }} minutes</td>
+                            <td>{{ request.venue_preference }}</td>
+                            <td>{{ request.days }}</td>
+                            <td>{{ request.time_of_day }}</td>
+                            <td>{{ request.status }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">You have no lesson requests at the moment.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back to Dashboard Button -->
+        <div class="text-center mt-4">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+        </div>
+    </div>
 {% endblock %}
