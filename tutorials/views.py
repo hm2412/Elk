@@ -4,13 +4,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
-from tutorials.helpers import login_prohibited
-from tutorials.helpers import admin_dashboard_context
+from .models import User, Meeting
+from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm
+from .helpers import login_prohibited, admin_dashboard_context, user_role_required
 
 @login_required
 def dashboard(request):
@@ -44,6 +44,24 @@ def home(request):
     """Display the application's start/home screen."""
 
     return render(request, 'home.html')
+
+@login_required
+@user_role_required('Admin')
+def schedule_session(request, student_id):
+    """Display a form to schedule tutoring sessions"""
+    student = get_object_or_404(User, id=student_id, user_type='Student')
+
+    if request.method == 'POST':
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            meeting = form.save(commit=False)
+            meeting.student = student
+            meeting.save()
+            return redirect('dashboard')  # Redirect to the admin dashboard after successful creation
+    else:
+        form = MeetingForm(initial={'student': student})
+
+    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student})
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""

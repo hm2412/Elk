@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from .models import User
+from .models import Meeting
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -117,3 +118,9 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         )
 
         return user
+    
+class MeetingForm(forms.ModelForm):
+    """Form to schedule meetings/tutoring sessions"""
+    class Meta:
+        model = Meeting
+        fields = ['tutor', 'date', 'start_time', 'end_time', 'topic', 'status', 'notes']

@@ -20,7 +20,11 @@
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{ request.title }}</h5>
                                                     <p class="card-text">{{ request.description }}</p>
-                                                    <small class="text-muted">Submitted by: {{ request.student.username }} on {{ request.submitted_at|date:"D M d, Y H:i" }}</small>
+                                                    <p class="text">Submitted by: 
+                                                        <a href="{% url 'schedule_session' request.student.id %}">
+                                                            {{ request.student.username }}
+                                                        </a>
+                                                        on {{ request.submitted_at|date:"D M d, Y H:i" }}</p>
                                                 </div>
                                             </div>
                                         </div>
