@@ -34,6 +34,15 @@ def dashboard(request):
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
         availability_slots = TutorAvailability.objects.filter(tutor=current_user)
 
+         # Add debug prints
+        print("=== Tutor Profile Debug Info ===")
+        print(f"Hourly Rate: {tutor_profile.hourly_rate}")
+        print(f"Subjects: {tutor_profile.subjects}")
+        print("\n=== Availability Slots ===")
+        for slot in availability_slots:
+            print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
+        print("============================")
+
         context.update({
             'tutor_profile': tutor_profile,
             'availability_slots': availability_slots,
