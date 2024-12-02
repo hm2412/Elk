@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from .models import User, Meeting
+from .models import User, Meeting, Request
 from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm
 from .helpers import login_prohibited, admin_dashboard_context, user_role_required
 
@@ -57,6 +57,14 @@ def schedule_session(request, student_id):
             meeting = form.save(commit=False)
             meeting.student = student
             meeting.save()
+
+            try:
+                outstanding_request = Request.objects.get(student=student)
+                outstanding_request.delete()
+            except Request.DoesNotExist:
+                pass 
+            # Issue: students submitting multiple requests
+
             return redirect('dashboard')  # Redirect to the admin dashboard after successful creation
     else:
         form = MeetingForm(initial={'student': student})
