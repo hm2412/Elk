@@ -7,9 +7,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
+from django.views.decorators.http import require_http_methods
 from django.urls import reverse
+from django.http import JsonResponse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
+import json
+from .models import TutorProfile, TutorAvailability
 
 @login_required
 def dashboard(request):
@@ -27,6 +31,15 @@ def dashboard(request):
     user_type = current_user.user_type
 
     if user_type == 'Tutor':
+        tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
+        availability_slots = TutorAvailability.objects.filter(tutor=current_user)
+
+        context.update({
+            'tutor_profile': tutor_profile,
+            'availability_slots': availability_slots,
+            'hourly_rate': tutor_profile.hourly_rate or '',
+            'subjects': tutor_profile.subjects,
+        })
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
@@ -43,6 +56,79 @@ def home(request):
     """Display the application's start/home screen."""
 
     return render(request, 'home.html')
+
+
+@login_required
+@require_http_methods(["POST"])
+def set_hourly_rate(request):
+    """Set tutor's hourly rate."""
+    if request.user.user_type != 'Tutor':
+        return JsonResponse({'success': False, 'error': 'User is not a tutor'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        hourly_rate = data.get('hourly_rate')
+        
+        tutor_profile, created = TutorProfile.objects.get_or_create(tutor=request.user)
+        tutor_profile.hourly_rate = hourly_rate
+        tutor_profile.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+@login_required
+@require_http_methods(["POST"])
+def set_subjects(request):
+    """Set tutor's teaching subjects."""
+    if request.user.user_type != 'Tutor':
+        return JsonResponse({'success': False, 'error': 'User is not a tutor'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        subjects = data.get('subjects', [])
+        
+        tutor_profile, created = TutorProfile.objects.get_or_create(tutor=request.user)
+        tutor_profile.subjects = subjects
+        tutor_profile.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+@login_required
+@require_http_methods(["POST"])
+def set_availability(request):
+    """Set tutor's weekly availability."""
+    if request.user.user_type != 'Tutor':
+        return JsonResponse({'success': False, 'error': 'User is not a tutor'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        
+        # Clear existing availability for this tutor
+        TutorAvailability.objects.filter(tutor=request.user).delete()
+        
+        # Create new availability slots
+        for day, slots in data.items():
+            if day.endswith('_enabled') and data[day]:  # If day is enabled
+                day_name = day.replace('_enabled', '')
+                time_slots = data.get(f"{day_name}_slots", [])
+                
+                for slot in time_slots:
+                    TutorAvailability.objects.create(
+                        tutor=request.user,
+                        day=day_name.capitalize(),
+                        start_time=slot['start_time'],
+                        end_time=slot['end_time'],
+                        is_available=True
+                    )
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
 
 class LoginProhibitedMixin:

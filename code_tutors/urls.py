@@ -34,5 +34,8 @@ urlpatterns = [
     # STUDENT paths
 
     # TUTOR paths
+    path('api/set-hourly-rate/', views.set_hourly_rate, name='set_hourly_rate'),
+    path('api/set-subjects/', views.set_subjects, name='set_subjects'),
+    path('api/set-availability/', views.set_availability, name='set_availability'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

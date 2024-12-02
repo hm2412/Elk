@@ -60,7 +60,7 @@
 </div>
 
 <!-- Availability Modal -->
-<div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="hourlyRateModalLabel" aria-hidden="true">
+<div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="availabilityModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -114,7 +114,7 @@
 
                             <!-- Add new slot button -->
                             <button type="button" class="btn btn-primary btn-sm add-slot">
-                                <i class="fas fa-plus"></i> Add Time Slot
+                                Add Time Slot
                             </button>
                         </div>
                     </div>
@@ -176,6 +176,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                {% csrf_token %}
                 <form id="subjectSelectionForm">
                     <!-- Science Subjects -->
                     <div class="mb-4">
@@ -314,8 +315,7 @@
         }
 
         document.getElementById('saveHourlyRate').addEventListener('click', function() {
-            const form = document.getElementById('hourlyRateForm');
-            const rate = form.querySelector('#hourlyRate').value;
+            const rate = document.getElementById('hourlyRate').value;
             const submitButton = this;
             
             // Show loading state
@@ -520,7 +520,7 @@
                 });
 
                 // Send to server
-                fetch('/save-subjects/', {
+                fetch('/api/set-subjects/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -550,24 +550,6 @@
                 });
             });
         }
-
-        // Handle removing custom subjects
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-subject') || 
-                (e.target.parentElement && e.target.parentElement.classList.contains('remove-subject'))) {
-                const button = e.target.classList.contains('remove-subject') ? e.target : e.target.parentElement;
-                const subjectItem = button.closest('.custom-subject-item');
-                
-                if (subjectItem) {
-                    subjectItem.remove();
-                    
-                    // Hide the custom subjects section if no more custom subjects
-                    if (customSubjectsList.children.length === 0) {
-                        customSubjectsSection.style.display = 'none';
-                    }
-                }
-            }
-        });
     });
 </script>
 
