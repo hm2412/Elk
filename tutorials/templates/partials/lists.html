@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User List{% endblock %}
+
+{% block body %}
+  {% include 'partials/navbar.html' %}
+  {% include 'partials/messages.html' %}
+
+  <div class="table-container">
+    <h2 class="table-title">List of Students</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>Tutor</th> <!-- New column added -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.user_type }}</td>
+          <td>void</td> <!-- New column value hardcoded as "void" -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+<link rel="stylesheet" type="text/css" href="{% static 'lists.css' %}">
+{% endblock %}

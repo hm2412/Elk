@@ -12,17 +12,14 @@ from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 
 @login_required
-
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    lessons = get_lessons_sorted(current_user)
 
     context = {
         'user': current_user,
-        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        'lessons_time_and_day': lessons,
+        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     }
 
     print("current user is: " + current_user.user_type)
@@ -31,16 +28,15 @@ def dashboard(request):
 
     if user_type == 'Tutor':
         template = 'tutor/dashboard_tutor.html'
-    elif user_type == 'Student':
+    elif user_type == 'student':
         template = 'student/dashboard_student.html'
-    elif user_type == 'Admin':
+    elif user_type == 'admin':
         template = 'admin/dashboard_admin.html'
     else:
-        template = 'student/dashboard_student.html'
+        template = 'tutor/dashboard_tutor.html'
     
     # return render(request, template, {'user': current_user})
     return render(request, template, context)
-
 
 @login_prohibited
 def home(request):
@@ -212,7 +208,21 @@ def get_lessons_sorted(user):
     
     return lessons_by_time_and_day
 
-"""
+from django.shortcuts import render
+from .models import User
+
+def student_list(request):
+    # Get all users and sort them by the username
+    students = User.objects.filter(user_type='student').order_by('username')
+
+    # Pass the sorted users to the template
+    return render(request, 'partials/lists.html', {'users': students})
+
+
+
+
+
+
 class TutorView(LoginRequiredMixin, View):
     
     template_name = 'tutor/dashboard_tutor.html'
@@ -229,4 +239,3 @@ class TutorView(LoginRequiredMixin, View):
             'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         }
         return render(request, self.template_name, context)
-"""

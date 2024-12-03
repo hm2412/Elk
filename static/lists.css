@@ -1,0 +1,50 @@
+/* Center the table and set up styling */
+.table-container {
+    margin: 0 auto;
+    max-width: 80%;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Styling for the table title */
+  .table-title {
+    text-align: center; /* Align the title to the right */
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* General table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+    border: 2px solid #000; /* Add a solid border to the entire table */
+  }
+  
+  table thead tr {
+    background-color: rgb(156, 17, 17); /* Dark green header background */
+    color: #ffffff; /* White text for headers */
+    font-weight: bold;
+  }
+  
+  table th, table td {
+    border: 2px solid #dddddd; /* Add borders between cells */
+    padding: 12px 15px;
+  }
+  
+  table tbody tr:nth-child(even) {
+    background-color: #f3f3f3; /* Light gray background for even rows */
+  }
+  
+  table tbody tr:hover {
+    background-color: #f1f1f1; /* Slight hover effect */
+  }
+  
+  /* Center-align text inside table cells */
+  table th, table td {
+    text-align: center;
+  }
+  
