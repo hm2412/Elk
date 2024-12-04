@@ -213,15 +213,39 @@ def get_lessons_sorted(user):
     return lessons_by_time_and_day
 
 from django.shortcuts import render
-from .models import User
+from django.http import HttpResponseForbidden
+from .models import User, Meeting
+
+from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from .models import User, Meeting
 
 def user_list(request, list_type):
+    if request.user.user_type == 'student':
+        return HttpResponseForbidden("You do not have permission to access this page.")
+    
     if list_type == 'students':
-        users = User.objects.filter(user_type='student').order_by('username')
-        title = "Student List"
+        if request.user.user_type == 'Tutor':
+            meetings = Meeting.objects.filter(tutor=request.user)
+            students = meetings.values_list('student', flat=True)
+            users = User.objects.filter(id__in=students).order_by('username')
+            title = "Your Students"
+        else:
+            users = User.objects.filter(user_type='student').order_by('username')
+            title = "Student List"
+            
+        # Fetch current tutors for each student
+        for user in users:
+            user.current_tutors = Meeting.objects.filter(student=user, status='scheduled').values_list('tutor__username', flat=True)
+    
     elif list_type == 'tutors':
-        users = User.objects.filter(user_type='Tutor').order_by('username')
-        title = "Tutor List"
+        if request.user.user_type == 'Admin':
+            users = User.objects.filter(user_type='Tutor').order_by('username')
+            title = "Tutor List"
+        else:
+            users = []
+            title = "Access Denied"
+    
     else:
         users = []
         title = "Invalid List Type"
@@ -230,6 +254,7 @@ def user_list(request, list_type):
         'users': users,
         'title': title
     })
+
 
 
 class TutorView(LoginRequiredMixin, View):
