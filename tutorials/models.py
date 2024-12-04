@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+import hashlib
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -26,6 +27,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     user_type = models.CharField(max_length=7, choices=USER_TYPES, default='Student')
 
+    @property
+    def gravatar_hash(self):
+        email = self.email.strip().lower().encode('utf-8')
+        return hashlib.md5(email).hexdigest()
 
     class Meta:
         """Model options."""
