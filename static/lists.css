@@ -48,3 +48,13 @@
     text-align: center;
   }
   
+  /* Style the links in table headers */
+table th a {
+    color: white;           /* Make text white */
+    text-decoration: none;  /* Remove underline */
+}
+
+/* Optional: Add a hover effect if you want */
+table th a:hover {
+    color: #ccc;            /* Change color on hover */
+}

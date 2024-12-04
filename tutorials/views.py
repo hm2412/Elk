@@ -30,7 +30,7 @@ def dashboard(request):
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'student':
         template = 'student/dashboard_student.html'
-    elif user_type == 'admin':
+    elif user_type == 'Admin':
         template = 'admin/dashboard_admin.html'
     else:
         template = 'tutor/dashboard_tutor.html'
@@ -211,13 +211,19 @@ def get_lessons_sorted(user):
 from django.shortcuts import render
 from .models import User
 
+
 def student_list(request):
-    # Get all users and sort them by the username
-    students = User.objects.filter(user_type='student').order_by('username')
+    # Get sorting field from the request, default to 'username'
+    sort_by = request.GET.get('sort_by', 'username')
 
-    # Pass the sorted users to the template
-    return render(request, 'partials/lists.html', {'users': students})
+    # Determine how to sort based on the field
+    if sort_by == 'full_name':
+        # Sorting by full name requires sorting by both first_name and last_name
+        students = User.objects.filter(user_type='student').order_by('first_name', 'last_name')
+    else:
+        students = User.objects.filter(user_type='student').order_by(sort_by)
 
+    return render(request, 'partials/lists.html', {'users': students, 'sort_by': sort_by})
 
 
 
