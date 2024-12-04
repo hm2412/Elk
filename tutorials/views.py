@@ -12,14 +12,17 @@ from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 
 @login_required
+
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
+    lessons = get_lessons_sorted(current_user)
 
     context = {
         'user': current_user,
-        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        'lessons_time_and_day': lessons,
     }
 
     print("current user is: " + current_user.user_type)
@@ -33,10 +36,11 @@ def dashboard(request):
     elif user_type == 'Admin':
         template = 'admin/dashboard_admin.html'
     else:
-        template = 'tutor/dashboard_tutor.html'
+        template = 'student/dashboard_student.html'
     
     # return render(request, template, {'user': current_user})
     return render(request, template, context)
+
 
 @login_prohibited
 def home(request):
@@ -211,22 +215,21 @@ def get_lessons_sorted(user):
 from django.shortcuts import render
 from .models import User
 
-
-def student_list(request):
-    # Get sorting field from the request, default to 'username'
-    sort_by = request.GET.get('sort_by', 'username')
-
-    # Determine how to sort based on the field
-    if sort_by == 'full_name':
-        # Sorting by full name requires sorting by both first_name and last_name
-        students = User.objects.filter(user_type='student').order_by('first_name', 'last_name')
+def user_list(request, list_type):
+    if list_type == 'students':
+        users = User.objects.filter(user_type='student').order_by('username')
+        title = "Student List"
+    elif list_type == 'tutors':
+        users = User.objects.filter(user_type='Tutor').order_by('username')
+        title = "Tutor List"
     else:
-        students = User.objects.filter(user_type='student').order_by(sort_by)
+        users = []
+        title = "Invalid List Type"
 
-    return render(request, 'partials/lists.html', {'users': students, 'sort_by': sort_by})
-
-
-
+    return render(request, 'partials/lists.html', {
+        'users': users,
+        'title': title
+    })
 
 
 class TutorView(LoginRequiredMixin, View):
