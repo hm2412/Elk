@@ -1,23 +1,95 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block body %}
-  <div class="container vh-100">
-    <div class="row h-100">
-      <div class="col-12 my-auto">
-        <div class="card cover-card offset-sm-2 offset-md-4 offset-lg-7">
-          <h1 class="cover-heading">Task Manager</h1>
-          <p class="cover-text">A task manager application by Team Elk</p>
-          <p>
-            <a href='{% url 'sign_up' %}' class="btn btn-lg btn-secondary">
-              Sign up
-            </a>
-          </p>
-          <p>
-            <a href='{% url 'log_in' %}' class="btn btn-lg btn-secondary">
-              Log in
-            </a>
-          </p>
-        </div>
+<div class="container">
+  <!-- Header Section with logo and buttons -->
+  <div class="row align-items-center py-3">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+      <!-- Logo on the left -->
+      <div class="d-flex align-items-center">
+        <img src="{% static 'images/logo.png' %}" alt="Code Tutors Logo" class="logo">
+      </div>
+
+      <!-- Buttons placed at the top-right -->
+      <div class="ms-auto">
+        <a href="{% url 'sign_up' %}" class="btn btn-secondary me-2">
+          Sign up
+        </a>
+        <a href="{% url 'log_in' %}" class="btn btn-secondary">
+          Log in
+        </a>
       </div>
     </div>
   </div>
+
+    <!-- Full-Width Horizontal Line -->
+    <hr class="full-width-line">
+
+    <!-- Tagline Section -->
+    <div class="tagline">
+      <div>Learn.</div>
+      <div>Code.</div>
+      <div>Succeed.</div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="description">
+      <p>At Code Tutors, we believe that everyone can learn to code in the right environment. With thousands of satisfied users, we guarantee that through interactive, online tutoring sessions with one of our hundreds of qualified, experienced, and passionate tutors, you will gain impactful skills in no time. Sign up today to start your journey towards coding mastery!</p>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+      <h2 class="reviews-title">What Our Users Say</h2>
+      <div class="reviews">
+        <div class="review-card">
+          <p>"I love Code Tutors! It really helped me understand the fundamentals of coding."</p>
+          <p>- Jack, Java</p>
+          <div class="stars">
+            <i class="fas fa-star"></i>  <!-- Imported predefined class -->
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="review-card">
+          <p>"The tutors are amazing, and I learned so much in just a few sessions."</p>
+          <p>- Katherine, Python</p>
+          <div class="stars">
+            <i class="fas fa-star"></i> 
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="review-card">
+          <p>"I learned more in a few weeks with Code Tutors than I did in years of self-teaching."</p>
+          <p>- Mark, C++</p>
+          <div class="stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="review-card">
+          <p>"Code Tutors has transformed the way I approach learning programming." <p>
+          <p>- Sarah, Scala</p>
+          <div class="stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="bottom-section">
+  <p>Made by Team Elk, 2024.</p>
+</div>
+
 {% endblock %}

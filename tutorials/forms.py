@@ -90,6 +90,13 @@ class PasswordForm(NewPasswordMixin):
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
+    user_type = forms.ChoiceField(
+        choices = User.USER_TYPES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+
     class Meta:
         """Form options."""
 
@@ -106,5 +113,89 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             last_name=self.cleaned_data.get('last_name'),
             email=self.cleaned_data.get('email'),
             password=self.cleaned_data.get('new_password'),
+            user_type=self.cleaned_data.get('user_type'),
         )
+
         return user
+    
+
+from .models import Lesson 
+from datetime import datetime, time
+from django.core.exceptions import ValidationError
+
+class LessonRequestForm(forms.ModelForm):
+    KNOWLEDGE_AREAS = [
+        ('c++', 'C++'),
+        ('scala', 'Scala'),
+        ('java', 'Java'),
+        ('python', 'Python'),
+        ('ruby', 'Ruby'),
+    ]
+    TERMS = [
+        ('sept-dec', 'September - December'),
+        ('jan-april', 'January - April'),
+        ('may-july', 'May - July'),
+    ]
+    VENUE_PREFERENCES = [
+        ('online', 'Online'),
+        ('onsite', 'Onsite'),
+    ]
+    DURATIONS    = [
+        ('30', '30 min'),
+        ('60', '60 min '),
+        ('90', '90 min'),
+        ('120', '120 min'),
+    ]
+
+    TIME_CHOICES = [
+        (datetime.strptime(f"{hour:02d}:{minute:02d}", "%H:%M").time(), f"{hour:02d}:{minute:02d}")
+        for hour in range(8, 21) 
+        for minute in range(0, 60, 10)
+    ]
+
+    # Fields will now correspond to the model fields
+    knowledge_area = forms.ChoiceField(choices=KNOWLEDGE_AREAS, label="Knowledge Area")
+    term = forms.ChoiceField(choices=TERMS, label="Term")
+    duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
+    start_time = forms.TimeField(
+        widget=forms.TimeInput(
+            attrs={
+                'type': 'time',
+                'min': '08:00', 
+                'max': '20:00', 
+                'step': '600',  
+            },
+            format='%H:%M',
+        ),
+        label="Preferred Start Time (HH:MM)",
+        input_formats=['%H:%M'], 
+    )
+    days = forms.MultipleChoiceField(
+        choices=[
+            ('mon', 'Monday'),
+            ('tue', 'Tuesday'),
+            ('wed', 'Wednesday'),
+            ('thu', 'Thursday'),
+            ('fri', 'Friday'),
+            ('sat', 'Saturday'),
+            ('sun', 'Sunday'),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        label="Days (select days)",
+    )
+    venue_preference = forms.ChoiceField(choices=VENUE_PREFERENCES, label="Venue Preference")
+
+    def clean_start_time(self):
+        start_time = self.cleaned_data.get('start_time')
+
+        min_time = time(8, 0)  
+        max_time = time(20, 0)  
+        
+        if not min_time <= start_time <= max_time:
+            raise ValidationError("The start time must be between 08:00 and 20:00.")
+
+        return start_time
+
+    class Meta:
+        model = Lesson  # Connect the form to the LessonRequest model
+        fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']

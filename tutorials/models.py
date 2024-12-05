@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+import hashlib
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -26,6 +27,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     user_type = models.CharField(max_length=7, choices=USER_TYPES, default='Student')
 
+    @property
+    def gravatar_hash(self):
+        email = self.email.strip().lower().encode('utf-8')
+        return hashlib.md5(email).hexdigest()
 
     class Meta:
         """Model options."""
@@ -49,6 +54,50 @@ class User(AbstractUser):
         
         return self.gravatar(size=60)
     
+from django.conf import settings
+from datetime import time, timedelta, datetime
+
+class Lesson(models.Model):
+
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_request'
+    )
+    knowledge_area = models.CharField(max_length=50)
+    term = models.CharField(max_length=50)
+    start_time = models.TimeField(null = True, blank = True) 
+    duration = models.IntegerField()  
+    end_time = models.TimeField(null=True, editable=False)
+    days = models.JSONField()  
+    time_of_day = models.CharField(max_length=10, editable=False)
+    venue_preference = models.CharField(max_length=100)
+    approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.start_time and self.duration is not None:
+            self.time_of_day = self.get_time_of_day()
+            start_dt = datetime.combine(datetime.today(), self.start_time)
+            self.end_time = (start_dt + timedelta(minutes=self.duration)).time()
+        super().save(*args, **kwargs)
+
+    def get_time_of_day(self):
+        if time(8, 0) <= self.start_time < time(12, 0):
+            return 'morning'
+        if time(12, 0) <= self.start_time < time(16, 0):
+            return 'afternoon'
+        if time(16, 0) <= self.start_time < time(20, 0):
+            return 'evening'
+        
+    def time_range(self):
+        if self.start_time and self.end_time:
+            return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
+        return "No time set"
+        
+
+    def __str__(self):
+        return f"{self.student}'s request for {self.knowledge_area} tutoring"
+    
+
 class Meeting(models.Model):
     """Model for scheduling meetings between tutors and students."""
     

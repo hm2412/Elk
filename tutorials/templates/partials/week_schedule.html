@@ -1,0 +1,68 @@
+{% load static %}
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'week_schedule.css' %}">
+</head>
+
+<div class="card mb-3">
+  <div class="card-header">
+    <h4 class="card-title">Weekly Schedule</h4>
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Time of Day</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+          <th>Sunday</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Morning</td>
+          {% for days, lessons in lessons_time_and_day.morning.items %}
+            <td>
+              {% if lessons %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Afternoon</td>
+          {% for days, lessons in lessons_time_and_day.afternoon.items %}
+            <td>
+              {% if lessons %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>Evening</td>
+          {% for days, lessons in lessons_time_and_day.evening.items %}
+            <td>
+              {% if lessons %}
+                {% for lesson in lessons %}
+                  <strong>{{ lesson.knowledge_area }}</strong><br>
+                  {{ lesson.time_range }}<br>
+                {% endfor %}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

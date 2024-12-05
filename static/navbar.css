@@ -1,0 +1,67 @@
+/* Navbar Background */
+.navbar {
+    background-color: rgba(156, 17, 17); 
+}
+
+/* Navbar Brand */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.navbar-brand img {
+    max-height: 80px; 
+    width: auto; 
+    filter: brightness(0) invert(1); 
+    transition: transform 0.3s ease; 
+    margin-right: 20px;
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+    border-color: transparent; 
+}
+
+
+.navbar-toggler-icon {
+    background-color: transparent;
+}
+
+.offcanvas-header {
+    background-color: rgb(156, 17, 17); 
+    color: white; 
+}
+
+/* Offcanvas Body */
+.offcanvas-body {
+    background-color: #f8f9fa;
+}
+
+/* Menu Items */
+.list-group-item {
+    font-size: 1rem;
+}
+
+
+.text-danger {
+    color: red !important; 
+}
+
+.text-decoration-none {
+    text-decoration: none;
+}
+
+.list-group-item-action {
+    transition: background-color 0.3s ease;
+}
+
+
+.list-group-item:hover {
+    background-color: rgba(156, 17, 17, 0.1); 
+}
+
+.list-group-item.active {
+    background-color: rgb(156, 17, 17); 
+    color: white;
+}
