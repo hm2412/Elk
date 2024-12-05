@@ -266,6 +266,20 @@ h3.profile-title {
   background-color: #9c1111;
 }
 
+.admin-dashboard .card {
+  background-color: #e8e8e8;
+}
+
 .admin-dashboard .requests-title {
   color: white;
+}
+
+.admin-dashboard .user-details {
+  font-size: 20px;
+}
+
+.admin-dashboard .gravatar {
+  width: 75px; 
+  height: auto; 
+  margin-right: 40px;
 }

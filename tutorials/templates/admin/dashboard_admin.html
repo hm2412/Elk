@@ -18,13 +18,26 @@
                                         <div class="col-12 mb-3">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <h5 class="card-title">{{ request.title }}</h5>
-                                                    <p class="card-text">{{ request.description }}</p>
-                                                    <p class="text">Submitted by: 
-                                                        <a href="{% url 'schedule_session' request.student.id %}">
-                                                            {{ request.student.username }}
-                                                        </a>
-                                                        on {{ request.submitted_at|date:"D M d, Y H:i" }}</p>
+                                                    <div class="d-flex align-items-center justify-content-center ">
+                                                        <!-- Gravatar -->
+                                                        <img src="https://www.gravatar.com/avatar/{{ request.student.gravatar_hash }}?s=50&d=identicon" alt="Student Gravatar" class="gravatar rounded-circle">
+                                        
+                                                        <!-- Request details -->
+                                                        <div>
+                                                            <p class="user-details"> 
+                                                                Student: <a href="{% url 'schedule_session' request.student.id %}"> {{ request.student.username }} </a>
+                                                            </p>
+                                                            <h5 class="card-title">{{ request.title }}</h5>
+                                                            <p class="request-info">
+                                                                Knowledge Area: {{ request.knowledge_area }}<br>
+                                                                Term: {{ request.term }}<br>
+                                                                Duration: {{ request.duration }} minutes<br>
+                                                                Venue Preference: {{ request.venue_preference }}<br>
+                                                                Days: {{ request.days }}<br>
+                                                                Preferred Time: {{ request.time_of_day|time:"H:i" }}<br>
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
