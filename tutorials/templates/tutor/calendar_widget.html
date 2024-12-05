@@ -1,7 +1,10 @@
 {# templates/tutor/calendar_widget.html #}
 <div class="calendar">
     <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-        <a href="?month={{ calendar_data.prev_month.month }}&year={{ calendar_data.prev_month.year }}" class="btn btn-outline-primary">&lt; Previous</a>
+        <div>
+            <a href="?month={{ calendar_data.prev_month.month }}&year={{ calendar_data.prev_month.year }}" class="btn btn-outline-primary">&lt; Previous</a>
+            <a href="?month={{ calendar_data.today.month }}&year={{ calendar_data.today.year }}" class="btn btn-primary ms-2">Today</a>
+        </div>
         <h3 class="m-0">{{ calendar_data.month_name }} {{ calendar_data.year }}</h3>
         <a href="?month={{ calendar_data.next_month.month }}&year={{ calendar_data.next_month.year }}" class="btn btn-outline-primary">Next &gt;</a>
     </div>

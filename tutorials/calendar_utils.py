@@ -10,6 +10,8 @@ class TutorCalendar:
         # Get the calendar for current month
         cal = calendar.monthcalendar(self.year, self.month)
         month_name = calendar.month_name[self.month]
+
+        today = datetime.now()
         
         # Convert availability slots to a more usable format
         availability_dict = {}
@@ -60,5 +62,10 @@ class TutorCalendar:
             'next_month': {
                 'month': (self.month + 1) if self.month < 12 else 1,
                 'year': self.year if self.month < 12 else self.year + 1
+            },
+            'today': {
+                'day': today.day,
+                'month': today.month,
+                'year': today.year
             }
         }
