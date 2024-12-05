@@ -39,15 +39,14 @@ def dashboard(request):
     user_type = current_user.user_type
 
     if user_type == 'Tutor':
-        current_date = datetime.datetime.now()
-        
-        month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
-        year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
-
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
         availability_slots = TutorAvailability.objects.filter(tutor=current_user)
 
-         # Add debug prints
+        current_date = datetime.datetime.now()
+        month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
+        year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
+
+        # Add debug prints
         print("=== Tutor Profile Debug Info ===")
         print(f"Hourly Rate: {tutor_profile.hourly_rate}")
         print(f"Subjects: {tutor_profile.subjects}")
@@ -59,11 +58,18 @@ def dashboard(request):
         calendar = TutorCalendar(year, month)
         calendar_data = calendar.get_calendar_data(availability_slots)
 
+        subject_choices = {
+            'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
+            'Languages' : ['English', 'Spanish', 'French', 'German'],
+            'Humanities' : ['Geography', 'History', 'Philosophy', 'Religious Studies']
+        }
+
         context.update({
             'tutor_profile': tutor_profile,
             'availability_slots': availability_slots,
             'hourly_rate': tutor_profile.hourly_rate or '',
-            'subjects': tutor_profile.subjects,
+            'subject_choices': subject_choices,
+            'selected_subjects': tutor_profile.subjects,
             'calendar_data': calendar_data,
         })
         template = 'tutor/dashboard_tutor.html'
@@ -83,6 +89,61 @@ def home(request):
     """Display the application's start/home screen."""
 
     return render(request, 'home.html')
+
+
+@login_required
+def tutor_availability(request):
+    if request.method == 'POST':
+        # Clear existing availability
+        TutorAvailability.objects.filter(tutor=request.user).delete()
+        
+        # Process each day
+        for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
+            if request.POST.get(f'{day}_enabled'):
+                start_time = request.POST.get(f'{day}_start_time')
+                end_time = request.POST.get(f'{day}_end_time')
+                
+                if start_time and end_time:
+                    TutorAvailability.objects.create(
+                        tutor=request.user,
+                        day=day.capitalize(),
+                        start_time=start_time,
+                        end_time=end_time,
+                        is_available=True
+                    )
+        
+        messages.success(request, 'Availability updated successfully')
+        return redirect('dashboard')
+    
+    return redirect('dashboard')
+
+
+@login_required
+def tutor_hourly_rate(request):
+    if request.method == 'POST':
+        hourly_rate = request.POST.get('hourly_rate')
+        if hourly_rate:
+            tutor_profile, _ = TutorProfile.objects.get_or_create(tutor=request.user)
+            tutor_profile.hourly_rate = hourly_rate
+            tutor_profile.save()
+            messages.success(request, 'Hourly rate updated successfully')
+        
+        return redirect('dashboard')
+    
+    return redirect('dashboard')
+
+
+@login_required
+def tutor_subjects(request):
+    if request.method == 'POST':
+        subjects = request.POST.getlist('subjects')
+        tutor_profile, _ = TutorProfile.objects.get_or_create(tutor=request.user)
+        tutor_profile.subjects = subjects
+        tutor_profile.save()
+        messages.success(request, 'Teaching subjects updated successfully')
+        return redirect('dashboard')
+    
+    return redirect('dashboard')
 
 
 @login_required

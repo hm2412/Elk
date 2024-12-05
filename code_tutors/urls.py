@@ -37,11 +37,8 @@ urlpatterns = [
     # STUDENT paths
 
     # TUTOR paths
-    path('tutor/availability/', views.TutorAvailabilityView.as_view(), name='tutor_availability'),
-    path('tutor/availability/add/', views.AddAvailabilitySlotView.as_view(), name='add_availability_slot'),
-    path('tutor/availability/delete/<int:slot_id>/', views.DeleteAvailabilitySlotView.as_view(), name='delete_availability_slot'),
-    path('tutor/hourly-rate/', views.TutorHourlyRateView.as_view(), name='tutor_hourly_rate'),
-    path('tutor/subjects/', views.TutorSubjectsView.as_view(), name='tutor_subjects'),
-    path('tutor/subjects/custom/', views.AddCustomSubjectView.as_view(), name='add_custom_subject'),
+    path('tutor/availability/save', views.tutor_availability, name='tutor_availability'),
+    path('tutor/hourly-rate/save', views.tutor_hourly_rate, name='tutor_hourly_rate'),
+    path('tutor/subjects/save', views.tutor_subjects, name='tutor_subjects'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
