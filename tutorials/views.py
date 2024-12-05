@@ -4,16 +4,21 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.http import JsonResponse
+from django import forms
+from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 import json
+import datetime
 from .models import TutorProfile, TutorAvailability
+from .calendar_utils import TutorCalendar
 
 @login_required
 def dashboard(request):
@@ -31,6 +36,9 @@ def dashboard(request):
     user_type = current_user.user_type
 
     if user_type == 'Tutor':
+        month = int(request.GET.get('month', datetime.datetime.now().month))
+        year = int(request.GET.get('year', datetime.datetime.now().year))
+
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
         availability_slots = TutorAvailability.objects.filter(tutor=current_user)
 
@@ -43,11 +51,15 @@ def dashboard(request):
             print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
         print("============================")
 
+        calendar = TutorCalendar(year, month)
+        calendar_data = calendar.get_calendar_data(availability_slots)
+
         context.update({
             'tutor_profile': tutor_profile,
             'availability_slots': availability_slots,
             'hourly_rate': tutor_profile.hourly_rate or '',
             'subjects': tutor_profile.subjects,
+            'calendar_data': calendar_data,
         })
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
@@ -284,3 +296,114 @@ class TutorView(LoginRequiredMixin, View):
             'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         }
         return render(request, self.template_name, context)
+
+
+class TutorAvailabilityForm(forms.Form):
+    day = forms.ChoiceField(choices=TutorAvailability.DAYS_OF_WEEK)
+    start_time = forms.TimeField()
+    end_time = forms.TimeField()
+
+class TutorAvailabilityView(LoginRequiredMixin, TemplateView):
+    template_name = 'tutor/availability.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['availability_slots'] = TutorAvailability.objects.filter(tutor=self.request.user)
+        context['form'] = TutorAvailabilityForm()
+        return context
+
+class AddAvailabilitySlotView(LoginRequiredMixin, FormView):
+    form_class = TutorAvailabilityForm
+    success_url = reverse_lazy('tutor_availability')
+    
+    def form_valid(self, form):
+        TutorAvailability.objects.create(
+            tutor=self.request.user,
+            day=form.cleaned_data['day'],
+            start_time=form.cleaned_data['start_time'],
+            end_time=form.cleaned_data['end_time']
+        )
+        messages.success(self.request, 'Availability slot added successfully.')
+        return super().form_valid(form)
+
+class DeleteAvailabilitySlotView(LoginRequiredMixin, View):
+    def post(self, request, slot_id):
+        slot = get_object_or_404(TutorAvailability, id=slot_id, tutor=request.user)
+        slot.delete()
+        messages.success(request, 'Availability slot deleted.')
+        return redirect('tutor_availability')
+
+class TutorHourlyRateForm(forms.Form):
+    hourly_rate = forms.DecimalField(max_digits=6, decimal_places=2, min_value=0)
+
+class TutorHourlyRateView(LoginRequiredMixin, FormView):
+    template_name = 'tutor/hourly_rate.html'
+    form_class = TutorHourlyRateForm
+    success_url = reverse_lazy('dashboard')
+    
+    def get_initial(self):
+        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
+        return {'hourly_rate': profile.hourly_rate}
+    
+    def form_valid(self, form):
+        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
+        profile.hourly_rate = form.cleaned_data['hourly_rate']
+        profile.save()
+        messages.success(self.request, 'Hourly rate updated successfully.')
+        return super().form_valid(form)
+
+class TutorSubjectsForm(forms.Form):
+    SUBJECT_CHOICES = [
+        ('Mathematics', 'Mathematics'),
+        ('Computer Science', 'Computer Science'),
+        ('Physics', 'Physics'),
+        ('Chemistry', 'Chemistry'),
+        ('Biology', 'Biology'),
+        ('English', 'English'),
+        ('Spanish', 'Spanish'),
+        ('French', 'French'),
+        ('German', 'German'),
+        ('Geography', 'Geography'),
+        ('History', 'History'),
+        ('Philosophy', 'Philosophy'),
+        ('Religious Studies', 'Religious Studies'),
+    ]
+    subjects = forms.MultipleChoiceField(
+        choices=SUBJECT_CHOICES,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+class TutorSubjectsView(LoginRequiredMixin, FormView):
+    template_name = 'tutor/subjects.html'
+    form_class = TutorSubjectsForm
+    success_url = reverse_lazy('dashboard')
+    
+    def get_initial(self):
+        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
+        return {'subjects': profile.subjects}
+    
+    def form_valid(self, form):
+        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
+        profile.subjects = form.cleaned_data['subjects']
+        profile.save()
+        messages.success(self.request, 'Teaching subjects updated successfully.')
+        return super().form_valid(form)
+
+class AddCustomSubjectView(LoginRequiredMixin, FormView):
+    template_name = 'tutor/custom_subject.html'
+    form_class = forms.Form
+    success_url = reverse_lazy('tutor_subjects')
+    
+    def get_form(self):
+        form = super().get_form()
+        form.fields['custom_subject'] = forms.CharField(max_length=100)
+        return form
+    
+    def form_valid(self, form):
+        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
+        custom_subject = form.cleaned_data['custom_subject']
+        profile.subjects = list(profile.subjects) + [custom_subject]
+        profile.save()
+        messages.success(self.request, f'Added custom subject: {custom_subject}')
+        return super().form_valid(form)
+    

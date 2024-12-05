@@ -1,0 +1,44 @@
+{# templates/tutor/calendar_widget.html #}
+<div class="calendar">
+    <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+        <a href="?month={{ calendar_data.prev_month.month }}&year={{ calendar_data.prev_month.year }}" class="btn btn-outline-primary">&lt; Previous</a>
+        <h3 class="m-0">{{ calendar_data.month_name }} {{ calendar_data.year }}</h3>
+        <a href="?month={{ calendar_data.next_month.month }}&year={{ calendar_data.next_month.year }}" class="btn btn-outline-primary">Next &gt;</a>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in calendar_data.weeks %}
+                <tr>
+                    {% for day in week %}
+                        <td class="{% if day.is_today %}bg-light{% endif %}">
+                            {% if day.day %}
+                                <div class="day-number">{{ day.day }}</div>
+                                {% if day.slots %}
+                                    <div class="availability-slots small">
+                                        {% for slot in day.slots %}
+                                            <div class="slot bg-success text-white p-1 mb-1 rounded">
+                                                {{ slot.start|time:"H:i" }} - {{ slot.end|time:"H:i" }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
