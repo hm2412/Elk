@@ -60,16 +60,16 @@
 </div>
 
 <!-- Availability Modal -->
-<div class="modal fade" id="availabilityModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Set Weekly Availability</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+<form method="post" action="{% url 'tutor_availability' %}" id="availabilityForm">
+    {% csrf_token %}
+    <div class="modal fade" id="availabilityModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Weekly Availability</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-            <form method="post" action="{% url 'tutor_availability' %}" id="availabilityForm">
-                {% csrf_token %}
                 <div class="modal-body">
                     {% for day in days %}
                     <div class="card mb-3">
@@ -80,7 +80,10 @@
                                     <input class="form-check-input" 
                                         type="checkbox" 
                                         name="{{ day|lower }}_enabled"
-                                        id="{{ day|lower }}_enabled">
+                                        id="{{ day|lower }}_enabled"
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}checked{% endif %}
+                                        {% endfor %}>
                                 </div>
                             </div>
                         </div>
@@ -89,10 +92,20 @@
                             <div class="time-slot mb-3">
                                 <div class="row">
                                     <div class="col-5">
-                                        <input type="time" name="{{ day|lower }}_start_time" class="form-control">
+                                        <input type="time" name="{{ day|lower }}_start_time" class="form-control"
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}
+                                                value="{{ slot.start_time|time:'H:i' }}"
+                                            {% endif %}
+                                        {% endfor %}>
                                     </div>
                                     <div class="col-5">
-                                        <input type="time" name="{{ day|lower }}_end_time" class="form-control">
+                                        <input type="time" name="{{ day|lower }}_end_time" class="form-control"
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}
+                                                value="{{ slot.end_time|time:'H:i' }}"
+                                            {% endif %}
+                                        {% endfor %}>
                                     </div>
                                 </div>
                             </div>
@@ -107,10 +120,10 @@
                         Save Availability
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+</form>
 
 <!-- Hourly Rate Modal -->
 <div class="modal fade" id="hourlyRateModal" tabindex="-1">
@@ -134,14 +147,14 @@
                         <div class="form-text">Enter your desired hourly rate in GBP</div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Save Rate
+                    </button>
+                </div>
             </form>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-success">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Save Rate
-                </button>
-            </div>
         </div>
     </div>
 </div>

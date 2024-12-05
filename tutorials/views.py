@@ -56,7 +56,7 @@ def dashboard(request):
         print("============================")
 
         calendar = TutorCalendar(year, month)
-        calendar_data = calendar.get_calendar_data(availability_slots)
+        calendar_data = calendar.get_calendar_data([])
 
         subject_choices = {
             'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
