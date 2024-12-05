@@ -152,8 +152,17 @@ class LessonRequestForm(forms.ModelForm):
         label="Preferred Start Time (HH:MM)",
         input_formats=['%H:%M'], 
     )
+
     days = forms.MultipleChoiceField(
-        choices=Lesson.DAY_CHOICES,
+        choices=[
+            ('mon', 'Monday'),
+            ('tue', 'Tuesday'),
+            ('wed', 'Wednesday'),
+            ('thu', 'Thursday'),
+            ('fri', 'Friday'),
+            ('sat', 'Saturday'),
+            ('sun', 'Sunday'),
+        ],
         widget=forms.CheckboxSelectMultiple,
         label="Days (select days)",
     )

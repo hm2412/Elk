@@ -105,7 +105,7 @@ class Lesson(models.Model):
     start_time = models.TimeField(null = True, blank = True) 
     duration = models.IntegerField(choices=DURATIONS)  
     end_time = models.TimeField(null=True, editable=False)
-    days = models.JSONField(choices=DAY_CHOICES)   
+    days = models.JSONField()   
     time_of_day = models.CharField(max_length=10, editable=False)
     venue_preference = models.CharField(max_length=100, choices=VENUE_PREFERENCES)
     approved = models.BooleanField(default=False)

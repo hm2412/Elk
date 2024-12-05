@@ -215,8 +215,30 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
 from .forms import LessonRequestForm
 from .models import Lesson
+from django.http import HttpResponse
 
 def create_lesson_request(request):
+    if request.method == 'POST':
+        print("POST request received")
+        form = LessonRequestForm(request.POST)
+        if form.is_valid():
+            print("Form is valid")
+            lesson_request = form.save(commit=False)
+            lesson_request.student = request.user
+            lesson_request.save()
+            print("Lesson request saved")
+            return redirect('dashboard')
+        else:
+            print("Form errors:", form.errors)
+            return HttpResponse(f"Errors: {form.errors}")  # Temporarily display errors
+    else:
+        print("GET request received")
+        form = LessonRequestForm()
+
+    return render(request, 'lesson_request.html', {'form': form})
+
+
+'''def create_lesson_request(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
@@ -227,7 +249,7 @@ def create_lesson_request(request):
     else:
         form = LessonRequestForm()
 
-    return render(request, 'lesson_request.html', {'form': form})
+    return render(request, 'lesson_request.html', {'form': form})'''
 
 def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
