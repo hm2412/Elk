@@ -34,14 +34,8 @@ urlpatterns = [
     # STUDENT paths
 
     # TUTOR paths
-    # path('api/set-hourly-rate/', views.set_hourly_rate, name='set_hourly_rate'),
-    # path('api/set-subjects/', views.set_subjects, name='set_subjects'),
-    # path('api/set-availability/', views.set_availability, name='set_availability'),
-    path('tutor/availability/', views.TutorAvailabilityView.as_view(), name='tutor_availability'),
-    path('tutor/availability/add/', views.AddAvailabilitySlotView.as_view(), name='add_availability_slot'),
-    path('tutor/availability/delete/<int:slot_id>/', views.DeleteAvailabilitySlotView.as_view(), name='delete_availability_slot'),
-    path('tutor/hourly-rate/', views.TutorHourlyRateView.as_view(), name='tutor_hourly_rate'),
-    path('tutor/subjects/', views.TutorSubjectsView.as_view(), name='tutor_subjects'),
-    path('tutor/subjects/custom/', views.AddCustomSubjectView.as_view(), name='add_custom_subject'),
+    path('api/set-hourly-rate/', views.set_hourly_rate, name='set_hourly_rate'),
+    path('api/set-subjects/', views.set_subjects, name='set_subjects'),
+    path('api/set-availability/', views.set_availability, name='set_availability'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
