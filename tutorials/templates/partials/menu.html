@@ -1,15 +1,61 @@
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
-  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-    <li class="nav-item dropdown">
-      <a class="nav-link" href="#" id="user-account-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <span class="bi-person-circle"></span>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
-        <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li>
-        <li><a class="dropdown-item" href="{% url 'password' %}">Change password</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="{% url 'log_out' %}">Log out</a></li>
-      </ul>
-    </li>
-  </ul>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="userAccountCanvas" aria-labelledby="userAccountCanvasLabel" data-bs-backdrop="true">
+  <div class="offcanvas-header">
+    <h5 id="userAccountCanvasLabel">Menu</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group">
+       <!-- these are menu items relating to every profile-->
+      <li class="list-group-item list-group-item-action">
+        <strong>Profile</strong>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'profile' %}" class="text-decoration-none">Change Profile</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'password' %}" class="text-decoration-none">Change Password</a>
+      </li>
+  
+   <!-- these are menu items specific to thr student-->
+      {% if user.user_type == 'Student' %}
+      <li class="list-group-item list-group-item-action">
+        <strong>Student Resources</strong>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none">Student Dashboard</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'lesson_request' %}" class="text-decoration-none">Lesson Request</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'view_lesson_request' %}" class="text-decoration-none">View Lesson Requests</a>
+      </li>
+      {% endif %}
+
+   <!-- these are menu items specific to the tutor-->
+      {% if user.user_type == 'Tutor' %}
+      <li class="list-group-item list-group-item-action">
+        <strong>Tutor Resources</strong>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none">Tutor Dashboard</a>
+      </li>
+      {% endif %}
+
+      <!-- these are menu items specific to the admin-->
+      {% if user.user_type == 'Admin' %}
+      <li class="list-group-item list-group-item-action">
+        <strong>Admin Resources</strong>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none">Admin Dashboard</a>
+      </li>
+      {% endif %}
+
+  <!-- log out menu item -->
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'log_out' %}" class="text-danger text-decoration-none">Log Out</a>
+      </li>
+    </ul>
+  </div>
 </div>

@@ -1,12 +1,25 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+{% load static %}
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'navbar.css' %}">
+</head>
+
+<nav class="navbar navbar-dark mb-3">
   <div class="container">
     <a class="navbar-brand" href="{% url 'dashboard' %}">
-      Task Manager
+      <img src="{% static 'images/logo.png' %}" alt="Logo">
+      {% if user and user.is_authenticated %}
+        {{user.user_type}}
+      {% endif %}
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+
     {% if user.is_authenticated %}
+      <!-- button that will trigger the off-canvas menu only if logged in -->
+      <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#userAccountCanvas" aria-controls="userAccountCanvas" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- including  the user-specific menu -->
       {% include 'partials/menu.html' %}
     {% endif %}
   </div>

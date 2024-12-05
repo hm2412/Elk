@@ -1,13 +1,33 @@
-{% extends 'base_content.html' %}
-{% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h1>Welcome to your dashboard {{ user.username }}</h1>
-            <div class="student-dashboard">
-                <h2>You are a student</h2>
-            </div>
-        </div>
+{% extends 'dashboard.html' %}
+{% block dashboard_content %}
+{% load static %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'student_dashboard.css' %}">
+</head>
+
+<div class="dashboard">  
+    <!-- the profile info-->
+    {% include 'partials/profile_info.html' %}
+
+    <!-- boxes on the dashboard-->
+    <br>
+    <div class="dashboard-grid">
+       
+        <a href="{% url 'lesson_request' %}" class="dashboard-box">
+            <h2>Make Lesson Request</h2>
+            <p>Request a new lesson</p>
+        </a>
+        
+        <a href="{% url 'view_lesson_request' %}" class="dashboard-box">
+            <h2>Requested Lessons</h2>
+            <p>View all your lesson requests</p>
+        </a>
+    </div>
+    
+    <div class="schedule-section">
+        {% include 'partials/week_schedule.html' %}
     </div>
 </div>
+<br/>  
+
 {% endblock %}

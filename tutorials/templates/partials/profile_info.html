@@ -1,0 +1,14 @@
+<div class="profile-info">
+    <h2 class="profile-heading">Profile Information</h2>
+    <div class="profile-details">
+        <div class="profile-image">
+          <img src="https://www.gravatar.com/avatar/{{ user.gravatar_hash }}?s=200&d=identicon" alt="Profile Picture" class="gravatar">
+        </div>
+        <div class="profile-text">
+            <p><strong>Full name:</strong> {{ user.full_name }}</p>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    </div>
+</div>
+  
