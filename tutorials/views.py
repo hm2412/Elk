@@ -10,6 +10,9 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
+from .models import Review
+from .forms import ReviewForm
+
 
 @login_required
 
@@ -44,9 +47,10 @@ def dashboard(request):
 
 @login_prohibited
 def home(request):
-    """Display the application's start/home screen."""
+    reviews = Review.objects.all()  # Get all reviews from the database
+    
+    return render(request, 'home.html', {'reviews': reviews})
 
-    return render(request, 'home.html')
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -216,10 +220,6 @@ from django.shortcuts import render
 from django.http import HttpResponseForbidden
 from .models import User, Meeting
 
-from django.shortcuts import render
-from django.http import HttpResponseForbidden
-from .models import User, Meeting
-
 def user_list(request, list_type):
     if request.user.user_type == 'student':
         return HttpResponseForbidden("You do not have permission to access this page.")
@@ -273,3 +273,19 @@ class TutorView(LoginRequiredMixin, View):
             'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         }
         return render(request, self.template_name, context)
+    
+from django.shortcuts import render, redirect
+from .forms import ReviewForm
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)  # Don't commit to the database yet
+            review.user = request.user  # Assign the logged-in user to the review
+            review.save()  # Now save the review
+            return redirect('success_page')  # Redirect to the success page
+    else:
+        form = ReviewForm()
+
+    return render(request, 'review.html', {'form': form})

@@ -199,3 +199,20 @@ class LessonRequestForm(forms.ModelForm):
     class Meta:
         model = Lesson  # Connect the form to the LessonRequest model
         fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
+
+
+from django import forms
+from .models import Review
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['content', 'rating']  # Adjust fields as necessary
+
+    def save(self, commit=True):
+        review = super().save(commit=False)  # Don't commit yet
+        if hasattr(self, 'user'):  # Check if user is set
+            review.user = self.user  # Set the user if it's passed to the form
+        if commit:
+            review.save()  # Now save the review
+        return review
