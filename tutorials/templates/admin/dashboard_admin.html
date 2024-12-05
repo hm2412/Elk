@@ -29,12 +29,12 @@
                                                             </p>
                                                             <h5 class="card-title">{{ request.title }}</h5>
                                                             <p class="request-info">
-                                                                Knowledge Area: {{ request.knowledge_area }}<br>
-                                                                Term: {{ request.term }}<br>
+                                                                Subject: {{ request.get_knowledge_area_display }}<br>
+                                                                Term: {{ request.get_term_display }}<br>
                                                                 Duration: {{ request.duration }} minutes<br>
-                                                                Venue Preference: {{ request.venue_preference }}<br>
-                                                                Days: {{ request.days }}<br>
-                                                                Preferred Time: {{ request.time_of_day|time:"H:i" }}<br>
+                                                                Lesson type: {{ request.get_venue_preference_display }}<br>
+                                                                Days: {{ request.formatted_days }}<br>
+                                                                Time: {{ request.start_time }}<br>
                                                             </p>
                                                         </div>
                                                     </div>

@@ -130,39 +130,15 @@ from datetime import datetime, time
 from django.core.exceptions import ValidationError
 
 class LessonRequestForm(forms.ModelForm):
-    KNOWLEDGE_AREAS = [
-        ('c++', 'C++'),
-        ('scala', 'Scala'),
-        ('java', 'Java'),
-        ('python', 'Python'),
-        ('ruby', 'Ruby'),
-    ]
-    TERMS = [
-        ('sept-dec', 'September - December'),
-        ('jan-april', 'January - April'),
-        ('may-july', 'May - July'),
-    ]
-    VENUE_PREFERENCES = [
-        ('online', 'Online'),
-        ('onsite', 'Onsite'),
-    ]
-    DURATIONS    = [
-        ('30', '30 min'),
-        ('60', '60 min '),
-        ('90', '90 min'),
-        ('120', '120 min'),
-    ]
-
     TIME_CHOICES = [
         (datetime.strptime(f"{hour:02d}:{minute:02d}", "%H:%M").time(), f"{hour:02d}:{minute:02d}")
         for hour in range(8, 21) 
         for minute in range(0, 60, 10)
     ]
-
     # Fields will now correspond to the model fields
-    knowledge_area = forms.ChoiceField(choices=KNOWLEDGE_AREAS, label="Knowledge Area")
-    term = forms.ChoiceField(choices=TERMS, label="Term")
-    duration = forms.ChoiceField(choices=DURATIONS, label=" Duration")
+    knowledge_area = forms.ChoiceField(choices=Lesson.KNOWLEDGE_AREAS, label="Knowledge Area")
+    term = forms.ChoiceField(choices=Lesson.TERMS, label="Term")
+    duration = forms.ChoiceField(choices=Lesson.DURATIONS, label=" Duration")
     start_time = forms.TimeField(
         widget=forms.TimeInput(
             attrs={
@@ -177,19 +153,11 @@ class LessonRequestForm(forms.ModelForm):
         input_formats=['%H:%M'], 
     )
     days = forms.MultipleChoiceField(
-        choices=[
-            ('mon', 'Monday'),
-            ('tue', 'Tuesday'),
-            ('wed', 'Wednesday'),
-            ('thu', 'Thursday'),
-            ('fri', 'Friday'),
-            ('sat', 'Saturday'),
-            ('sun', 'Sunday'),
-        ],
+        choices=Lesson.DAY_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         label="Days (select days)",
     )
-    venue_preference = forms.ChoiceField(choices=VENUE_PREFERENCES, label="Venue Preference")
+    venue_preference = forms.ChoiceField(choices=Lesson.VENUE_PREFERENCES, label="Venue Preference")
 
     def clean_start_time(self):
         start_time = self.cleaned_data.get('start_time')

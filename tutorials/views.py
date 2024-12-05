@@ -1,3 +1,4 @@
+from datetime import datetime, time, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -49,11 +50,23 @@ def home(request):
 
     return render(request, 'home.html')
 
+"""SCHEDULE MEETING"""
 @login_required
 @user_role_required('Admin')
 def schedule_session(request, student_id):
     """Display a form to schedule tutoring sessions"""
     student = get_object_or_404(User, id=student_id, user_type='Student')
+
+    lesson_request = Lesson.objects.filter(student=student).first()
+    if lesson_request:
+        lesson_start_time = lesson_request.start_time
+        duration = lesson_request.duration
+    else:
+        lesson_start_time = time(10, 0)
+        duration = 30
+   
+    start_converted = datetime.combine(datetime.today(), lesson_start_time)
+    lesson_end_time = (start_converted + timedelta(minutes=duration)).time()
 
     if request.method == 'POST':
         form = MeetingForm(request.POST)
@@ -62,16 +75,14 @@ def schedule_session(request, student_id):
             meeting.student = student
             meeting.save()
 
-            try:
-                outstanding_request = Request.objects.get(student=student)
-                outstanding_request.delete()
-            except Request.DoesNotExist:
-                pass 
-            # Issue: students submitting multiple requests
+            if lesson_request:
+                lesson_request.delete()
 
             return redirect('dashboard')  # Redirect to the admin dashboard after successful creation
     else:
-        form = MeetingForm(initial={'student': student})
+        form = MeetingForm(initial={'student': student, 
+                                    'start_time': lesson_start_time, 
+                                    'end_time': lesson_end_time,})
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student})
 

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
-from .models import User, Request, Lesson
+from .models import User, Lesson
 
 def login_prohibited(view_function):
     """Decorator for view functions that redirect users away if they are logged in."""
