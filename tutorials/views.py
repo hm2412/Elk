@@ -19,12 +19,12 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    lessons = get_lessons_sorted(current_user)
+    meetings = get_meetings_sorted(current_user)
 
     context = {
         'user': current_user,
         'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        'lessons_time_and_day': lessons,
+        'meetings_sorted': meetings,
     }
 
     print("current user is: " + current_user.user_type)
