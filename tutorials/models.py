@@ -88,12 +88,6 @@ class Lesson(models.Model):
         if time(16, 0) <= self.start_time < time(20, 0):
             return 'evening'
         
-    def time_range(self):
-        if self.start_time and self.end_time:
-            return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
-        return "No time set"
-        
-
     def __str__(self):
         return f"{self.student}'s request for {self.knowledge_area} tutoring"
     
@@ -134,6 +128,12 @@ class Meeting(models.Model):
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    days = models.JSONField() 
+    time_of_day = models.CharField(max_length=20)
+
+    def time_range(self):
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
 
     class Meta:
         ordering = ['date', 'start_time']

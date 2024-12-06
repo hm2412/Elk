@@ -23,14 +23,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr> 
           <td>Morning</td>
-          {% for days, lessons in lessons_time_and_day.morning.items %}
+          {% for days, meetings in meetings_sorted.morning.items %}
             <td>
-              {% if lessons %}
-                {% for lesson in lessons %}
-                  <strong>{{ lesson.knowledge_area }}</strong><br>
-                  {{ lesson.time_range }}<br>
+              {% if meetings %}
+                {% for meeting in meeting %}
+                  <strong>{{ meeting.topic }}</strong><br>
+                  {{ meeting.topic }}<br>
                 {% endfor %}
               {% endif %}
             </td>
@@ -38,12 +38,12 @@
         </tr>
         <tr>
           <td>Afternoon</td>
-          {% for days, lessons in lessons_time_and_day.afternoon.items %}
+          {% for days, meetings in meetings_sorted.afternoon.items %}
             <td>
-              {% if lessons %}
-                {% for lesson in lessons %}
-                  <strong>{{ lesson.knowledge_area }}</strong><br>
-                  {{ lesson.time_range }}<br>
+              {% if meetings %}
+                {% for meeting in meetings %}
+                  <strong>{{ meeting.topic}}</strong><br>
+                  {{ meeting.time_range }}<br>
                 {% endfor %}
               {% endif %}
             </td>
@@ -51,12 +51,12 @@
         </tr>
         <tr>
           <td>Evening</td>
-          {% for days, lessons in lessons_time_and_day.evening.items %}
+          {% for days, meetings in meetings_sorted.evening.items %}
             <td>
-              {% if lessons %}
-                {% for lesson in lessons %}
-                  <strong>{{ lesson.knowledge_area }}</strong><br>
-                  {{ lesson.time_range }}<br>
+              {% if meetings %}
+                {% for meeting in meetings %}
+                  <strong>{{ meeting.topic }}</strong><br>
+                  {{ meeting.time_range }}<br>
                 {% endfor %}
               {% endif %}
             </td>
