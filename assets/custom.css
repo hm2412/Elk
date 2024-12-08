@@ -140,12 +140,13 @@ h3.profile-title {
 .full-width-line {
   border: none;
   border-top: 2px solid #000;
-  width: 102vw;
+  width: 100vw;
+  margin: 0;
   position: relative;
-  left: -108px;
-  display: flex;
+  left: calc(-50vw + 50%); /* Center the line relative to the container */
   top: 0;
 }
+
 
 .tagline {
   font-family: 'Rubik', sans-serif;   /* Imported font */
@@ -171,9 +172,9 @@ h3.profile-title {
 .bottom-section {
   background-color: rgba(156, 17, 17);
   height: 140px;
-  width: 102vw;
+  width: 100vw;
   position: relative;
-  left: -108px;
+  left: calc(-50vw + 50%); /* Center the section relative to the container */
   display: flex;
   justify-content: center;
   align-items: center;
