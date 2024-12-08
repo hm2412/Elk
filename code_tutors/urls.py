@@ -38,5 +38,8 @@ urlpatterns = [
     # STUDENT paths
 
     # TUTOR paths
+    path('tutor/availability/save', views.tutor_availability, name='tutor_availability'),
+    path('tutor/hourly-rate/save', views.tutor_hourly_rate, name='tutor_hourly_rate'),
+    path('tutor/subjects/save', views.tutor_subjects, name='tutor_subjects'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
