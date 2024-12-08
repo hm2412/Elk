@@ -11,7 +11,6 @@ from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 from .models import Review
-from .forms import ReviewForm
 
 
 @login_required
@@ -274,18 +273,3 @@ class TutorView(LoginRequiredMixin, View):
         }
         return render(request, self.template_name, context)
     
-from django.shortcuts import render, redirect
-from .forms import ReviewForm
-
-def submit_review(request):
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)  # Don't commit to the database yet
-            review.user = request.user  # Assign the logged-in user to the review
-            review.save()  # Now save the review
-            return redirect('success_page')  # Redirect to the success page
-    else:
-        form = ReviewForm()
-
-    return render(request, 'review.html', {'form': form})
