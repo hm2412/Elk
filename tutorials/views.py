@@ -20,6 +20,8 @@ import datetime
 from .models import TutorProfile, TutorAvailability, Meeting, Lesson
 from .calendar_utils import TutorCalendar
 from .forms import LessonRequestForm
+from django.shortcuts import get_object_or_404
+
 
 @login_required
 def dashboard(request):
