@@ -111,6 +111,12 @@ class Meeting(models.Model):
         ('sun', 'Sunday'),
     ]
 
+    TIME_OF_DAY_CHOICES = [
+        ('morning', 'Morning'),
+        ('afternoon', 'Afternoon'),
+        ('evening', 'Evening'),
+    ]
+
     tutor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -126,11 +132,19 @@ class Meeting(models.Model):
     )
 
     date = models.DateField()
-    days = models.JSONField(default=list, blank=True)
-    time_of_day = models.CharField(max_length=20)
+
+    days = models.JSONField(default=list, blank=False)
+
     start_time = models.TimeField()
     end_time = models.TimeField()
-    time_of_day = models.CharField(max_length=20, null=True)
+    time_of_day = models.CharField(
+        max_length=20,
+        choices=TIME_OF_DAY_CHOICES,  
+        default='morning',
+        blank=False,
+        null=False
+    )
+
     topic = models.CharField(max_length=200)
     status = models.CharField(
         max_length=10,
