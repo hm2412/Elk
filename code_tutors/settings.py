@@ -13,6 +13,16 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from django.contrib.messages import constants as messages
 
+import os
+import sys
+
+if 'test' in sys.argv:
+    ENVIRONMENT = 'test'
+elif 'PYTHONANYWHERE_SITE' in os.environ:
+    ENVIRONMENT = 'production'
+else:
+    ENVIRONMENT = 'development'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +31,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&$dln5wpgorppuw&(gintxm573v2ks+zq4o$(4*lapguixf^+2'
+if ENVIRONMENT == 'production':
+    SECRET_KEY = str(os.getenv('SECRET_KEY'))
+else:
+    SECRET_KEY = 'TR4RGQGASUZVMZOWELBLPTEPKH9K724FVM83C79SP8MSUDT0LS9GHD73XEJ958SV'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ENVIRONMENT == 'development'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['emilieyu.pythonanywhere.com', 'localhost']
 
 
 # Application definition
@@ -141,3 +154,11 @@ REDIRECT_URL_WHEN_LOGGED_IN = 'dashboard'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+if ENVIRONMENT == 'production':
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_PRELOAD = True
