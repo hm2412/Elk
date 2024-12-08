@@ -47,3 +47,15 @@
   height: auto; 
   margin-right: 40px;
 }
+
+.gravatar-form {
+  width: 100px; 
+  height: auto; 
+  margin-right:50px;
+}
+
+.info-card {
+    background-color: white;
+    border-style: solid;
+    border-color:  #e8e8e8;
+}

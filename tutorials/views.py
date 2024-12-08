@@ -83,7 +83,7 @@ def schedule_session(request, student_id):
                                     'start_time': lesson_start_time, 
                                     'end_time': lesson_end_time,})
 
-    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student})
+    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""

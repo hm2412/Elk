@@ -32,7 +32,7 @@
                                                                 Student: <a href="{% url 'schedule_session' request.student.id %}"> {{ request.student.username }} </a>
                                                             </p>
                                                             <h5 class="card-title">{{ request.title }}</h5>
-                                                            <p class="request-info">
+                                                            <p>
                                                                 Subject: {{ request.get_knowledge_area_display }}<br>
                                                                 Term: {{ request.get_term_display }}<br>
                                                                 Duration: {{ request.duration }} minutes<br>
