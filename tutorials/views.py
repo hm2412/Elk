@@ -10,7 +10,6 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
-from .models import Review
 
 
 @login_required
@@ -46,10 +45,7 @@ def dashboard(request):
 
 @login_prohibited
 def home(request):
-    reviews = Review.objects.all()  # Get all reviews from the database
-    
-    return render(request, 'home.html', {'reviews': reviews})
-
+    return render(request, 'home.html')
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
