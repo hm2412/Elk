@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %}  <!-- Load static files -->
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'review.css' %}">  <!-- Include the CSS file -->
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/navbar.html' %}
+    
+    <!-- Display messages if they exist -->
+    {% include 'partials/messages.html' %}
+    
+    <div class="centered-container">
+        <h2>Submit Your Review</h2>
+
+        <!-- Display success messages -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Render the form -->
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+{% endblock %}

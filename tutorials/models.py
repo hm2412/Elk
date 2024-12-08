@@ -208,3 +208,26 @@ class TutorAvailability(models.Model):
     def __str__(self):
         return f"{self.tutor.username}'s availability on {self.day}"
     
+
+from django.db import models
+from django.conf import settings
+
+class Review(models.Model):
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,  # This points to the User model (which can be Student or Tutor)
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    content = models.CharField(max_length=90)  # The content field, which can hold up to 90 characters
+    review_text = models.TextField()  # The actual review text
+    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating from 1 to 5
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Review by {self.student.username} (Rating: {self.rating})'
+
+    class Meta:
+        ordering = ['-created_at']  # Show the most recent reviews
+
+
+    

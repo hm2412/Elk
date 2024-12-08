@@ -118,7 +118,7 @@ h3.profile-title {
  */
 
 .btn-secondary {
-  background-color: rgb(156, 17, 17);
+  background-color: rgba(156, 17, 17);
   border-color: #6c757d;
   font-size: 1.25rem;
   padding: 12px 24px;

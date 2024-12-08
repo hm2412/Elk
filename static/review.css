@@ -1,0 +1,61 @@
+/* Ensure full height and margin removal */
+html, body {
+    height: 100%; /* Full viewport height */
+    margin: 0;    /* Remove default margin */
+    padding: 0;   /* Remove default padding */
+    display: flex; /* Flexbox to center content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    font-family: Arial, sans-serif; /* Set font */
+    background-color: #f8f9fa; /* Light background */
+}
+
+/* Centered container for form and messages */
+.centered-container {
+    max-width: 600px;  /* Maximum width */
+    width: 100%;       /* Full width within max-width */
+    padding: 20px;     /* Padding inside the container */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Box shadow for the container */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;  /* Center content horizontally */
+    text-align: center;    /* Center all text */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+/* Success/Error messages styling */
+.messages {
+    margin-bottom: 15px;
+    padding: 10px;
+    list-style-type: none;
+    width: 100%; /* Ensure messages use full width */
+}
+
+/* Success message styling */
+.messages .success {
+    color: green;
+    font-weight: bold;
+}
+
+/* Error message styling */
+.messages .error {
+    color: red;
+    font-weight: bold;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}

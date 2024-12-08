@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from .models import User
+from .models import Review
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -199,3 +200,26 @@ class LessonRequestForm(forms.ModelForm):
     class Meta:
         model = Lesson  # Connect the form to the LessonRequest model
         fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
+        
+from django import forms
+from .models import Review
+
+class ReviewForm(forms.ModelForm):
+    rating = forms.FloatField(
+        min_value=0,
+        max_value=5,
+        widget=forms.NumberInput(attrs={'type': 'number', 'step': '0.1'}),  # Allow decimal numbers
+        label='Rating (0-5)',
+    )
+
+    class Meta:
+        model = Review
+        fields = ['content', 'rating']  # Adjust fields as necessary
+
+    def save(self, commit=True):
+        review = super().save(commit=False)  # Don't commit yet
+        if hasattr(self, 'user'):  # Check if user is set
+            review.student = self.user  # Set the user if it's passed to the form
+        if commit:
+            review.save()  # Now save the review
+        return review

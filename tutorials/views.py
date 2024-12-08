@@ -20,6 +20,9 @@ import datetime
 from .models import TutorProfile, TutorAvailability, Meeting, Lesson
 from .calendar_utils import TutorCalendar
 from .forms import LessonRequestForm
+from .forms import Review
+from .forms import ReviewForm
+
 
 @login_required
 def dashboard(request):
@@ -553,3 +556,24 @@ def user_list(request, list_type):
         'users': users,
         'title': title
     })
+
+
+from django.contrib import messages  # Import the messages framework
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.student = request.user  # Ensure the logged-in user is assigned
+            review.save()
+
+            # Add a success message
+            messages.success(request, 'Thank you for your feedback!')
+
+            return redirect('submit_review')  # Redirect to the same page to show the message
+    else:
+        form = ReviewForm()
+
+    return render(request, 'review.html', {'form': form})
+
