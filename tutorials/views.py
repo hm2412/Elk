@@ -552,6 +552,7 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
     
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 from .models import User, Meeting
 
 def user_list(request, list_type):
@@ -583,6 +584,10 @@ def user_list(request, list_type):
     else:
         users = []
         title = "Invalid List Type"
+        
+    paginator = Paginator(users, 25)  # Show 25 users per page
+    page_number = request.GET.get('page')  # Get current page number from request
+    users = paginator.get_page(page_number)  # Get the page object
 
     return render(request, 'partials/lists.html', {
         'users': users,
