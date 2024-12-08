@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from .models import User, Meeting, Request
+from .models import User
 from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm
 from .helpers import login_prohibited, admin_dashboard_context, user_role_required
 
