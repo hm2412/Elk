@@ -80,4 +80,28 @@ class Migration(migrations.Migration):
                 'ordering': ['date', 'start_time'],
             },
         ),
+        migrations.CreateModel(
+            name='TutorProfile',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('hourly_rate', models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True, validators=[django.core.validators.MinValueValidator(0)])),
+                ('subjects', models.JSONField(blank=True, default=list)),
+                ('tutor', models.OneToOneField(limit_choices_to={'user_type': 'Tutor'}, on_delete=django.db.models.deletion.CASCADE, related_name='tutor_profile', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TutorAvailability',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('day', models.CharField(choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')], max_length=9)),
+                ('start_time', models.TimeField()),
+                ('end_time', models.TimeField()),
+                ('is_available', models.BooleanField(default=True)),
+                ('tutor', models.ForeignKey(limit_choices_to={'user_type': 'Tutor'}, on_delete=django.db.models.deletion.CASCADE, related_name='availability_slots', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['day', 'start_time'],
+                'unique_together': {('tutor', 'day', 'start_time', 'end_time')},
+            },
+        ),
     ]

@@ -1,0 +1,48 @@
+.calendar {
+    width: 100%;
+}
+
+.calendar td {
+    height: 150px;  /* Increased from 120px */
+    width: 14.28%;
+    vertical-align: top;
+    padding: 10px;  /* Increased from 5px for more internal spacing */
+    border: 1px solid #dee2e6;  /* Added explicit border */
+}
+
+.calendar .day-number {
+    font-weight: bold;
+    margin-bottom: 10px;  /* Increased from 5px */
+    font-size: 1.1rem;    /* Made the date numbers slightly larger */
+}
+
+.calendar th {
+    text-align: center;
+    padding: 15px;        /* Increased from 10px */
+    background-color: #f8f9fa;
+    font-size: 1.1rem;    /* Made the day names slightly larger */
+}
+
+.calendar .availability-slots {
+    font-size: 0.9rem;    /* Slightly larger from 0.8rem */
+}
+
+.calendar .slot {
+    margin-bottom: 5px;   /* Increased from 3px */
+    padding: 4px 8px;     /* Increased from 2px 4px */
+    border-radius: 3px;
+}
+
+.calendar td.bg-light {
+    background-color: #f8f9fa;
+}
+
+.calendar .calendar-header {
+    margin-bottom: 1.5rem;  /* Increased from 1rem */
+    padding: 10px 0;        /* Added some vertical padding */
+}
+
+.calendar .calendar-header h3 {
+    margin: 0;
+    font-size: 1.5rem;      /* Made the month/year larger */
+}
