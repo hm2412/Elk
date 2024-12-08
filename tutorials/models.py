@@ -139,28 +139,6 @@ class Meeting(models.Model):
 from django.db import models
 from django.conf import settings
 
-class Review(models.Model):
-
-    User
-    content = models.TextField(default="")
-    rating = models.IntegerField()
-    
-    student = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # This points to the User model (which can be Student or Tutor)
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    comment = models.CharField(max_length=90)  # Set the max length to 90 characters
-    content = models.TextField(default="")  # The actual review text
-    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating from 1 to 5
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Review by {self.student.username} (Rating: {self.rating})'
-
-    class Meta:
-        ordering = ['-created_at']  # Show the most recent reviews
-
 
 
     
