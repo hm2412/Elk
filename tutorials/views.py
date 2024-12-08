@@ -34,7 +34,7 @@ def dashboard(request):
 
     if user_type == 'Tutor':
         template = 'tutor/dashboard_tutor.html'
-    elif user_type == 'student':
+    elif user_type == 'Student':
         template = 'student/dashboard_student.html'
     elif user_type == 'Admin':
         template = 'admin/dashboard_admin.html'
@@ -224,7 +224,7 @@ def user_list(request, list_type):
             users = User.objects.filter(id__in=students).order_by('username')
             title = "Your Students"
         else:
-            users = User.objects.filter(user_type='student').order_by('username')
+            users = User.objects.filter(user_type='Student').order_by('username')
             title = "Student List"
             
         # Fetch current tutors for each student

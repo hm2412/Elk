@@ -39,7 +39,7 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ENVIRONMENT == 'development'
 
-ALLOWED_HOSTS = ['emilieyu.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['emilieyu.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
