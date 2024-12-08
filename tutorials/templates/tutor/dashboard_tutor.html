@@ -12,8 +12,11 @@
                     <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#availabilityModal">
                         Set Weekly Availability
                     </button>
-                    <button type="button" class="btn btn-primary btn-lg ms-5" data-bs-toggle="modal" data-bs-target="#hourlyRateModal">
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#hourlyRateModal">
                         Set Hourly Rate
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#teachingSubjectsModal">
+                        Set Teaching Subjects
                     </button>
                 </div>
 
@@ -23,7 +26,7 @@
                         <h3>Calendar</h3>
                     </div>
                     <div class="card-body">
-                        <div id="calendar"></div>
+                        {% include "tutor/calendar_widget.html" with calendar_data=calendar_data %}
                     </div>
                 </div>
 
@@ -41,7 +44,7 @@
                                             <h5 class="mb-1">Meeting with {{ meeting.student.get_full_name }}</h5>
                                             <small>{{ meeting.date|date:"F j, Y" }}</small>
                                         </div>
-                                        <p class="mb-1">Time: {{ meeting.time|time:"g:i A" }}</p>
+                                        <p class="mb-1">Time: {{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
                                         <small>Topic: {{ meeting.topic }}</small>
                                     </div>
                                 {% endfor %}
@@ -57,283 +60,141 @@
 </div>
 
 <!-- Availability Modal -->
-<div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="hourlyRateModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="availabilityModalLabel">Set Weekly Availability</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<form method="post" action="{% url 'tutor_availability' %}" id="availabilityForm">
+    {% csrf_token %}
+    <div class="modal fade" id="availabilityModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Weekly Availability</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-            <div class="modal-body">
-                <form id="availabilityForm">
-                    {% csrf_token %}
+                <div class="modal-body">
                     {% for day in days %}
                     <div class="card mb-3">
                         <div class="card-header bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <strong>{{ day }}</strong>
                                 <div class="form-check">
-                                    <input class="form-check-input availability-toggle" 
+                                    <input class="form-check-input" 
                                         type="checkbox" 
+                                        name="{{ day|lower }}_enabled"
                                         id="{{ day|lower }}_enabled"
-                                        name="{{ day|lower }}_enabled">
-                                    <label class="form-check-label" for="{{ day|lower }}_toggle">Available</label>
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}checked{% endif %}
+                                        {% endfor %}>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="{{ day|lower }}_times" class="card-body time-slots" style="display: none;">
-                            <div class="time-slot-container">
-                                <!-- Initial time slot -->
-                                <div class="time-slot mb-3">
-                                    <div class="row">
-                                        <div class="col-5">
-                                            <div class="form-group">
-                                                <label>Start Time</label>
-                                                <input type="time" class="form-control start-time">
-                                            </div>
-                                        </div>
-                                        <div class="col-5">
-                                            <div class="form-group">
-                                                <label>End Time</label>
-                                                <input type="time" class="form-control end-time">
-                                            </div>
-                                        </div>
-                                        <div class="col-2 d-flex align-items-end">
-                                            <button type="button" class="btn btn-danger btn-sm remove-slot" style="display: none;">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                        </div>
+                        <div class="card-body time-slots">
+                            <div class="time-slot mb-3">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <input type="time" name="{{ day|lower }}_start_time" class="form-control"
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}
+                                                value="{{ slot.start_time|time:'H:i' }}"
+                                            {% endif %}
+                                        {% endfor %}>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="time" name="{{ day|lower }}_end_time" class="form-control"
+                                        {% for slot in availability_slots %}
+                                            {% if slot.day == day %}
+                                                value="{{ slot.end_time|time:'H:i' }}"
+                                            {% endif %}
+                                        {% endfor %}>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Add new slot button -->
-                            <button type="button" class="btn btn-primary btn-sm add-slot">
-                                <i class="fas fa-plus"></i> Add Time Slot
-                            </button>
                         </div>
                     </div>
                     {% endfor %}
-                </form>
-            </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" id="saveAvailability">
-                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                    Save Availability
-                </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Save Availability
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 
 <!-- Hourly Rate Modal -->
-<div class="modal fade" id="hourlyRateModal" tabindex="-1" aria-labelledby="hourlyRateModalLabel" aria-hidden="true">
+<div class="modal fade" id="hourlyRateModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="hourlyRateModalLabel">Set Your Hourly Rate</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Set Your Hourly Rate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
-                <form id="hourlyRateForm">
-                    {% csrf_token %}
+            <form method="post" action="{% url 'tutor_hourly_rate' %}" id="hourlyRateForm">
+                {% csrf_token %}
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label for="hourlyRate" class="form-label">Hourly Rate (£)</label>
+                        <label class="form-label">Hourly Rate (£)</label>
                         <div class="input-group">
                             <span class="input-group-text">£</span>
-                            <input type="number" class="form-control" id="hourlyRate" name="hourlyRate" min="0" step="0.01" 
-                                   value="{{ current_rate|default:'0.00' }}" required>
+                            <input type="number" class="form-control" name="hourly_rate" min="0" step="0.01" 
+                                   value="{{ hourly_rate|default:'0.00' }}" required>
                         </div>
                         <div class="form-text">Enter your desired hourly rate in GBP</div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" id="saveHourlyRate">
-                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                    Save Rate
-                </button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Save Rate
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Include FullCalendar.js -->
-<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.0/main.min.css' rel='stylesheet' />
-<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.0/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.0/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.0/main.min.js'></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: ['dayGrid'],
-            defaultView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek'
-            },
-            events: [] // Will be populated from backend
-        });
-        calendar.render();
-    });
-
-    document.getElementById('saveHourlyRate').addEventListener('click', function() {
-        const form = document.getElementById('hourlyRateForm');
-        const rate = form.querySelector('#hourlyRate').value;
-        const submitButton = this;
-        
-        // Show loading state
-        submitButton.disabled = true;
-        submitButton.querySelector('.spinner-border').classList.remove('d-none');
-        
-        fetch('/api/set-hourly-rate/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({ hourly_rate: rate })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('hourlyRateModal'));
-                modal.hide();
-                location.reload();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to save hourly rate');
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.querySelector('.spinner-border').classList.add('d-none');
-        });
-    });
-
-    document.querySelectorAll('.day-toggle').forEach(toggle => {
-        toggle.addEventListener('change', function() {
-            const day = this.id.replace('_enabled', '');
-            const timeSlots = document.getElementById(`${day}_times`);
-            timeSlots.style.display = this.checked ? 'block' : 'none';
-        });
-    });
-
-    document.querySelectorAll('.availability-toggle').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const timeSlot = document.getElementById(this.id.replace('enabled', 'times'));
-            timeSlot.style.display = this.checked ? 'block' : 'none';
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle adding new time slots
-        document.querySelectorAll('.add-slot').forEach(button => {
-            button.addEventListener('click', function() {
-                const container = this.previousElementSibling;
-                const newSlot = createTimeSlot();
-                container.appendChild(newSlot);
-                
-                // Show remove buttons when there's more than one slot
-                const removeButtons = container.querySelectorAll('.remove-slot');
-                if (removeButtons.length > 1) {
-                    removeButtons.forEach(btn => btn.style.display = 'block');
-                }
-            });
-        });
-
-        // Handle removing time slots
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-slot') || e.target.parentElement.classList.contains('remove-slot')) {
-                const button = e.target.classList.contains('remove-slot') ? e.target : e.target.parentElement;
-                const timeSlot = button.closest('.time-slot');
-                const container = timeSlot.closest('.time-slot-container');
-                
-                timeSlot.remove();
-                
-                // Hide remove buttons if only one slot remains
-                const removeButtons = container.querySelectorAll('.remove-slot');
-                if (removeButtons.length === 1) {
-                    removeButtons[0].style.display = 'none';
-                }
-            }
-        });
-
-        // Create new time slot element
-        function createTimeSlot() {
-            const div = document.createElement('div');
-            div.className = 'time-slot mb-3';
-            div.innerHTML = `
-                <div class="row">
-                    <div class="col-5">
-                        <div class="form-group">
-                            <label>Start Time</label>
-                            <input type="time" class="form-control start-time">
+<!-- Teaching Subjects Modal -->
+<div class="modal fade" id="teachingSubjectsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set Teaching Subjects</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'tutor_subjects' %}" id="subjectsForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% for group, subjects in subject_choices.items %}
+                    <div class="mb-4">
+                        <h6>{{ group }}</h6>
+                        {% for subject in subjects %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="subjects" value="{{ subject }}"
+                                id="subject{{ subject|slugify }}"
+                                {% if subject in selected_subjects %}checked{% endif %}>  
+                            <label class="form-check-label">{{ subject }}</label>
                         </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-5">
-                        <div class="form-group">
-                            <label>End Time</label>
-                            <input type="time" class="form-control end-time">
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger btn-sm remove-slot">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
+                    {% endfor %}
                 </div>
-            `;
-            return div;
-        }
-
-        // Modify your existing save functionality to handle multiple time slots
-        document.getElementById('saveAvailability').addEventListener('click', function() {
-        const button = this;
-        const spinner = button.querySelector('.spinner-border');
-        
-        // Show spinner, disable button
-        spinner.classList.remove('d-none');
-        button.disabled = true;
-        
-        // Get form data and submit
-        const formData = new FormData(document.getElementById('availabilityForm'));
-        
-        fetch('/api/set-availability/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify(Object.fromEntries(formData))
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to save availability'); // Fixed error message
-        })
-        .finally(() => {
-            spinner.classList.add('d-none');
-            button.disabled = false;
-        });
-    });
-    });
-</script>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Save Subjects
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Add loading spinner CSS -->
 <style>
