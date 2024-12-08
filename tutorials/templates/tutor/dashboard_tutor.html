@@ -44,7 +44,7 @@
                                             <h5 class="mb-1">Meeting with {{ meeting.student.get_full_name }}</h5>
                                             <small>{{ meeting.date|date:"F j, Y" }}</small>
                                         </div>
-                                        <p class="mb-1">Time: {{ meeting.time|time:"g:i A" }}</p>
+                                        <p class="mb-1">Time: {{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
                                         <small>Topic: {{ meeting.topic }}</small>
                                     </div>
                                 {% endfor %}

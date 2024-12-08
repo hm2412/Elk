@@ -6,23 +6,28 @@ class TutorCalendar:
         self.year = year or datetime.now().year
         self.month = month or datetime.now().month
         
-    def get_calendar_data(self, availability_slots):
+    def get_calendar_data(self, availability_slots, meetings):
         # Get the calendar for current month
         cal = calendar.monthcalendar(self.year, self.month)
         month_name = calendar.month_name[self.month]
-
         today = datetime.now()
         
-        # Convert availability slots to a more usable format
-        availability_dict = {}
-        for slot in availability_slots:
-            if slot.day not in availability_dict:
-                availability_dict[slot.day] = []
-            availability_dict[slot.day].append({
-                'start': slot.start_time,
-                'end': slot.end_time
+        meetings = meetings or []
+        meetings_dict = {}
+        for meeting in meetings:
+            date_key = meeting.date.day
+            if date_key not in meetings_dict:
+                meetings_dict[date_key] = []
+
+            meetings_dict[date_key].append({
+                'start': meeting.start_time.strftime('%H:%M'),
+                'end': meeting.end_time.strftime('%H:%M'),
+                'topic': meeting.topic,
+                'student_name': f"{meeting.student.first_name} {meeting.student.last_name}",
+                'status': meeting.status,
+                'type': 'meeting'
             })
-        
+
         # Process calendar weeks
         processed_calendar = []
         for week in cal:
@@ -32,23 +37,26 @@ class TutorCalendar:
                     week_data.append({
                         'day': '',
                         'is_current_month': False,
-                        'slots': []
+                        'slots': [],
+                        'meetings': []
                     })
                 else:
-                    # Get the weekday name for this date
                     date = datetime(self.year, self.month, day)
                     weekday = date.strftime('%A')
                     
-                    # Get availability slots for this weekday
-                    slots = availability_dict.get(weekday, [])
+                    # Prioritize meetings over availability slots
+                    day_meetings = meetings_dict.get(day, [])
+                    # day_slots = [] if day in meetings_dict else availability_dict.get(day, [])
                     
                     week_data.append({
                         'day': day,
                         'is_current_month': True,
                         'is_today': datetime.now().date() == date.date(),
-                        'slots': slots,
+                        'slots': [],
+                        'meetings': day_meetings,
                         'weekday': weekday
                     })
+                    
             processed_calendar.append(week_data)
             
         return {

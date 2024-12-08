@@ -17,7 +17,7 @@ from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 import json
 import datetime
-from .models import TutorProfile, TutorAvailability
+from .models import TutorProfile, TutorAvailability, Meeting
 from .calendar_utils import TutorCalendar
 
 
@@ -40,23 +40,50 @@ def dashboard(request):
 
     if user_type == 'Tutor':
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
-        availability_slots = TutorAvailability.objects.filter(tutor=current_user)
 
         current_date = datetime.datetime.now()
         month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
         year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
 
+        meetings = Meeting.objects.filter(
+            tutor=current_user, 
+            date__year=year,
+            date__month=month
+        ).select_related('student')
+        
         # Add debug prints
         print("=== Tutor Profile Debug Info ===")
         print(f"Hourly Rate: {tutor_profile.hourly_rate}")
         print(f"Subjects: {tutor_profile.subjects}")
+        
+        availability_slots = TutorAvailability.objects.filter(tutor=request.user)
+
+        # More debug prints
         print("\n=== Availability Slots ===")
         for slot in availability_slots:
             print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
         print("============================")
+        print("\n=== Meetings ===")
+        for meeting in meetings:
+            print(f"Meeting on {meeting.date}: {meeting.start_time}-{meeting.end_time}")
+        print("============================")
 
         calendar = TutorCalendar(year, month)
-        calendar_data = calendar.get_calendar_data([])
+        calendar_data = calendar.get_calendar_data(
+            meetings=meetings,
+            availability_slots=availability_slots
+        )
+
+        # Debug calendar data
+        print("\nCalendar Data:")
+        for week in calendar_data['weeks']:
+            for day in week:
+                if day['meetings']:
+                    print(f"Day {day['day']} has meetings:")
+                    for meeting in day['meetings']:
+                        print(f"- {meeting['start']} - {meeting['end']}: {meeting['topic']}")
+        
+        print("==================")
 
         subject_choices = {
             'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
@@ -71,6 +98,7 @@ def dashboard(request):
             'subject_choices': subject_choices,
             'selected_subjects': tutor_profile.subjects,
             'calendar_data': calendar_data,
+            'meetings': meetings,
         })
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':

@@ -23,6 +23,43 @@
         </thead>
         <tbody>
             {% for week in calendar_data.weeks %}
+            <tr>
+                {% for day in week %}
+                    <td class="{% if day.is_today %}bg-light{% endif %}" style="min-height: 100px; vertical-align: top;">
+                        {% if day.day %}
+                            <div class="day-number font-weight-bold">{{ day.day }}</div>
+                            
+                            {# Display availability slots #}
+                            {% if day.slots %}
+                                <div class="availability-slots small">
+                                    {% for slot in day.slots %}
+                                        <div class="slot bg-success text-white p-1 mb-1 rounded">
+                                            {{ slot.start }} - {{ slot.end }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {# Display meetings #}
+                            {% if day.meetings %}
+                                <div class="meetings small">
+                                    {% for meeting in day.meetings %}
+                                        <div class="meeting bg-primary text-white p-1 mb-1 rounded">
+                                            <div>{{ meeting.start }} - {{ meeting.end }}</div>
+                                            <div>{{ meeting.topic }}</div>
+                                            <div class="small">{{ meeting.student_name }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tbody>
+            {% for week in calendar_data.weeks %}
                 <tr>
                     {% for day in week %}
                         <td class="{% if day.is_today %}bg-light{% endif %}">
@@ -42,6 +79,6 @@
                     {% endfor %}
                 </tr>
             {% endfor %}
-        </tbody>
+        </tbody> -->
     </table>
 </div>
