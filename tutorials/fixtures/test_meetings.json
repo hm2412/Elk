@@ -1,0 +1,18 @@
+[
+    {
+        "model": "tutorials.meeting",
+        "pk": 1,
+        "fields": {
+          "tutor": 2,
+          "student": 3,
+          "date": "2024-03-20",
+          "start_time": "14:00:00",
+          "end_time": "15:00:00",
+          "topic": "Python Basics",
+          "status": "scheduled",
+          "notes": "Introduction to Python programming",
+          "created_at": "2024-03-19T10:00:00Z",
+          "updated_at": "2024-03-19T10:00:00Z"
+        }
+    }
+]

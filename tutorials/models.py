@@ -1,4 +1,4 @@
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
@@ -88,12 +88,6 @@ class Lesson(models.Model):
         if time(16, 0) <= self.start_time < time(20, 0):
             return 'evening'
         
-    def time_range(self):
-        if self.start_time and self.end_time:
-            return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
-        return "No time set"
-        
-
     def __str__(self):
         return f"{self.student}'s request for {self.knowledge_area} tutoring"
     
@@ -105,6 +99,22 @@ class Meeting(models.Model):
         ('scheduled', 'Scheduled'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
+    ]
+
+    DAYS_CHOICES = [
+        ('mon', 'Monday'),
+        ('tue', 'Tuesday'),
+        ('wed', 'Wednesday'),
+        ('thu', 'Thursday'),
+        ('fri', 'Friday'),
+        ('sat', 'Saturday'),
+        ('sun', 'Sunday'),
+    ]
+
+    TIME_OF_DAY_CHOICES = [
+        ('morning', 'Morning'),
+        ('afternoon', 'Afternoon'),
+        ('evening', 'Evening'),
     ]
 
     tutor = models.ForeignKey(
@@ -122,8 +132,19 @@ class Meeting(models.Model):
     )
 
     date = models.DateField()
+
+    days = models.JSONField(default=list, blank=False)
+
     start_time = models.TimeField()
     end_time = models.TimeField()
+    time_of_day = models.CharField(
+        max_length=20,
+        choices=TIME_OF_DAY_CHOICES,  
+        default='morning',
+        blank=False,
+        null=False
+    )
+
     topic = models.CharField(max_length=200)
     status = models.CharField(
         max_length=10,
@@ -135,9 +156,69 @@ class Meeting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    def time_range(self):
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
+
     class Meta:
         ordering = ['date', 'start_time']
 
     def __str__(self):
         return f"Meeting: {self.tutor.username} with {self.student.username} on {self.date}"
+    
+class TutorProfile(models.Model):
+    """Model for storing tutor-specific information."""
+    
+    tutor = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tutor_profile',
+        limit_choices_to={'user_type': 'Tutor'}
+    )
+
+    hourly_rate = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        null=True,
+        blank=True
+    )
+
+    subjects = models.JSONField(default=list, blank=True)
+    
+    def __str__(self):
+        return f"{self.tutor.username}'s Profile"
+    
+
+class TutorAvailability(models.Model):
+    """Model for storing tutor availability."""
+    
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday')
+    ]
+    
+    tutor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='availability_slots',
+        limit_choices_to={'user_type': 'Tutor'}
+    )
+    
+    day = models.CharField(max_length=9, choices=DAYS_OF_WEEK)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    is_available = models.BooleanField(default=True)
+    
+    class Meta:
+        unique_together = ['tutor', 'day', 'start_time', 'end_time']
+        ordering = ['day', 'start_time']
+    
+    def __str__(self):
+        return f"{self.tutor.username}'s availability on {self.day}"
     
