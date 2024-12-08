@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+import hashlib
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -26,6 +27,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     user_type = models.CharField(max_length=7, choices=USER_TYPES, default='Student')
 
+    @property
+    def gravatar_hash(self):
+        email = self.email.strip().lower().encode('utf-8')
+        return hashlib.md5(email).hexdigest()
 
     class Meta:
         """Model options."""
@@ -83,12 +88,6 @@ class Lesson(models.Model):
         if time(16, 0) <= self.start_time < time(20, 0):
             return 'evening'
         
-    def time_range(self):
-        if self.start_time and self.end_time:
-            return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
-        return "No time set"
-        
-
     def __str__(self):
         return f"{self.student}'s request for {self.knowledge_area} tutoring"
     
@@ -100,6 +99,16 @@ class Meeting(models.Model):
         ('scheduled', 'Scheduled'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
+    ]
+
+    DAYS_CHOICES = [
+        ('mon', 'Monday'),
+        ('tue', 'Tuesday'),
+        ('wed', 'Wednesday'),
+        ('thu', 'Thursday'),
+        ('fri', 'Friday'),
+        ('sat', 'Saturday'),
+        ('sun', 'Sunday'),
     ]
 
     tutor = models.ForeignKey(
@@ -117,8 +126,11 @@ class Meeting(models.Model):
     )
 
     date = models.DateField()
+    days = models.JSONField(default=list, blank=True)
+    time_of_day = models.CharField(max_length=20)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    time_of_day = models.CharField(max_length=20, null=True)
     topic = models.CharField(max_length=200)
     status = models.CharField(
         max_length=10,
@@ -129,6 +141,10 @@ class Meeting(models.Model):
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+    def time_range(self):
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
 
     class Meta:
         ordering = ['date', 'start_time']
