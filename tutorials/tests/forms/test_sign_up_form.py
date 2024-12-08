@@ -15,7 +15,8 @@ class SignUpFormTestCase(TestCase):
             'username': '@janedoe',
             'email': 'janedoe@example.org',
             'new_password': 'Password123',
-            'password_confirmation': 'Password123'
+            'password_confirmation': 'Password123',
+            'user_type': 'Admin'
         }
 
     def test_valid_sign_up_form(self):
@@ -36,9 +37,34 @@ class SignUpFormTestCase(TestCase):
         self.assertIn('password_confirmation', form.fields)
         password_confirmation_widget = form.fields['password_confirmation'].widget
         self.assertTrue(isinstance(password_confirmation_widget, forms.PasswordInput))
+        self.assertIn('user_type', form.fields)
 
     def test_form_uses_model_validation(self):
         self.form_input['username'] = 'badusername'
+        form = SignUpForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+    
+    def test_duplicate_email(self):
+        user = User.objects.create_user(
+            username='user',
+            email='janedoe@example.org',
+            password='Password123',
+            first_name='Jane',
+            last_name='Doe',
+            user_type='admin'
+        )
+        form = SignUpForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+
+    def test_duplicate_username(self):
+        user = User.objects.create_user(
+            username='@janedoe',
+            email='email@example.org',
+            password='Password123',
+            first_name='Jane',
+            last_name='Doe',
+            user_type='admin'
+        )
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
@@ -64,6 +90,13 @@ class SignUpFormTestCase(TestCase):
         self.form_input['password_confirmation'] = 'WrongPassword123'
         form = SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
+    
+    def test_missing_field(self):
+        for field in ['first_name', 'last_name', 'username', 'email', 'new_password', 'password_confirmation', 'user_type']:
+            invalid_input = self.form_input.copy()
+            del invalid_input[field]
+            form = SignUpForm(data=invalid_input)
+            self.assertFalse(form.is_valid())
 
     def test_form_must_save_correctly(self):
         form = SignUpForm(data=self.form_input)
@@ -77,3 +110,7 @@ class SignUpFormTestCase(TestCase):
         self.assertEqual(user.email, 'janedoe@example.org')
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)
+        self.assertEqual(user.user_type, 'Admin')
+
+
+    
