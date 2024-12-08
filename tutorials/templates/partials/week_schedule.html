@@ -31,6 +31,7 @@
                 {% for meeting in meetings %}
                   {{ meeting.topic }}<br>
                   {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>
@@ -44,6 +45,7 @@
                 {% for meeting in meetings %}
                   {{ meeting.topic}}><br>
                   {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>
@@ -57,6 +59,7 @@
                 {% for meeting in meetings %}
                   {{ meeting.topic }}<br>
                   {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>
