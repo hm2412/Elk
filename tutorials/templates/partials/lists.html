@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+  {% include 'partials/navbar.html' %}
+  {% include 'partials/messages.html' %}
+
+    <div class="container">
+        <h1 class="title">{{ title }}</h1>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    {% if title == "Student List" %}
+                        <th>Current Tutors</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.full_name }}</td>
+                        
+                        {% if title == "Student List" %}
+                            <td>
+                                {% if user.current_tutors %}
+                                    {{ user.current_tutors|join:", " }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <link rel="stylesheet" type="text/css" href="{% static 'lists.css' %}">
+{% endblock %}
