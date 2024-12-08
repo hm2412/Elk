@@ -1,0 +1,49 @@
+.square{
+  aspect-ratio: 1 / 1; /* Ensures the div is square */
+  height: auto;        /* Responsive height */
+  max-width: 100%;     /* Avoids overflowing */
+  padding: 10px;       /* Space between squares if necessary */
+  display: flex;
+  flex-direction: column; /* Stacks content vertically */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #9c1111
+}
+
+.icon {
+  width: 35%; /* Adjust size for the icon */
+  height: auto;
+}
+
+.stats-title {
+  font-size: 25px; /* Adjust font size as needed */
+  color: white;
+}
+
+.stats-number {
+  font-size: 45px; /* Adjust size for the bottom text */
+  color: white;
+}
+
+.requests {
+  background-color: #9c1111;
+}
+
+.card {
+  background-color: #e8e8e8;
+}
+
+.requests-title {
+  color: white;
+}
+
+.user-details {
+  font-size: 20px;
+}
+
+.gravatar {
+  width: 75px; 
+  height: auto; 
+  margin-right: 40px;
+}
