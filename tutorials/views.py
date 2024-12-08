@@ -9,23 +9,22 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from .models import User
-from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm
+from .models import User, Lesson, Meeting
+from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm, LessonRequestForm
 from .helpers import login_prohibited, admin_dashboard_context, user_role_required
 
 @login_required
-
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
     user_type = current_user.user_type
-    lessons = get_lessons_sorted(current_user)
+    meetings = get_meetings_sorted(current_user)
 
     context = {
         'user': current_user,
         'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        'lessons_time_and_day': lessons,
+        'meetings_sorted': meetings,
     }
 
     print("current user is: " + user_type)
@@ -213,32 +212,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
     
 """ Views for Student Dashboard below"""
 
-from .forms import LessonRequestForm
-from .models import Lesson
-from django.http import HttpResponse
-
 def create_lesson_request(request):
-    if request.method == 'POST':
-        print("POST request received")
-        form = LessonRequestForm(request.POST)
-        if form.is_valid():
-            print("Form is valid")
-            lesson_request = form.save(commit=False)
-            lesson_request.student = request.user
-            lesson_request.save()
-            print("Lesson request saved")
-            return redirect('dashboard')
-        else:
-            print("Form errors:", form.errors)
-            return HttpResponse(f"Errors: {form.errors}")  # Temporarily display errors
-    else:
-        print("GET request received")
-        form = LessonRequestForm()
-
-    return render(request, 'lesson_request.html', {'form': form})
-
-
-'''def create_lesson_request(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
@@ -249,28 +223,27 @@ def create_lesson_request(request):
     else:
         form = LessonRequestForm()
 
-    return render(request, 'lesson_request.html', {'form': form})'''
+    return render(request, 'lesson_request.html', {'form': form})
 
 def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
     return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
 
-def get_lessons_sorted(user):
+def get_meetings_sorted(user):
     """Organize lessons by time of day and day of the week."""
-    lessons = Lesson.objects.filter(student=user)
 
-    lessons_by_time_and_day = {
+    meetings_sorted = {
         'morning': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
         'afternoon': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
         'evening': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
     }
 
-    for lesson in lessons:
-        for day in lesson.days:
-            if lesson.time_of_day in lessons_by_time_and_day:
-                lessons_by_time_and_day[lesson.time_of_day][day].append(lesson)
+    for meeting in Meeting.objects.filter(student=user):
+        for day in meeting.days:
+            if meeting.time_of_day in meetings_sorted:
+                meetings_sorted[meeting.time_of_day][day].append(meeting)
     
-    return lessons_by_time_and_day
+    return meetings_sorted
 
 """
 class TutorView(LoginRequiredMixin, View):
