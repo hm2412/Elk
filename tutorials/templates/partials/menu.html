@@ -40,6 +40,9 @@
       <li class="list-group-item list-group-item-action">
         <a href="{% url 'dashboard' %}" class="text-decoration-none">Tutor Dashboard</a>
       </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'user_list' 'students' %}">View Students</a>
+      </li>
       {% endif %}
 
       <!-- these are menu items specific to the admin-->
@@ -49,6 +52,12 @@
       </li>
       <li class="list-group-item list-group-item-action">
         <a href="{% url 'dashboard' %}" class="text-decoration-none">Admin Dashboard</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'user_list' 'students' %}">View Students</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'user_list' 'tutors' %}">View Tutors</a>
       </li>
       {% endif %}
 
