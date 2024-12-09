@@ -124,7 +124,7 @@ class MeetingForm(forms.ModelForm):
     days = forms.ChoiceField(choices=Meeting.DAYS_CHOICES, widget=forms.Select, required=True)
     class Meta:
         model = Meeting
-        fields = ['tutor', 'days', 'date', 'start_time', 'end_time', 'time_of_day', 'topic', 'status', 'notes']
+        fields = ['tutor', 'date', 'day', 'start_time', 'end_time', 'time_of_day', 'topic', 'status', 'notes']
 
 from .models import Lesson 
 from datetime import datetime, time

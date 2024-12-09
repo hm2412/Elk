@@ -39,7 +39,7 @@
         </tr>
         <tr>
           <td>Afternoon</td>
-          {% for days, meetings in meetings_sorted.afternoon.items %}
+          {% for day, meetings in meetings_sorted.afternoon.items %}
             <td>
               {% if meetings %}
                 {% for meeting in meetings %}
@@ -53,7 +53,7 @@
         </tr>
         <tr>
           <td>Evening</td>
-          {% for days, meetings in meetings_sorted.evening.items %}
+          {% for day, meetings in meetings_sorted.evening.items %}
             <td>
               {% if meetings %}
                 {% for meeting in meetings %}
