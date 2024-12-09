@@ -123,7 +123,7 @@ class MeetingForm(forms.ModelForm):
     """Form to schedule meetings/tutoring sessions"""
     class Meta:
         model = Meeting
-        fields = ['tutor', 'date', 'start_time', 'end_time', 'topic', 'status', 'notes']
+        fields = ['tutor', 'date', 'day', 'start_time', 'end_time', 'time_of_day', 'topic', 'status', 'notes']
 
 from .models import Lesson 
 from datetime import datetime, time

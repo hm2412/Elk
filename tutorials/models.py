@@ -188,7 +188,13 @@ class Meeting(models.Model):
 
     date = models.DateField()
 
-    days = models.JSONField(default=list, blank=False)
+    day = models.CharField(
+        max_length=30,
+        choices=DAYS_CHOICES,  
+        default='mon',
+        blank=False,
+        null=False
+    )
 
     start_time = models.TimeField()
     end_time = models.TimeField()

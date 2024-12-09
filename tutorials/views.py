@@ -18,8 +18,8 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 import json
-import datetime
 from .calendar_utils import TutorCalendar
+
 
 @login_required
 def dashboard(request):
@@ -116,6 +116,8 @@ def dashboard(request):
 def home(request):
     return render(request, 'home.html')
 
+from datetime import datetime
+
 """SCHEDULE MEETING"""
 @login_required
 @user_role_required('Admin')
@@ -202,7 +204,7 @@ def tutor_subjects(request):
         tutor_profile.subjects = subjects
         tutor_profile.save()
         messages.success(request, 'Teaching subjects updated successfully')
-        return redirect('dashboard')
+        return redirect('dcombineashboard')
     
     return redirect('dashboard')
 
@@ -434,9 +436,15 @@ def get_meetings_sorted(user):
     }
 
     for meeting in Meeting.objects.filter(student=user):
-        for day in meeting.days:
-            if meeting.time_of_day in meetings_sorted:
-                meetings_sorted[meeting.time_of_day][day].append(meeting)
+        time_of_day = meeting.time_of_day
+        day = meeting.day
+        if time_of_day not in meetings_sorted:
+            continue
+
+        if day not in meetings_sorted[time_of_day]:
+            continue
+
+        meetings_sorted[time_of_day][day].append(meeting)
     
     return meetings_sorted
 
