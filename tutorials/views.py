@@ -204,7 +204,7 @@ def tutor_subjects(request):
         tutor_profile.subjects = subjects
         tutor_profile.save()
         messages.success(request, 'Teaching subjects updated successfully')
-        return redirect('dcombineashboard')
+        return redirect('dashboard')
     
     return redirect('dashboard')
 
@@ -586,18 +586,20 @@ def user_list(request, list_type):
     
     elif list_type == 'tutors':
         if request.user.user_type == 'Admin':
-            #users = User.objects.filter(user_type='Tutor').order_by('username').prefetch_related('tutor_profile')
+            
             users = User.objects.filter(user_type='Tutor').order_by('username')
-            availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
-
-            for user in users:
-                user.availability = availability.filter(tutor=user)
+    
             # Add subject filtering
             subject_filters = request.GET.getlist('subjects', [])
             if subject_filters:
-                for subject in subject_filters:
-                    users = users.filter(tutor_profile__subjects__contains=[subject])
+                # Filter tutors by subjects manually
+                users = [
+                    user for user in users 
+                    if hasattr(user, 'tutor_profile') and any(subject in subject_filters for subject in user.tutor_profile.subjects)
+                ]
                 filters['subjects'] = subject_filters
+
+            availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
 
             for user in users:
                 user.availability = availability.filter(tutor=user)
