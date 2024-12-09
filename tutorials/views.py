@@ -86,9 +86,7 @@ def dashboard(request):
         print("==================")
 
         subject_choices = {
-            'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
-            'Languages' : ['English', 'Spanish', 'French', 'German'],
-            'Humanities' : ['Geography', 'History', 'Philosophy', 'Religious Studies']
+            'Computer Programming' : ['Ruby', 'Swift', 'Scala', 'Java', 'Javascript/React', 'Python/Tensorflow', 'C++', 'C#'],
         }
 
         context.update({
@@ -468,19 +466,14 @@ class TutorHourlyRateView(LoginRequiredMixin, FormView):
 
 class TutorSubjectsForm(forms.Form):
     SUBJECT_CHOICES = [
-        ('Mathematics', 'Mathematics'),
-        ('Computer Science', 'Computer Science'),
-        ('Physics', 'Physics'),
-        ('Chemistry', 'Chemistry'),
-        ('Biology', 'Biology'),
-        ('English', 'English'),
-        ('Spanish', 'Spanish'),
-        ('French', 'French'),
-        ('German', 'German'),
-        ('Geography', 'Geography'),
-        ('History', 'History'),
-        ('Philosophy', 'Philosophy'),
-        ('Religious Studies', 'Religious Studies'),
+        ('Ruby', 'Ruby'),
+        ('Swift', 'Swift'),
+        ('Scala', 'Scala'),
+        ('Java', 'Java'),
+        ('Javascript/React', 'Javascript/React'),
+        ('Python/Tensorflow', 'Python/Tensorflow'),
+        ('C++', 'C++'),
+        ('C#', 'C#'),
     ]
     subjects = forms.MultipleChoiceField(
         choices=SUBJECT_CHOICES,
