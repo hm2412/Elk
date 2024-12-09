@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
 
-{% load static %}  <!-- Load static files -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'review.css' %}">
 
-{% block head %}
-    <link rel="stylesheet" href="{% static 'review.css' %}">  <!-- Include the CSS file -->
-{% endblock %}
 
 {% block body %}
     {% include 'partials/navbar.html' %}
     
     <!-- Display messages if they exist -->
     {% include 'partials/messages.html' %}
+
     
     <div class="centered-container">
         <h2>Submit Your Review</h2>

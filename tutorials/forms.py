@@ -208,8 +208,13 @@ class ReviewForm(forms.ModelForm):
     rating = forms.FloatField(
         min_value=0,
         max_value=5,
-        widget=forms.NumberInput(attrs={'type': 'number', 'step': '0.1'}),  # Allow decimal numbers
+        widget=forms.NumberInput(attrs={'type': 'int'}),  # Allow decimal numbers
         label='Rating (0-5)',
+    )
+
+    content = forms.CharField(
+        max_length=500,  # Set the maximum length for content
+        label='Content',
     )
 
     class Meta:

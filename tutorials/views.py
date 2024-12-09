@@ -115,8 +115,12 @@ def dashboard(request):
     return render(request, template, context)
 
 
-@login_prohibited
+from django.shortcuts import render
+from .models import Review
+
 def home(request):
+    """Display the application's start/home screen."""
+
     return render(request, 'home.html')
 
 
