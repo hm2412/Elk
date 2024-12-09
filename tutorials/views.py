@@ -575,7 +575,13 @@ def user_list(request, list_type):
     
     elif list_type == 'tutors':
         if request.user.user_type == 'Admin':
-            users = User.objects.filter(user_type='Tutor').order_by('username')
+            users = User.objects.filter(user_type='Tutor').order_by('username').prefetch_related('tutor_profile')
+            availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
+
+            # Map availability to each tutor
+            for user in users:
+                user.availability = availability.filter(tutor=user)
+            
             title = "Tutor List"
         else:
             users = []

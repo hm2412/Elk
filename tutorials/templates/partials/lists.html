@@ -16,6 +16,11 @@
                     {% if title == "Student List" %}
                         <th>Current Tutors</th>
                     {% endif %}
+                    {% if title == "Tutor List" %}
+                        <th>Subjects</th>
+                        <th>Hourly Rate</th>
+                        <th>Availability</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -33,9 +38,32 @@
                                     None
                                 {% endif %}
                             </td>
-                        {% endif %}
-                        {% if title == "Tutor List" %}
-                        
+                        {% elif title == "Tutor List" %}
+                            <td>
+                                {% if user.tutor_profile %}
+                                    {{ user.tutor_profile.subjects|join:", " }}
+                                {% else %}
+                                    Not Specified
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.tutor_profile and user.tutor_profile.hourly_rate %}
+                                    £{{ user.tutor_profile.hourly_rate }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.availability %}
+                                <ul>
+                                    {% for slot in user.availability %}
+                                        <li>{{ slot.day }}: {{ slot.start_time }} - {{ slot.end_time }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                    No availability listed
+                                {% endif %}
+                            </td>
                         {% endif %}
                     </tr>
                 {% endfor %}
