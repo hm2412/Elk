@@ -7,6 +7,20 @@
 
     <div class="container">
         <h1 class="title">{{ title }}</h1>
+        <form method="get" class="filter-form">
+            {% if title == "Tutor List" %}
+                <label for="subject">Filter by subject:</label>
+                <select id="subject" name="subject">
+                    <option value="">-- Select a Subject --</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.name }}" {% if filters.subject == subject.name %}selected{% endif %}>
+                            {{ subject.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Filter</button>
+            {% endif %}
+        </form>            
         <table class="styled-table">
             <thead>
                 <tr>
@@ -40,7 +54,7 @@
                             </td>
                         {% elif title == "Tutor List" %}
                             <td>
-                                {% if user.tutor_profile %}
+                                {% if user.tutor_profile and user.tutor_profile.subjects %}
                                     {{ user.tutor_profile.subjects|join:", " }}
                                 {% else %}
                                     Not Specified

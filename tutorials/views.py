@@ -40,7 +40,7 @@ def dashboard(request):
     if user_type == 'Tutor':
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
 
-        current_date = datetime.datetime.now()
+        current_date = datetime.now()
         month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
         year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
 
@@ -116,6 +116,7 @@ def dashboard(request):
 def home(request):
     return render(request, 'home.html')
 
+from datetime import datetime, time
 """SCHEDULE MEETING"""
 @login_required
 @user_role_required('Admin')
@@ -436,7 +437,9 @@ def get_meetings_sorted(user):
     for meeting in Meeting.objects.filter(student=user):
         for day in meeting.days:
             if meeting.time_of_day in meetings_sorted:
-                meetings_sorted[meeting.time_of_day][day].append(meeting)
+                #meetings_sorted[meeting.time_of_day][day].append(meeting)
+                meetings_sorted[meeting.time_of_day].get(day, []).append(meeting)
+
     
     return meetings_sorted
 
@@ -553,11 +556,14 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import User, Meeting
 
 def user_list(request, list_type):
     if request.user.user_type == 'student':
         return HttpResponseForbidden("You do not have permission to access this page.")
+
+    filters = {}
     
     if list_type == 'students':
         if request.user.user_type == 'Tutor':
@@ -575,10 +581,19 @@ def user_list(request, list_type):
     
     elif list_type == 'tutors':
         if request.user.user_type == 'Admin':
-            users = User.objects.filter(user_type='Tutor').order_by('username').prefetch_related('tutor_profile')
+            #users = User.objects.filter(user_type='Tutor').order_by('username').prefetch_related('tutor_profile')
+            users = User.objects.filter(user_type='Tutor').order_by('username')
             availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
 
-            # Map availability to each tutor
+            for user in users:
+                user.availability = availability.filter(tutor=user)
+            # Add subject filtering
+            subject_filters = request.GET.getlist('subjects', [])
+            if subject_filters:
+                for subject in subject_filters:
+                    users = users.filter(tutor_profile__subjects__contains=[subject])
+                filters['subjects'] = subject_filters
+
             for user in users:
                 user.availability = availability.filter(tutor=user)
             
@@ -590,6 +605,8 @@ def user_list(request, list_type):
     else:
         users = []
         title = "Invalid List Type"
+
+    subjects = TutorSubjectsForm.SUBJECT_CHOICES
         
     paginator = Paginator(users, 25)  # Show 25 users per page
     page_number = request.GET.get('page')  # Get current page number from request
@@ -597,5 +614,7 @@ def user_list(request, list_type):
 
     return render(request, 'partials/lists.html', {
         'users': users,
-        'title': title
+        'title': title,
+        'filters': filters,
+        'subjects': subjects,
     })
