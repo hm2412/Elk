@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
 from tutorials.models import User
+from tutorials.meetings import Meeting
+from datetime import timedelta, datetime
+
 
 import pytz
 from faker import Faker
@@ -24,6 +27,7 @@ class Command(BaseCommand):
     """Build automation command to seed the database."""
 
     USER_COUNT = 600
+    MEETING_COUNT: 80
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -102,5 +106,25 @@ class Command(BaseCommand):
             user_type=group
         )
         
-         
         user.groups.add(group_instance)
+
+    """ Seeding Meetings """
+    def generate_meeting_fixture(self):
+        try:
+            tutor = User.objects.get(username='@janedoe')
+            student = User.objects.get(username='@charlie')
+
+            Meeting.objects.create(
+                tutor=tutor,
+                student=student,
+                date=datetime.now().date(),
+                days=["mon", "wed"],
+                start_time="10:00:00",
+                end_time="11:00:00",
+                time_of_day="morning",
+                topic="Python",
+                status="scheduled",
+                notes="Please remember this meeting."
+            )
+        except Exception as e:
+            print(f"Error while creating meeting fixture: {e}")
