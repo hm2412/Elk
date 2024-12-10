@@ -15,9 +15,6 @@
       <li class="list-group-item list-group-item-action">
         <a href="{% url 'password' %}" class="text-decoration-none">Change Password</a>
       </li>
-      <li class="list-group-item list-group-item-action">
-        <a href="{% url 'submit_review' %}" class="text-decoration-none">Submit Review</a>
-      </li>
   
    <!-- these are menu items specific to thr student-->
       {% if user.user_type == 'Student' %}
@@ -32,6 +29,9 @@
       </li>
       <li class="list-group-item list-group-item-action">
         <a href="{% url 'view_lesson_request' %}" class="text-decoration-none">View Lesson Requests</a>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <a href="{% url 'submit_review' %}" class="text-decoration-none">Submit Review</a>
       </li>
       {% endif %}
 
