@@ -15,7 +15,8 @@ class SignUpFormTestCase(TestCase):
             'username': '@janedoe',
             'email': 'janedoe@example.org',
             'new_password': 'Password123',
-            'password_confirmation': 'Password123'
+            'password_confirmation': 'Password123',
+            'user_type': 'Tutor'
         }
 
     def test_valid_sign_up_form(self):
@@ -77,3 +78,4 @@ class SignUpFormTestCase(TestCase):
         self.assertEqual(user.email, 'janedoe@example.org')
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)
+        self.assertEqual(user.user_type, 'Tutor')

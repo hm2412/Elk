@@ -25,12 +25,13 @@
       <tbody>
         <tr> 
           <td>Morning</td>
-          {% for days, meetings in meetings_sorted.morning.items %}
+          {% for day, meetings in meetings_sorted.morning.items %}
             <td>
               {% if meetings %}
-                {% for meeting in meeting %}
-                  <strong>{{ meeting.topic }}</strong><br>
+                {% for meeting in meetings %}
                   {{ meeting.topic }}<br>
+                  {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>
@@ -38,12 +39,13 @@
         </tr>
         <tr>
           <td>Afternoon</td>
-          {% for days, meetings in meetings_sorted.afternoon.items %}
+          {% for day, meetings in meetings_sorted.afternoon.items %}
             <td>
               {% if meetings %}
                 {% for meeting in meetings %}
-                  <strong>{{ meeting.topic}}</strong><br>
+                  {{ meeting.topic}}><br>
                   {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>
@@ -51,12 +53,13 @@
         </tr>
         <tr>
           <td>Evening</td>
-          {% for days, meetings in meetings_sorted.evening.items %}
+          {% for day, meetings in meetings_sorted.evening.items %}
             <td>
               {% if meetings %}
                 {% for meeting in meetings %}
-                  <strong>{{ meeting.topic }}</strong><br>
+                  {{ meeting.topic }}<br>
                   {{ meeting.time_range }}<br>
+                  with {{ meeting.tutor.username }}
                 {% endfor %}
               {% endif %}
             </td>

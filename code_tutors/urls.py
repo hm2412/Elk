@@ -29,6 +29,7 @@ urlpatterns = [
     path('password/', views.PasswordView.as_view(), name='password'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
+    path('schedule-session/<int:student_id>/', views.schedule_session, name='schedule_session'),
     path('list/<str:list_type>/', views.user_list, name='user_list'),
     path('submit_review/', views.submit_review, name='submit_review'),
 

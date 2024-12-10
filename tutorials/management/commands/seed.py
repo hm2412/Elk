@@ -4,7 +4,9 @@ from tutorials.models import User
 
 import pytz
 from faker import Faker
-from random import randint, random, choice
+
+import random
+
 
 user_fixtures = [
     {'username': '@johndoe', 'email': 'john.doe@example.org', 'first_name': 'John', 'last_name': 'Doe', 'group': 'Admin'},
@@ -36,8 +38,10 @@ class Command(BaseCommand):
         self.generate_user_fixtures()
         self.generate_random_users()
 
+ # dont need to insert random allocation logic for user_fixtures, as they have default roles
     def generate_user_fixtures(self):
         for data in user_fixtures:
+
             self.try_create_user(data)
 
     def generate_random_users(self):
@@ -54,11 +58,20 @@ class Command(BaseCommand):
         last_name = self.faker.last_name()
         email = create_email(first_name, last_name)
         username = create_username(first_name, last_name)
+        
+         #  randomly assign a user types from the list based on the probabilities of each
+        user_types = ['Student', 'Tutor', 'Admin']
+        probabilities = [0.80, 0.15, 0.05] 
+        #return a single user_type andget the first element in the list to be stored in user_type 
+        user_type = random.choices(user_types, weights=probabilities, k=1)[0] 
+
         self.try_create_user({
             'username': username, 
             'email': email, 
             'first_name': first_name, 
             'last_name': last_name,
+            'group': user_type 
+
         })
 
        
@@ -76,7 +89,10 @@ class Command(BaseCommand):
             print(f'Failed to create user: {data} with error message: {e}')
 
     def create_user(self, data):
+
         group = data.get('group', 'Student')
+        group_instance, created = Group.objects.get_or_create(name=group)
+       
         user = User.objects.create_user(
             username=data['username'],
             email=data['email'],
@@ -86,3 +102,5 @@ class Command(BaseCommand):
             user_type=group
         )
         
+         
+        user.groups.add(group_instance)
