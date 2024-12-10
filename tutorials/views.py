@@ -635,6 +635,8 @@ def user_list(request, list_type):
 
 
 from django.contrib import messages  # Import the messages framework
+from django.shortcuts import render, redirect
+from tutorials.forms import ReviewForm
 
 def submit_review(request):
     if request.method == 'POST':
@@ -651,5 +653,6 @@ def submit_review(request):
     else:
         form = ReviewForm()
 
-    return render(request, 'review.html', {'form': form})
+    return render(request, 'review.html', {'review': form})  # Use 'review' in the context
+
 
