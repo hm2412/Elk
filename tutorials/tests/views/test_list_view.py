@@ -43,11 +43,13 @@ class UserListViewAccessTests(TestCase):
         self.client.login(username='tutor@domain.com', password='password')
         response = self.client.get(reverse('user_list', args=['students']))
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partials/lists.html")
     
     def test_admin_can_access_students_list(self):
         self.client.login(username='admin@domain.com', password='password')
         response = self.client.get(reverse('user_list', args=['students']))
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partials/lists.html")
     
     def test_student_can_access_tutors_list_with_permission_message(self):
         self.client.login(username='student@domain.com', password='password')
@@ -58,9 +60,11 @@ class UserListViewAccessTests(TestCase):
         self.client.login(username='tutor@domain.com', password='password')
         response = self.client.get(reverse('user_list', args=['tutors']))
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partials/lists.html")
         self.assertContains(response, "Access Denied")
     
     def test_admin_can_access_tutors_list(self):
         self.client.login(username='admin@domain.com', password='password')
         response = self.client.get(reverse('user_list', args=['tutors']))
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partials/lists.html")
