@@ -565,7 +565,7 @@ from django.db.models import Q
 from .models import User, Meeting
 
 def user_list(request, list_type):
-    if request.user.user_type == 'student':
+    if request.user.user_type == 'Student':
         return HttpResponseForbidden("You do not have permission to access this page.")
 
     filters = {}
