@@ -1,5 +1,6 @@
 """Tests of the sign up view."""
 from django.contrib.auth.hashers import check_password
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from tutorials.forms import SignUpForm
@@ -20,8 +21,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
             'email': 'janedoe@example.org',
             'new_password': 'Password123',
             'password_confirmation': 'Password123',
-            'user_type': 'Student' 
-
+            'user_type': 'Tutor'
         }
         self.user = User.objects.get(username='@johndoe')
 
@@ -58,22 +58,16 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def test_succesful_sign_up(self):
         before_count = User.objects.count()
-
         response = self.client.post(self.url, self.form_input, follow=True)
-
-        self.assertRedirects(response, reverse('dashboard'), status_code=302, target_status_code=200)
-
-        self.assertTemplateUsed(response, 'dashboard.html')
-
         after_count = User.objects.count()
-        self.assertEqual(after_count, before_count + 1)
-
-        
+        self.assertEqual(after_count, before_count+1)
+        response_url = reverse('dashboard')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'tutor/dashboard_tutor.html')
         user = User.objects.get(username='@janedoe')
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
         self.assertEqual(user.email, 'janedoe@example.org')
-
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)
         self.assertTrue(self._is_logged_in())
@@ -85,5 +79,6 @@ class SignUpViewTestCase(TestCase, LogInTester):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
         redirect_url = reverse('dashboard')
+        print(reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN))  # Debugging
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
