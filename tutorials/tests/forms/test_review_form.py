@@ -19,7 +19,7 @@ class ReviewFormTestCase(TestCase):
         """Test the form with valid data"""
         # Data for a valid form submission
         data = {
-            'rating': 4.5,
+            'rating': 4,
             'content': 'This is a valid review content.'
         }
         
