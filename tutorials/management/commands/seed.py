@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
-from tutorials.models import User
-from tutorials.meetings import Meeting
+from tutorials.models import User, Meeting
 from datetime import timedelta, datetime
 
 
