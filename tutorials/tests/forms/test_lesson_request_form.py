@@ -32,8 +32,6 @@ class LessonRequestFormTest(TestCase):
         self.assertIn('knowledge_area', form.fields)
         self.assertTrue(isinstance(form.fields['knowledge_area'].widget, forms.Select))
         self.assertIn('term', form.fields)
-        self.assertIn('time_of_day', form.fields)
-        self.assertTrue(isinstance(form.fields['time_of_day'].widget, forms.Select))
         self.assertIn('duration', form.fields)
         self.assertIn('start_time', form.fields)
         self.assertTrue(isinstance(form.fields['start_time'].widget, forms.TimeInput))
@@ -93,13 +91,6 @@ class LessonRequestFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('term', form.errors)
         self.assertEqual(form.errors['term'], ['This field is required.'])
-
-    def test_empty_time_of_day(self):
-        self.form_input['time_of_day'] = ''  
-        form = LessonRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
-        self.assertIn('time_of_day', form.errors)
-        self.assertEqual(form.errors['time_of_day'], ['This field is required.'])
 
     def test_empty_duration(self):
         self.form_input['duration'] = '' 
