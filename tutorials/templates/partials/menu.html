@@ -41,7 +41,7 @@
         <a href="{% url 'dashboard' %}" class="text-decoration-none">Tutor Dashboard</a>
       </li>
       <li class="list-group-item list-group-item-action">
-        <a href="{% url 'user_list' 'students' %}">View Students</a>
+        <a href="{% url 'user_list' 'students' %}" class="text-decoration-none" >View Students</a>
       </li>
       {% endif %}
 
@@ -54,10 +54,10 @@
         <a href="{% url 'dashboard' %}" class="text-decoration-none">Admin Dashboard</a>
       </li>
       <li class="list-group-item list-group-item-action">
-        <a href="{% url 'user_list' 'students' %}">View Students</a>
+        <a href="{% url 'user_list' 'students' %}" class="text-decoration-none">View Students</a>
       </li>
       <li class="list-group-item list-group-item-action">
-        <a href="{% url 'user_list' 'tutors' %}">View Tutors</a>
+        <a href="{% url 'user_list' 'tutors' %}"class="text-decoration-none">View Tutors</a>
       </li>
       {% endif %}
 

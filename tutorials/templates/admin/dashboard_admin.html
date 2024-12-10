@@ -1,11 +1,78 @@
 {% extends 'base_content.html' %}
+{% load static %}
 {% block content %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'admin_dashboard.css' %}">
+</head>
+
 <div class="container">
     <div class="row">
         <div class="col-12">
             <h1>Welcome to your dashboard {{ user.username }}</h1>
             <div class="admin-dashboard">
                 <h2>You are an admin</h2>
+
+                <div class="container text-center">
+                    <div class="row align-items-start mt-5">
+                        <div class="col-6 requests align-items-center justify-content-center">
+                            <div class="container">
+                                <div class="row p-2">
+                                    <h2 class="p-4 requests-title">Outstanding requests</h2>
+                                    {% for request in requests %}
+                                        <div class="col-12 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center justify-content-center ">
+                                                        <!-- Gravatar -->
+                                                        <img src="https://www.gravatar.com/avatar/{{ request.student.gravatar_hash }}?s=50&d=identicon" alt="Student Gravatar" class="gravatar rounded-circle">
+                                        
+                                                        <!-- Request details -->
+                                                        <div>
+                                                            <p class="user-details"> 
+                                                                Student: <a href="{% url 'schedule_session' request.student.id %}"> {{ request.student.username }} </a>
+                                                            </p>
+                                                            <h5 class="card-title">{{ request.title }}</h5>
+                                                            <p>
+                                                                Subject: {{ request.get_knowledge_area_display }}<br>
+                                                                Term: {{ request.get_term_display }}<br>
+                                                                Duration: {{ request.duration }} minutes<br>
+                                                                Lesson type: {{ request.get_venue_preference_display }}<br>
+                                                                Days: {{ request.formatted_days }}<br>
+                                                                Time: {{ request.start_time }}<br>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6 align-items-start justify-content-center">
+                            <div class="container text-center">
+                                <div class="row justify-content-evenly">
+                                    <div class="col-5 square align-items-center justify-content-center">
+                                        <div class="enrolled-students d-flex align-items-center mt-3 ms-2">
+                                            <img src="{% static 'images/student.svg' %}" alt="Icon" class="icon">
+                                            <span class="stats-title">Enrolled students:</span>
+                                        </div>
+                                        <p class="mt-3 stats-number">{{ total_students }}</p>
+                                    </div>
+
+                                    <div class="col-5 square align-items-center justify-content-center">
+                                        <div class="enrolled-students d-flex align-items-center mt-3 ms-2">
+                                            <img src="{% static 'images/tutor.svg' %}" alt="Icon" class="icon">
+                                            <span class="stats-title">Total tutors:</span>
+                                        </div>
+                                        <p class="mt-3 stats-number">{{ total_tutors }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
