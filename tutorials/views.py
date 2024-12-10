@@ -1,26 +1,24 @@
+from datetime import datetime, time, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
+from .models import User, Lesson, Meeting, TutorProfile, TutorAvailability
+from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm, LessonRequestForm
+from .helpers import login_prohibited, admin_dashboard_context, user_role_required
 from django import forms
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-from tutorials.forms import LogInForm, PasswordForm, UserForm, SignUpForm
-from tutorials.helpers import login_prohibited
 import json
-import datetime
-from .models import TutorProfile, TutorAvailability, Meeting, Lesson
 from .calendar_utils import TutorCalendar
-from .forms import LessonRequestForm
-from django.shortcuts import get_object_or_404
 
 
 @login_required
@@ -28,6 +26,7 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
+    user_type = current_user.user_type
     meetings = get_meetings_sorted(current_user)
 
     context = {
@@ -36,14 +35,12 @@ def dashboard(request):
         'meetings_sorted': meetings,
     }
 
-    print("current user is: " + current_user.user_type)
-
-    user_type = current_user.user_type
+    print("current user is: " + user_type)
 
     if user_type == 'Tutor':
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
 
-        current_date = datetime.datetime.now()
+        current_date = datetime.now()
         month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
         year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
 
@@ -106,6 +103,7 @@ def dashboard(request):
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
     elif user_type == 'Admin':
+        context.update(admin_dashboard_context())
         template = 'admin/dashboard_admin.html'
     else:
         template = 'student/dashboard_student.html'
@@ -118,6 +116,43 @@ def dashboard(request):
 def home(request):
     return render(request, 'home.html')
 
+from datetime import datetime
+
+"""SCHEDULE MEETING"""
+@login_required
+@user_role_required('Admin')
+def schedule_session(request, student_id):
+    """Display a form to schedule tutoring sessions"""
+    student = get_object_or_404(User, id=student_id, user_type='Student')
+
+    lesson_request = Lesson.objects.filter(student=student).first()
+    if lesson_request:
+        lesson_start_time = lesson_request.start_time
+        duration = lesson_request.duration
+    else:
+        lesson_start_time = time(10, 0)
+        duration = 30
+   
+    start_converted = datetime.combine(datetime.today(), lesson_start_time)
+    lesson_end_time = (start_converted + timedelta(minutes=duration)).time()
+
+    if request.method == 'POST':
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            meeting = form.save(commit=False)
+            meeting.student = student
+            meeting.save()
+
+            if lesson_request:
+                lesson_request.delete()
+
+            return redirect('dashboard')  # Redirect to the admin dashboard after successful creation
+    else:
+        form = MeetingForm(initial={'student': student, 
+                                    'start_time': lesson_start_time, 
+                                    'end_time': lesson_end_time,})
+
+    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
 
 @login_required
 def tutor_availability(request):
@@ -401,9 +436,15 @@ def get_meetings_sorted(user):
     }
 
     for meeting in Meeting.objects.filter(student=user):
-        for day in meeting.days:
-            if meeting.time_of_day in meetings_sorted:
-                meetings_sorted[meeting.time_of_day][day].append(meeting)
+        time_of_day = meeting.time_of_day
+        day = meeting.day
+        if time_of_day not in meetings_sorted:
+            continue
+
+        if day not in meetings_sorted[time_of_day]:
+            continue
+
+        meetings_sorted[time_of_day][day].append(meeting)
     
     return meetings_sorted
 
@@ -519,11 +560,15 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
     
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import User, Meeting
 
 def user_list(request, list_type):
-    if request.user.user_type == 'student':
+    if request.user.user_type == 'Student':
         return HttpResponseForbidden("You do not have permission to access this page.")
+
+    filters = {}
     
     if list_type == 'students':
         if request.user.user_type == 'Tutor':
@@ -541,7 +586,24 @@ def user_list(request, list_type):
     
     elif list_type == 'tutors':
         if request.user.user_type == 'Admin':
+            
             users = User.objects.filter(user_type='Tutor').order_by('username')
+    
+            # Add subject filtering
+            subject_filters = request.GET.getlist('subjects', [])
+            if subject_filters:
+                # Filter tutors by subjects manually
+                users = [
+                    user for user in users 
+                    if hasattr(user, 'tutor_profile') and any(subject in subject_filters for subject in user.tutor_profile.subjects)
+                ]
+                filters['subjects'] = subject_filters
+
+            availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
+
+            for user in users:
+                user.availability = availability.filter(tutor=user)
+            
             title = "Tutor List"
         else:
             users = []
@@ -551,7 +613,15 @@ def user_list(request, list_type):
         users = []
         title = "Invalid List Type"
 
+    subjects = TutorSubjectsForm.SUBJECT_CHOICES
+        
+    paginator = Paginator(users, 25)  # Show 25 users per page
+    page_number = request.GET.get('page')  # Get current page number from request
+    users = paginator.get_page(page_number)  # Get the page object
+
     return render(request, 'partials/lists.html', {
         'users': users,
-        'title': title
+        'title': title,
+        'filters': filters,
+        'subjects': subjects,
     })
