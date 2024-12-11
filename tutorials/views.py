@@ -1,24 +1,59 @@
+# standard imports
 from datetime import datetime, time, timedelta
+import json
+
+# django imports
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.core.paginator import Paginator
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.http import require_http_methods
-from django.urls import reverse
-from .models import User, Lesson, Meeting, TutorProfile, TutorAvailability
-from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm, LessonRequestForm
-from .helpers import login_prohibited, admin_dashboard_context, tutor_dashboard_context, user_role_required, get_meetings_sorted
-from django import forms
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
-from django.http import JsonResponse
-import json
+from django.views.generic.edit import FormView, UpdateView
 
+from .models import (
+    User, 
+    Lesson, 
+    Meeting, 
+    TutorProfile, 
+    TutorAvailability
+)
+from .forms import (
+    LogInForm, 
+    PasswordForm, 
+    UserForm, 
+    SignUpForm, 
+    MeetingForm, 
+    LessonRequestForm,
+    TutorAvailabilityForm,
+    TutorHourlyRateForm,
+    TutorSubjectsForm
+)
+from .helpers import (
+    login_prohibited, 
+    admin_dashboard_context, 
+    tutor_dashboard_context, 
+    user_role_required, 
+    get_meetings_sorted,
+    get_lesson_times,
+    delete_lesson_request
+)
+
+from .helpers import (
+    handle_students_list,
+    handle_tutors_list,
+    handle_invalid_or_forbidden_list,
+    paginate_users,
+    render_user_list
+)
 
 @login_required
 def dashboard(request):
@@ -320,17 +355,12 @@ def create_lesson_request(request):
 
     return render(request, 'lesson_request.html', {'form': form})
 
-from django.core.paginator import Paginator
-
 def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
     paginator = Paginator(lesson_request, 10)  # 10 per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
-
-
-from .forms import TutorAvailabilityForm
 
 class TutorAvailabilityView(LoginRequiredMixin, TemplateView):
     template_name = 'tutor/availability.html'
@@ -362,8 +392,6 @@ class DeleteAvailabilitySlotView(LoginRequiredMixin, View):
         messages.success(request, 'Availability slot deleted.')
         return redirect('tutor_availability')
 
-from .forms import TutorHourlyRateForm
-
 class TutorHourlyRateView(LoginRequiredMixin, FormView):
     template_name = 'tutor/hourly_rate.html'
     form_class = TutorHourlyRateForm
@@ -379,8 +407,6 @@ class TutorHourlyRateView(LoginRequiredMixin, FormView):
         profile.save()
         messages.success(self.request, 'Hourly rate updated successfully.')
         return super().form_valid(form)
-
-from .forms import TutorSubjectsForm
 
 class TutorSubjectsView(LoginRequiredMixin, FormView):
     template_name = 'tutor/subjects.html'
@@ -415,17 +441,6 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
         profile.save()
         messages.success(self.request, f'Added custom subject: {custom_subject}')
         return super().form_valid(form)
-    
-from django.shortcuts import render
-from django.http import HttpResponseForbidden
-from .models import User
-from tutorials.helpers import (
-    handle_students_list,
-    handle_tutors_list,
-    handle_invalid_or_forbidden_list,
-    paginate_users,
-    render_user_list
-)
 
 def user_list(request, list_type):
     if request.user.user_type == 'Student':
@@ -442,9 +457,6 @@ def user_list(request, list_type):
 
     users = paginate_users(request, users)
     return render_user_list(request, users, title, filters)
-
-from datetime import datetime
-from .helpers import get_lesson_times, delete_lesson_request
 
 """Admin dashboard view functions"""
 @login_required
