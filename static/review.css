@@ -1,0 +1,53 @@
+/* Review Page Specific Styles */
+.review-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9; /* Optional: Background color for review section */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for better visual appeal */
+}
+
+/* Form Styles */
+.review-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.review-container form button {
+    margin-top: 10px;
+}
+
+/* Styling input, select, textarea elements within the review form */
+.review-container form input,
+.review-container form select,
+.review-container form textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Submit button styling */
+.review-container form button.btn-primary {
+    background-color: #9c1111;  /* Red color */
+    border: none;
+    color: white;
+    font-size: 16px;
+}
+
+.review-container form button.btn-primary:hover {
+    background-color: #7a0d0d;  /* Darker red on hover */
+    cursor: pointer;
+}
+
+/* Optional: Add padding around the content */
+.review-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Optional: Add spacing between the form elements */
+.review-container form {
+    gap: 15px;
+}
