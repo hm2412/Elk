@@ -41,7 +41,7 @@ def admin_dashboard_context():
     }
 
 def tutor_dashboard_context(request, current_user):
-    tutor_profile = TutorProfile.objects.get_or_create(tutor=current_user)
+    tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
     current_date = datetime.now()
     month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
     year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year

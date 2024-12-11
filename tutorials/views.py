@@ -35,7 +35,7 @@ def dashboard(request):
     }
 
     if user_type == 'Tutor':
-        context.update(tutor_dashboard_context())
+        context.update(tutor_dashboard_context(request, current_user))
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
@@ -320,8 +320,13 @@ def create_lesson_request(request):
 
     return render(request, 'lesson_request.html', {'form': form})
 
+from django.core.paginator import Paginator
+
 def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
+    paginator = Paginator(lesson_request, 10)  # 10 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
 
 
@@ -413,7 +418,7 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
     
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
-from .models import User, Meeting
+from .models import User
 from tutorials.helpers import (
     handle_students_list,
     handle_tutors_list,
