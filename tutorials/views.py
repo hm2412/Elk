@@ -55,6 +55,10 @@ from .helpers import (
     render_user_list
 )
 
+from .calendar_utils import (
+    TutorCalendar
+)
+
 # Dashboard views
 @login_required
 def dashboard(request):
@@ -74,7 +78,7 @@ def dashboard(request):
         context.update(tutor_dashboard_context(request, current_user))
         tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
 
-        current_date = datetime.datetime.now()
+        current_date = datetime.now()
         month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
         year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
 
