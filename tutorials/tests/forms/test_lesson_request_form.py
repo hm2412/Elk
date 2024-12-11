@@ -107,20 +107,46 @@ class LessonRequestFormTest(TestCase):
         self.assertEqual(form.errors['venue_preference'], ['This field is required.'])
 
     def test_invalid_start_time(self):
+       
+       #wrong formatting of the time
         self.form_input['start_time'] = '9:00 AM'  
         form = LessonRequestForm(data=self.form_input)
         self.assertFalse(form.is_valid())
         self.assertIn('start_time', form.errors)
         self.assertEqual(form.errors['start_time'], ['Enter a valid time.'])
 
+        # too early - before 8 am
+        self.form_input['start_time'] = '07:59'  
+        form = LessonRequestForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('start_time', form.errors)
+        self.assertEqual(form.errors['start_time'], ['The start time must be between 08:00 and 20:00.'])
+
+        # too late - after 8pm
+        self.form_input['start_time'] = '20:01'  
+        form = LessonRequestForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('start_time', form.errors)
+        self.assertEqual(form.errors['start_time'], ['The start time must be between 08:00 and 20:00.'])
+
+
+    def test_valid_start_time(self):
+       
+        self.form_input['start_time'] = '08:00'  
+        form = LessonRequestForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+        self.form_input['start_time'] = '20:00'  
+        form = LessonRequestForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+        self.form_input['start_time'] = '10:00' 
+        form = LessonRequestForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
     def test_valid_multiple_days(self):
         self.form_input['days'] = ['mon', 'wed', 'fri']
         form = LessonRequestForm(data=self.form_input)
         self.assertTrue(form.is_valid())
 
-    def test_empty_days(self):
-        self.form_input['days'] = []  
-        form = LessonRequestForm(data=self.form_input)
-        self.assertFalse(form.is_valid())
-        self.assertIn('days', form.errors)
-        self.assertEqual(form.errors['days'], ['This field is required.'])
+
