@@ -126,7 +126,28 @@ class UserModelTestCase(TestCase):
     def test_full_name_must_be_correct(self):
         full_name = self.user.full_name()
         self.assertEqual(full_name, "John Doe")
+    
+    """ Tests for attribute user_type """
 
+    def test_user_type_tutor_is_valid(self):
+        self.user.user_type = 'Tutor'
+        self._assert_user_is_valid()
+    
+    def test_user_type_student_is_valid(self):
+        self.user.user_type = 'Student'
+        self._assert_user_is_valid()
+    
+    def test_user_type_admin_is_valid(self):
+        self.user.user_type = 'Admin'
+        self._assert_user_is_valid()
+
+    def test_user_type_is_invalid(self):
+        self.user.user_type = 'Invalid'
+        self._assert_user_is_invalid()
+    
+    def test_user_type_default(self):
+        user = User.objects.create(username='@user', first_name='New', last_name='User', email='user@example.com')
+        self.assertEqual(user.user_type, 'Student')
 
     def test_default_gravatar(self):
         actual_gravatar_url = self.user.gravatar()

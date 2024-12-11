@@ -97,7 +97,6 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
-
     class Meta:
         """Form options."""
 
