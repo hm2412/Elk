@@ -9,7 +9,8 @@ The members of the team are:
 - Jiaxuan Yu
 
 ## Project structure
-The project is called `Code Tutors`.  It currently consists of `home, sign up, log in, student dashboard, tutor dashboard, admin dashboard`.
+The project is called `Code Tutors`.  It currently consists of `tutorials`.
+It includes a `home page, sign up page, log in page, student dashboard, tutor dashboard and admin dashboard`.
 
 ## Deployed version of the application
 The deployed version of the application can be found [*here*](https://emilieyu.pythonanywhere.com/).

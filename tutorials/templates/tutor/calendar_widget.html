@@ -1,84 +1,87 @@
 {# templates/tutor/calendar_widget.html #}
 <div class="calendar">
-    <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <a href="?month={{ calendar_data.prev_month.month }}&year={{ calendar_data.prev_month.year }}" class="btn btn-outline-primary">&lt; Previous</a>
-            <a href="?month={{ calendar_data.today.month }}&year={{ calendar_data.today.year }}" class="btn btn-primary ms-2">Today</a>
-        </div>
-        <h3 class="m-0">{{ calendar_data.month_name }} {{ calendar_data.year }}</h3>
-        <a href="?month={{ calendar_data.next_month.month }}&year={{ calendar_data.next_month.year }}" class="btn btn-outline-primary">Next &gt;</a>
-    </div>
-
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-                <th>Saturday</th>
-                <th>Sunday</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for week in calendar_data.weeks %}
-            <tr>
-                {% for day in week %}
-                    <td class="{% if day.is_today %}bg-light{% endif %}" style="min-height: 100px; vertical-align: top;">
-                        {% if day.day %}
-                            <div class="day-number font-weight-bold">{{ day.day }}</div>
-                            
-                            {# Display availability slots #}
-                            {% if day.slots %}
-                                <div class="availability-slots small">
-                                    {% for slot in day.slots %}
-                                        <div class="slot bg-success text-white p-1 mb-1 rounded">
-                                            {{ slot.start }} - {{ slot.end }}
+    <div class="calendar-wrapper overflow-auto">
+        <div class="calendar min-width-lg">
+            <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <a href="?month={{ calendar_data.prev_month.month }}&year={{ calendar_data.prev_month.year }}" class="btn btn-outline-primary">&lt; Previous</a>
+                    <a href="?month={{ calendar_data.today.month }}&year={{ calendar_data.today.year }}" class="btn btn-primary ms-2">Today</a>
+                </div>
+                <h3 class="m-0">{{ calendar_data.month_name }} {{ calendar_data.year }}</h3>
+                <a href="?month={{ calendar_data.next_month.month }}&year={{ calendar_data.next_month.year }}" class="btn btn-outline-primary">Next &gt;</a>
+            </div>
+        
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                        <th>Sunday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in calendar_data.weeks %}
+                    <tr>
+                        {% for day in week %}
+                            <td class="{% if day.is_today %}bg-light{% endif %}" 
+                                {% if day.date %}data-date="{{ day.date|date:'F j, Y' }}"{% endif %} style="min-height: 100px; vertical-align: top;">
+                                {% if day.day %}
+                                    <div class="day-number font-weight-bold">{{ day.day }}</div>
+                                    
+                                    {# Display availability slots #}
+                                    {% if day.slots %}
+                                        <div class="availability-slots small">
+                                            {% for slot in day.slots %}
+                                                <div class="slot bg-success text-white p-1 mb-1 rounded">
+                                                    {{ slot.start }} - {{ slot.end }}
+                                                </div>
+                                            {% endfor %}
                                         </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {# Display meetings #}
-                            {% if day.meetings %}
-                                <div class="meetings small">
-                                    {% for meeting in day.meetings %}
-                                        <div class="meeting bg-primary text-white p-1 mb-1 rounded">
-                                            <div>{{ meeting.start }} - {{ meeting.end }}</div>
-                                            <div>{{ meeting.topic }}</div>
-                                            <div class="small">{{ meeting.student_name }}</div>
+                                    {% endif %}
+        
+                                    {# Display meetings #}
+                                    {% if day.meetings %}
+                                        <div class="meetings small">
+                                            {% for meeting in day.meetings %}
+                                                <div class="meeting bg-primary text-white p-1 mb-1 rounded">
+                                                    <a href="#lessonDetailsModal" data-bs-toggle="modal" 
+                                                       data-bs-target="#lessonDetailsModal"
+                                                       data-start="{{ meeting.start }}"
+                                                       data-end="{{ meeting.end }}"
+                                                       data-topic="{{ meeting.topic }}"
+                                                       data-student="{{ meeting.student_name }}"
+                                                       data-notes="{{ meeting.notes|default:'' }}"
+                                                       data-lesson-id="{{ meeting.id }}"
+                                                       class="text-white text-decoration-none"
+                                                       onclick="document.getElementById('hiddenLessonStartTime').value = '{{ meeting.start }}';
+                                                                document.getElementById('hiddenLessonEndTime').value = '{{ meeting.end }}';
+                                                                document.getElementById('hiddenLessonTopic').value = '{{ meeting.topic }}';
+                                                                document.getElementById('hiddenLessonStudent').value = '{{ meeting.student_name }}';
+                                                                document.getElementById('lessonStartTime').setAttribute('data-start', '{{ meeting.start }}');
+                                                                document.getElementById('lessonEndTime').setAttribute('data-end', '{{ meeting.end }}');
+                                                                document.getElementById('lessonTopic').setAttribute('data-topic', '{{ meeting.topic }}');
+                                                                document.getElementById('lessonStudent').setAttribute('data-student', '{{ meeting.student_name }}');
+                                                                document.getElementById('lessonNotes').value = '{{ meeting.notes|escapejs }}';
+                                                                document.getElementById('hiddenLessonId').value = '{{ meeting.id }}';">
+                                                        <div>{{ meeting.start }} - {{ meeting.end }}</div>
+                                                        <div>{{ meeting.topic }}</div>
+                                                        <div class="small">{{ meeting.student_name }}</div>
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
                                         </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-        <!-- <tbody>
-            {% for week in calendar_data.weeks %}
-                <tr>
-                    {% for day in week %}
-                        <td class="{% if day.is_today %}bg-light{% endif %}">
-                            {% if day.day %}
-                                <div class="day-number">{{ day.day }}</div>
-                                {% if day.slots %}
-                                    <div class="availability-slots small">
-                                        {% for slot in day.slots %}
-                                            <div class="slot bg-success text-white p-1 mb-1 rounded">
-                                                {{ slot.start|time:"H:i" }} - {{ slot.end|time:"H:i" }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        </td>
+                            </td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody> -->
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

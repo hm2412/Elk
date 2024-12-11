@@ -55,7 +55,20 @@ from .helpers import (
     render_user_list
 )
 
+from .calendar_utils import (
+    TutorCalendar
+)
+
 # Dashboard views
+from django.urls import reverse_lazy
+from django.http import JsonResponse
+import json
+from .calendar_utils import TutorCalendar
+from .forms import LessonRequestForm
+from .forms import Review
+from .forms import ReviewForm
+
+
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
@@ -72,6 +85,65 @@ def dashboard(request):
 
     if user_type == 'Tutor':
         context.update(tutor_dashboard_context(request, current_user))
+        tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
+
+        current_date = datetime.now()
+        month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
+        year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
+
+        meetings = Meeting.objects.filter(
+            tutor=current_user, 
+            date__year=year,
+            date__month=month
+        ).select_related('student')
+        
+        # Add debug prints
+        print("=== Tutor Profile Debug Info ===")
+        print(f"Hourly Rate: {tutor_profile.hourly_rate}")
+        print(f"Subjects: {tutor_profile.subjects}")
+        
+        availability_slots = TutorAvailability.objects.filter(tutor=request.user)
+
+        # More debug prints
+        print("\n=== Availability Slots ===")
+        for slot in availability_slots:
+            print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
+        print("============================")
+        print("\n=== Meetings ===")
+        for meeting in meetings:
+            print(f"Meeting on {meeting.date}: {meeting.start_time}-{meeting.end_time}")
+        print("============================")
+
+        calendar = TutorCalendar(year, month)
+        calendar_data = calendar.get_calendar_data(
+            meetings=meetings,
+            availability_slots=availability_slots
+        )
+
+        # Debug calendar data
+        print("\nCalendar Data:")
+        for week in calendar_data['weeks']:
+            for day in week:
+                if day['meetings']:
+                    print(f"Day {day['day']} has meetings:")
+                    for meeting in day['meetings']:
+                        print(f"- {meeting['start']} - {meeting['end']}: {meeting['topic']}")
+        
+        print("==================")
+
+        subject_choices = {
+            'Computer Programming' : ['Ruby', 'Swift', 'Scala', 'Java', 'Javascript/React', 'Python/Tensorflow', 'C++', 'C#'],
+        }
+
+        context.update({
+            'tutor_profile': tutor_profile,
+            'availability_slots': availability_slots,
+            'hourly_rate': tutor_profile.hourly_rate or '',
+            'subject_choices': subject_choices,
+            'selected_subjects': tutor_profile.subjects,
+            'calendar_data': calendar_data,
+            'meetings': meetings,
+        })
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
@@ -84,8 +156,12 @@ def dashboard(request):
     return render(request, template, context)
 
 
-@login_prohibited
+from django.shortcuts import render
+from .models import Review
+
 def home(request):
+    """Display the application's start/home screen."""
+
     return render(request, 'home.html')
 
 # Sign up/log in handling
@@ -412,6 +488,22 @@ class TutorHourlyRateView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Hourly rate updated successfully.')
         return super().form_valid(form)
 
+class TutorSubjectsForm(forms.Form):
+    SUBJECT_CHOICES = [
+        ('Ruby', 'Ruby'),
+        ('Swift', 'Swift'),
+        ('Scala', 'Scala'),
+        ('Java', 'Java'),
+        ('Javascript/React', 'Javascript/React'),
+        ('Python/Tensorflow', 'Python/Tensorflow'),
+        ('C++', 'C++'),
+        ('C#', 'C#'),
+    ]
+    subjects = forms.MultipleChoiceField(
+        choices=SUBJECT_CHOICES,
+        widget=forms.CheckboxSelectMultiple
+    )
+
 class TutorSubjectsView(LoginRequiredMixin, FormView):
     template_name = 'tutor/subjects.html'
     form_class = TutorSubjectsForm
@@ -491,3 +583,39 @@ def schedule_session(request, student_id):
                                     'end_time': lesson_end_time,})
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
+
+from django.contrib import messages  # Import the messages framework
+from django.shortcuts import render, redirect
+from tutorials.forms import ReviewForm
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.student = request.user  # Ensure the logged-in user is assigned
+            review.save()
+
+            # Add a success message
+            messages.success(request, 'Thank you for your feedback!')
+
+            return redirect('submit_review')  # Redirect to the same page to show the message
+    else:
+        form = ReviewForm()
+
+    return render(request, 'review.html', {
+        'review': form, 
+        'is_review_page': True  # This will ensure 'review.css' is loaded
+    })
+
+@login_required
+def save_lesson_notes(request):
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        notes = request.POST.get('notes')
+        meeting = get_object_or_404(Meeting, id=lesson_id)
+        meeting.notes = notes
+        meeting.save()
+        messages.success(request, 'Notes saved successfully')
+        return redirect('dashboard')
+    return redirect('dashboard')

@@ -20,11 +20,13 @@ class TutorCalendar:
                 meetings_dict[date_key] = []
 
             meetings_dict[date_key].append({
+                'id': meeting.id, 
                 'start': meeting.start_time.strftime('%H:%M'),
                 'end': meeting.end_time.strftime('%H:%M'),
                 'topic': meeting.topic,
                 'student_name': f"{meeting.student.first_name} {meeting.student.last_name}",
                 'status': meeting.status,
+                'notes': meeting.notes or '',
                 'type': 'meeting'
             })
 
@@ -77,4 +79,3 @@ class TutorCalendar:
                 'year': today.year
             }
         }
-    

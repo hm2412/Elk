@@ -31,6 +31,9 @@ urlpatterns = [
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('schedule-session/<int:student_id>/', views.schedule_session, name='schedule_session'),
     path('list/<str:list_type>/', views.user_list, name='user_list'),
+    path('submit_review/', views.submit_review, name='submit_review'),
+
+
     path('dashboard/lesson-request/', views.create_lesson_request, name='lesson_request'),
     path('dashboard/view-lesson-request/', views.view_lesson_request, name='view_lesson_request'),
     # ADMIN paths
@@ -41,5 +44,6 @@ urlpatterns = [
     path('tutor/availability/save', views.tutor_availability, name='tutor_availability'),
     path('tutor/hourly-rate/save', views.tutor_hourly_rate, name='tutor_hourly_rate'),
     path('tutor/subjects/save', views.tutor_subjects, name='tutor_subjects'),
+    path('tutor/save-lesson-notes/', views.save_lesson_notes, name='save_lesson_notes'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
