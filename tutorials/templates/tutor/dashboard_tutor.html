@@ -5,7 +5,7 @@
         <div class="col-12">
             <h1>Welcome to your dashboard {{ user.username }}</h1>
             <div class="tutor-dashboard">
-                <h2>You are a tutor</h2>
+                <!-- <h2>You are a tutor</h2> -->
 
                 <!--Availability Section-->
                 <div class="text-center my-4">
@@ -71,6 +71,11 @@
                 </div>
 
                 <div class="modal-body">
+                    <!-- Instructions -->
+                    <div class="alert alert-info">
+                        <p>Check the box for days you're available to teach. Enter your preferred time slots - these will be saved even when inactive. You can toggle availability without losing your saved times.</p>
+                    </div>
+
                     {% for day in days %}
                     <div class="card mb-3">
                         <div class="card-header bg-light">
