@@ -1,69 +1,53 @@
-/* Reset default margin/padding */
-* {
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
+/* Review Page Specific Styles */
+.review-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9; /* Optional: Background color for review section */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for better visual appeal */
 }
 
-
-
-
-/* Ensure full height for parent elements */
-html, body {
-    height: 100% !important; /* Full viewport height */
-    margin: 0 !important; /* No extra margin */
-    padding: 0 !important; /* No extra padding */
-    display: flex !important; /* Flexbox for centering */
-    justify-content: center !important; /* Horizontally center content */
-    align-items: center !important; /* Vertically center content */
-    font-family: Arial, sans-serif !important; /* Font for text */
-    background-color: #f8f9fa !important; /* Light background */
+/* Form Styles */
+.review-container form {
+    display: flex;
+    flex-direction: column;
 }
 
-/* Centered container styling */
-.centered-container {
-    max-width: 600px !important; /* Restrict maximum width */
-    width: 100% !important; /* Allow full width within max */
-    padding: 20px !important; /* Add padding */
-    background-color: #ffffff !important; /* White background */
-    border-radius: 10px !important; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important; /* Light shadow */
-    display: flex !important;
-    flex-direction: column !important; /* Stack content vertically */
-    align-items: center !important; /* Center child content horizontally */
-    text-align: center !important; /* Center-align text */
+.review-container form button {
+    margin-top: 10px;
 }
 
-/* Success/Error messages styling */
-.messages {
-    margin-bottom: 15px !important; /* Spacing below messages */
-    padding: 10px !important; /* Padding inside message box */
-    list-style-type: none !important; /* Remove bullet points */
-    width: 100% !important; /* Full width for messages */
+/* Styling input, select, textarea elements within the review form */
+.review-container form input,
+.review-container form select,
+.review-container form textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
-/* Styling for success and error messages */
-.messages .success {
-    color: green !important;
-    font-weight: bold !important;
+/* Submit button styling */
+.review-container form button.btn-primary {
+    background-color: #9c1111;  /* Red color */
+    border: none;
+    color: white;
+    font-size: 16px;
 }
 
-.messages .error {
-    color: red !important;
-    font-weight: bold !important;
+.review-container form button.btn-primary:hover {
+    background-color: #7a0d0d;  /* Darker red on hover */
+    cursor: pointer;
 }
 
-/* Button styling */
-.btn-primary {
-    background-color: rgba(156, 17, 17); 
-    border: none !important;
-    padding: 10px 20px !important;
-    color: white !important;
-    cursor: pointer !important;
-    font-size: 16px !important;
-    border-radius: 5px !important;
+/* Optional: Add padding around the content */
+.review-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3 !important;
+/* Optional: Add spacing between the form elements */
+.review-container form {
+    gap: 15px;
 }
