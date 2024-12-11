@@ -2,6 +2,8 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from .models import User, Meeting
+from .models import TutorAvailability
 from .models import User
 from .models import Meeting
 from .models import Review
@@ -97,7 +99,6 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         required=True,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
-
 
     class Meta:
         """Form options."""
@@ -212,3 +213,32 @@ class ReviewForm(forms.ModelForm):
         if commit:
             review.save()  # Now save the review
         return review
+        fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
+class TutorSubjectsForm(forms.Form):
+    SUBJECT_CHOICES = [
+        ('Mathematics', 'Mathematics'),
+        ('Computer Science', 'Computer Science'),
+        ('Physics', 'Physics'),
+        ('Chemistry', 'Chemistry'),
+        ('Biology', 'Biology'),
+        ('English', 'English'),
+        ('Spanish', 'Spanish'),
+        ('French', 'French'),
+        ('German', 'German'),
+        ('Geography', 'Geography'),
+        ('History', 'History'),
+        ('Philosophy', 'Philosophy'),
+        ('Religious Studies', 'Religious Studies'),
+    ]
+    subjects = forms.MultipleChoiceField(
+        choices=SUBJECT_CHOICES,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+class TutorAvailabilityForm(forms.Form):
+    day = forms.ChoiceField(choices=TutorAvailability.DAYS_OF_WEEK)
+    start_time = forms.TimeField()
+    end_time = forms.TimeField()
+
+class TutorHourlyRateForm(forms.Form):
+    hourly_rate = forms.DecimalField(max_digits=6, decimal_places=2, min_value=0)
