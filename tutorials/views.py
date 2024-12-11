@@ -56,6 +56,15 @@ from .helpers import (
 )
 
 # Dashboard views
+from django.urls import reverse_lazy
+from django.http import JsonResponse
+import json
+from .calendar_utils import TutorCalendar
+from .forms import LessonRequestForm
+from .forms import Review
+from .forms import ReviewForm
+
+
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
@@ -84,8 +93,12 @@ def dashboard(request):
     return render(request, template, context)
 
 
-@login_prohibited
+from django.shortcuts import render
+from .models import Review
+
 def home(request):
+    """Display the application's start/home screen."""
+
     return render(request, 'home.html')
 
 # Sign up/log in handling
@@ -491,3 +504,27 @@ def schedule_session(request, student_id):
                                     'end_time': lesson_end_time,})
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
+
+from django.contrib import messages  # Import the messages framework
+from django.shortcuts import render, redirect
+from tutorials.forms import ReviewForm
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.student = request.user  # Ensure the logged-in user is assigned
+            review.save()
+
+            # Add a success message
+            messages.success(request, 'Thank you for your feedback!')
+
+            return redirect('submit_review')  # Redirect to the same page to show the message
+    else:
+        form = ReviewForm()
+
+    return render(request, 'review.html', {
+        'review': form, 
+        'is_review_page': True  # This will ensure 'review.css' is loaded
+    })
