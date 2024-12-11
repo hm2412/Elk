@@ -27,7 +27,8 @@
                     {% for week in calendar_data.weeks %}
                     <tr>
                         {% for day in week %}
-                            <td class="{% if day.is_today %}bg-light{% endif %}" style="min-height: 100px; vertical-align: top;">
+                            <td class="{% if day.is_today %}bg-light{% endif %}" 
+                                {% if day.date %}data-date="{{ day.date|date:'F j, Y' }}"{% endif %} style="min-height: 100px; vertical-align: top;">
                                 {% if day.day %}
                                     <div class="day-number font-weight-bold">{{ day.day }}</div>
                                     
@@ -47,9 +48,29 @@
                                         <div class="meetings small">
                                             {% for meeting in day.meetings %}
                                                 <div class="meeting bg-primary text-white p-1 mb-1 rounded">
-                                                    <div>{{ meeting.start }} - {{ meeting.end }}</div>
-                                                    <div>{{ meeting.topic }}</div>
-                                                    <div class="small">{{ meeting.student_name }}</div>
+                                                    <a href="#lessonDetailsModal" data-bs-toggle="modal" 
+                                                       data-bs-target="#lessonDetailsModal"
+                                                       data-start="{{ meeting.start }}"
+                                                       data-end="{{ meeting.end }}"
+                                                       data-topic="{{ meeting.topic }}"
+                                                       data-student="{{ meeting.student_name }}"
+                                                       data-notes="{{ meeting.notes|default:'' }}"
+                                                       data-lesson-id="{{ meeting.id }}"
+                                                       class="text-white text-decoration-none"
+                                                       onclick="document.getElementById('hiddenLessonStartTime').value = '{{ meeting.start }}';
+                                                                document.getElementById('hiddenLessonEndTime').value = '{{ meeting.end }}';
+                                                                document.getElementById('hiddenLessonTopic').value = '{{ meeting.topic }}';
+                                                                document.getElementById('hiddenLessonStudent').value = '{{ meeting.student_name }}';
+                                                                document.getElementById('lessonStartTime').setAttribute('data-start', '{{ meeting.start }}');
+                                                                document.getElementById('lessonEndTime').setAttribute('data-end', '{{ meeting.end }}');
+                                                                document.getElementById('lessonTopic').setAttribute('data-topic', '{{ meeting.topic }}');
+                                                                document.getElementById('lessonStudent').setAttribute('data-student', '{{ meeting.student_name }}');
+                                                                document.getElementById('lessonNotes').value = '{{ meeting.notes|escapejs }}';
+                                                                document.getElementById('hiddenLessonId').value = '{{ meeting.id }}';">
+                                                        <div>{{ meeting.start }} - {{ meeting.end }}</div>
+                                                        <div>{{ meeting.topic }}</div>
+                                                        <div class="small">{{ meeting.student_name }}</div>
+                                                    </a>
                                                 </div>
                                             {% endfor %}
                                         </div>

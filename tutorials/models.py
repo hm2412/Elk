@@ -110,6 +110,7 @@ class Lesson(models.Model):
     venue_preference = models.CharField(max_length=100, choices=VENUE_PREFERENCES)
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.start_time and self.duration is not None:
@@ -306,4 +307,3 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
-    

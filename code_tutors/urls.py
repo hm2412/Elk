@@ -44,5 +44,6 @@ urlpatterns = [
     path('tutor/availability/save', views.tutor_availability, name='tutor_availability'),
     path('tutor/hourly-rate/save', views.tutor_hourly_rate, name='tutor_hourly_rate'),
     path('tutor/subjects/save', views.tutor_subjects, name='tutor_subjects'),
+    path('tutor/save-lesson-notes/', views.save_lesson_notes, name='save_lesson_notes'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
