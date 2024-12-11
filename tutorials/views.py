@@ -504,3 +504,27 @@ def schedule_session(request, student_id):
                                     'end_time': lesson_end_time,})
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
+
+from django.contrib import messages  # Import the messages framework
+from django.shortcuts import render, redirect
+from tutorials.forms import ReviewForm
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.student = request.user  # Ensure the logged-in user is assigned
+            review.save()
+
+            # Add a success message
+            messages.success(request, 'Thank you for your feedback!')
+
+            return redirect('submit_review')  # Redirect to the same page to show the message
+    else:
+        form = ReviewForm()
+
+    return render(request, 'review.html', {
+        'review': form, 
+        'is_review_page': True  # This will ensure 'review.css' is loaded
+    })
