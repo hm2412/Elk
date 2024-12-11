@@ -19,6 +19,18 @@ class ReviewTestCase(TestCase):
         rating = 4
         self.review = Review(content=content, review_text=review_text, rating=rating, student=self.user)
 
+        self.valid_review_data = {
+            "content": "This is a valid content.",
+            "review_text": "This is a valid review text.",
+            "rating": 4,
+            "student": self.user,
+        }
+
+    def create_review(self, **kwargs):
+        data = self.valid_review_data.copy()  
+        data.update(kwargs)  
+        return Review(**data)
+
     def test_valid_review_is_valid(self):
         try:
             self.review.full_clean()
@@ -70,3 +82,7 @@ class ReviewTestCase(TestCase):
         with self.assertRaises(ValidationError):
             self.review.full_clean()
 
+    def test_str_method(self):
+            review = self.create_review()
+            expected_str = f"Review by {self.user.username} (Rating: 4)"
+            self.assertEqual(str(review), expected_str)
