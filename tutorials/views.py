@@ -12,13 +12,12 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from .models import User, Lesson, Meeting, TutorProfile, TutorAvailability
 from .forms import LogInForm, PasswordForm, UserForm, SignUpForm, MeetingForm, LessonRequestForm
-from .helpers import login_prohibited, admin_dashboard_context, user_role_required
+from .helpers import login_prohibited, admin_dashboard_context, tutor_dashboard_context, user_role_required, get_meetings_sorted
 from django import forms
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 import json
-from .calendar_utils import TutorCalendar
 
 
 @login_required
@@ -35,70 +34,8 @@ def dashboard(request):
         'meetings_sorted': meetings,
     }
 
-    print("current user is: " + user_type)
-
     if user_type == 'Tutor':
-        tutor_profile, created = TutorProfile.objects.get_or_create(tutor=current_user)
-
-        current_date = datetime.now()
-        month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
-        year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
-
-        meetings = Meeting.objects.filter(
-            tutor=current_user, 
-            date__year=year,
-            date__month=month
-        ).select_related('student')
-        
-        # Add debug prints
-        print("=== Tutor Profile Debug Info ===")
-        print(f"Hourly Rate: {tutor_profile.hourly_rate}")
-        print(f"Subjects: {tutor_profile.subjects}")
-        
-        availability_slots = TutorAvailability.objects.filter(tutor=request.user)
-
-        # More debug prints
-        print("\n=== Availability Slots ===")
-        for slot in availability_slots:
-            print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
-        print("============================")
-        print("\n=== Meetings ===")
-        for meeting in meetings:
-            print(f"Meeting on {meeting.date}: {meeting.start_time}-{meeting.end_time}")
-        print("============================")
-
-        calendar = TutorCalendar(year, month)
-        calendar_data = calendar.get_calendar_data(
-            meetings=meetings,
-            availability_slots=availability_slots
-        )
-
-        # Debug calendar data
-        print("\nCalendar Data:")
-        for week in calendar_data['weeks']:
-            for day in week:
-                if day['meetings']:
-                    print(f"Day {day['day']} has meetings:")
-                    for meeting in day['meetings']:
-                        print(f"- {meeting['start']} - {meeting['end']}: {meeting['topic']}")
-        
-        print("==================")
-
-        subject_choices = {
-            'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
-            'Languages' : ['English', 'Spanish', 'French', 'German'],
-            'Humanities' : ['Geography', 'History', 'Philosophy', 'Religious Studies']
-        }
-
-        context.update({
-            'tutor_profile': tutor_profile,
-            'availability_slots': availability_slots,
-            'hourly_rate': tutor_profile.hourly_rate or '',
-            'subject_choices': subject_choices,
-            'selected_subjects': tutor_profile.subjects,
-            'calendar_data': calendar_data,
-            'meetings': meetings,
-        })
+        context.update(tutor_dashboard_context())
         template = 'tutor/dashboard_tutor.html'
     elif user_type == 'Student':
         template = 'student/dashboard_student.html'
@@ -108,51 +45,12 @@ def dashboard(request):
     else:
         template = 'student/dashboard_student.html'
     
-    # return render(request, template, {'user': current_user})
     return render(request, template, context)
 
 
 @login_prohibited
 def home(request):
     return render(request, 'home.html')
-
-from datetime import datetime
-
-"""SCHEDULE MEETING"""
-@login_required
-@user_role_required('Admin')
-def schedule_session(request, student_id):
-    """Display a form to schedule tutoring sessions"""
-    student = get_object_or_404(User, id=student_id, user_type='Student')
-
-    lesson_request = Lesson.objects.filter(student=student).first()
-    if lesson_request:
-        lesson_start_time = lesson_request.start_time
-        duration = lesson_request.duration
-    else:
-        lesson_start_time = time(10, 0)
-        duration = 30
-   
-    start_converted = datetime.combine(datetime.today(), lesson_start_time)
-    lesson_end_time = (start_converted + timedelta(minutes=duration)).time()
-
-    if request.method == 'POST':
-        form = MeetingForm(request.POST)
-        if form.is_valid():
-            meeting = form.save(commit=False)
-            meeting.student = student
-            meeting.save()
-
-            if lesson_request:
-                lesson_request.delete()
-
-            return redirect('dashboard')  # Redirect to the admin dashboard after successful creation
-    else:
-        form = MeetingForm(initial={'student': student, 
-                                    'start_time': lesson_start_time, 
-                                    'end_time': lesson_end_time,})
-
-    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
 
 @login_required
 def tutor_availability(request):
@@ -426,33 +324,8 @@ def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
     return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
 
-def get_meetings_sorted(user):
-    """Organize lessons by time of day and day of the week."""
 
-    meetings_sorted = {
-        'morning': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
-        'afternoon': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
-        'evening': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
-    }
-
-    for meeting in Meeting.objects.filter(student=user):
-        time_of_day = meeting.time_of_day
-        day = meeting.day
-        if time_of_day not in meetings_sorted:
-            continue
-
-        if day not in meetings_sorted[time_of_day]:
-            continue
-
-        meetings_sorted[time_of_day][day].append(meeting)
-    
-    return meetings_sorted
-
-
-class TutorAvailabilityForm(forms.Form):
-    day = forms.ChoiceField(choices=TutorAvailability.DAYS_OF_WEEK)
-    start_time = forms.TimeField()
-    end_time = forms.TimeField()
+from .forms import TutorAvailabilityForm
 
 class TutorAvailabilityView(LoginRequiredMixin, TemplateView):
     template_name = 'tutor/availability.html'
@@ -484,8 +357,7 @@ class DeleteAvailabilitySlotView(LoginRequiredMixin, View):
         messages.success(request, 'Availability slot deleted.')
         return redirect('tutor_availability')
 
-class TutorHourlyRateForm(forms.Form):
-    hourly_rate = forms.DecimalField(max_digits=6, decimal_places=2, min_value=0)
+from .forms import TutorHourlyRateForm
 
 class TutorHourlyRateView(LoginRequiredMixin, FormView):
     template_name = 'tutor/hourly_rate.html'
@@ -503,26 +375,7 @@ class TutorHourlyRateView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Hourly rate updated successfully.')
         return super().form_valid(form)
 
-class TutorSubjectsForm(forms.Form):
-    SUBJECT_CHOICES = [
-        ('Mathematics', 'Mathematics'),
-        ('Computer Science', 'Computer Science'),
-        ('Physics', 'Physics'),
-        ('Chemistry', 'Chemistry'),
-        ('Biology', 'Biology'),
-        ('English', 'English'),
-        ('Spanish', 'Spanish'),
-        ('French', 'French'),
-        ('German', 'German'),
-        ('Geography', 'Geography'),
-        ('History', 'History'),
-        ('Philosophy', 'Philosophy'),
-        ('Religious Studies', 'Religious Studies'),
-    ]
-    subjects = forms.MultipleChoiceField(
-        choices=SUBJECT_CHOICES,
-        widget=forms.CheckboxSelectMultiple
-    )
+from .forms import TutorSubjectsForm
 
 class TutorSubjectsView(LoginRequiredMixin, FormView):
     template_name = 'tutor/subjects.html'
@@ -584,3 +437,33 @@ def user_list(request, list_type):
 
     users = paginate_users(request, users)
     return render_user_list(request, users, title, filters)
+
+from datetime import datetime
+from .helpers import get_lesson_times, delete_lesson_request
+
+"""Admin dashboard view functions"""
+@login_required
+@user_role_required('Admin')
+def schedule_session(request, student_id):
+    """Display a form to schedule tutoring sessions"""
+    student = get_object_or_404(User, id=student_id, user_type='Student')
+    lesson_request = Lesson.objects.filter(student=student).first()
+
+    lesson_start_time, lesson_end_time = get_lesson_times(lesson_request)
+
+    if request.method == 'POST':
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            meeting = form.save(commit=False)
+            meeting.student = student
+            meeting.save()
+
+            delete_lesson_request(lesson_request)
+
+            return redirect('dashboard')  # Redirect to the admin dashboard
+    else:
+        form = MeetingForm(initial={'student': student, 
+                                    'start_time': lesson_start_time, 
+                                    'end_time': lesson_end_time,})
+
+    return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})

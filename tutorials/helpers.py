@@ -4,7 +4,8 @@ from django.core.exceptions import PermissionDenied
 from .models import User, Lesson
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from .models import User, Meeting, TutorAvailability
+from .models import User, Meeting, TutorAvailability, TutorProfile
+from .calendar_utils import TutorCalendar
 
 def login_prohibited(view_function):
     """Decorator for view functions that redirect users away if they are logged in."""
@@ -39,8 +40,41 @@ def admin_dashboard_context():
         'requests': requests,
     }
 
+def tutor_dashboard_context(request, current_user):
+    tutor_profile = TutorProfile.objects.get_or_create(tutor=current_user)
+    current_date = datetime.now()
+    month = int(request.GET.get('month')) if request.GET.get('month') else current_date.month
+    year = int(request.GET.get('year')) if request.GET.get('year') else current_date.year
 
+    meetings = Meeting.objects.filter(
+        tutor=current_user, 
+        date__year=year,
+        date__month=month
+    ).select_related('student')
 
+    availability_slots = TutorAvailability.objects.filter(tutor=request.user)
+
+    calendar = TutorCalendar(year, month)
+    calendar_data = calendar.get_calendar_data(
+        meetings=meetings,
+        availability_slots=availability_slots
+    )
+
+    subject_choices = {
+        'STEM' : ['Mathematics', 'Computer Science', 'Physics', 'Chemistry', 'Biology'],
+        'Languages' : ['English', 'Spanish', 'French', 'German'],
+        'Humanities' : ['Geography', 'History', 'Philosophy', 'Religious Studies']
+    }
+
+    return {
+        'tutor_profile': tutor_profile,
+        'availability_slots': availability_slots,
+        'hourly_rate': tutor_profile.hourly_rate or '',
+        'subject_choices': subject_choices,
+        'selected_subjects': tutor_profile.subjects,
+        'calendar_data': calendar_data,
+        'meetings': meetings,
+    }
 
 def get_students_for_tutor(tutor):
     meetings = Meeting.objects.filter(tutor=tutor)
@@ -110,3 +144,44 @@ def render_user_list(request, users, title, filters):
         'filters': filters,
         'subjects': get_subject_choices(),
     })
+
+from datetime import datetime, timedelta, time
+
+def get_lesson_times(lesson_request):
+    if lesson_request:
+        lesson_start_time = lesson_request.start_time
+        duration = lesson_request.duration
+    else:
+        lesson_start_time = time(10, 0)
+        duration = 30
+    
+    start_converted = datetime.combine(datetime.today(), lesson_start_time)
+    lesson_end_time = (start_converted + timedelta(minutes=duration)).time()
+    
+    return lesson_start_time, lesson_end_time
+
+def delete_lesson_request(lesson_request):
+    if lesson_request:
+        lesson_request.delete()
+
+def get_meetings_sorted(user):
+    """Organize lessons by time of day and day of the week."""
+
+    meetings_sorted = {
+        'morning': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+        'afternoon': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+        'evening': { 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': [], 'sat': [], 'sun': [] },
+    }
+
+    for meeting in Meeting.objects.filter(student=user):
+        time_of_day = meeting.time_of_day
+        day = meeting.day
+        if time_of_day not in meetings_sorted:
+            continue
+
+        if day not in meetings_sorted[time_of_day]:
+            continue
+
+        meetings_sorted[time_of_day][day].append(meeting)
+    
+    return meetings_sorted
