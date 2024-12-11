@@ -560,68 +560,27 @@ class AddCustomSubjectView(LoginRequiredMixin, FormView):
     
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
-from django.core.paginator import Paginator
-from django.db.models import Q
 from .models import User, Meeting
+from tutorials.helpers import (
+    handle_students_list,
+    handle_tutors_list,
+    handle_invalid_or_forbidden_list,
+    paginate_users,
+    render_user_list
+)
 
 def user_list(request, list_type):
     if request.user.user_type == 'Student':
         return HttpResponseForbidden("You do not have permission to access this page.")
 
-    filters = {}
-    
+    users, title, filters = [], "Invalid List Type", {}
+
     if list_type == 'students':
-        if request.user.user_type == 'Tutor':
-            meetings = Meeting.objects.filter(tutor=request.user)
-            students = meetings.values_list('student', flat=True)
-            users = User.objects.filter(id__in=students).order_by('username')
-            title = "Your Students"
-        else:
-            users = User.objects.filter(user_type='Student').order_by('username')
-            title = "Student List"
-            
-        # Fetch current tutors for each student
-        for user in users:
-            user.current_tutors = Meeting.objects.filter(student=user, status='scheduled').values_list('tutor__username', flat=True)
-    
-    elif list_type == 'tutors':
-        if request.user.user_type == 'Admin':
-            
-            users = User.objects.filter(user_type='Tutor').order_by('username')
-    
-            # Add subject filtering
-            subject_filters = request.GET.getlist('subjects', [])
-            if subject_filters:
-                # Filter tutors by subjects manually
-                users = [
-                    user for user in users 
-                    if hasattr(user, 'tutor_profile') and any(subject in subject_filters for subject in user.tutor_profile.subjects)
-                ]
-                filters['subjects'] = subject_filters
-
-            availability = TutorAvailability.objects.filter(tutor__in=users).order_by('tutor', 'day', 'start_time')
-
-            for user in users:
-                user.availability = availability.filter(tutor=user)
-            
-            title = "Tutor List"
-        else:
-            users = []
-            title = "Access Denied"
-    
+        users, title = handle_students_list(request)
+    elif list_type == 'tutors' and request.user.user_type == 'Admin':
+        users, title, filters = handle_tutors_list(request)
     else:
-        users = []
-        title = "Invalid List Type"
+        users, title, filters = handle_invalid_or_forbidden_list(list_type, request.user.user_type)
 
-    subjects = TutorSubjectsForm.SUBJECT_CHOICES
-        
-    paginator = Paginator(users, 25)  # Show 25 users per page
-    page_number = request.GET.get('page')  # Get current page number from request
-    users = paginator.get_page(page_number)  # Get the page object
-
-    return render(request, 'partials/lists.html', {
-        'users': users,
-        'title': title,
-        'filters': filters,
-        'subjects': subjects,
-    })
+    users = paginate_users(request, users)
+    return render_user_list(request, users, title, filters)
