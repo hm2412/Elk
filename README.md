@@ -9,10 +9,10 @@ The members of the team are:
 - Jiaxuan Yu
 
 ## Project structure
-The project is called `Code Tutors`.  It currently consists of `no apps`.
+The project is called `Code Tutors`.  It currently consists of `home, sign up, log in, student dashboard, tutor dashboard, admin dashboard`.
 
 ## Deployed version of the application
-The deployed version of the application can be found at [*enter url here*](*enter_url_here*).
+The deployed version of the application can be found [*here*](https://emilieyu.pythonanywhere.com/).
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
@@ -45,9 +45,7 @@ Run all tests with:
 $ python3 manage.py test
 ```
 
-*The above instructions should work in your version of the application.  If there are deviations, declare those here in bold.  Otherwise, remove this line.*
+*Note: if css styling is not visible, clear cache*
 
 ## Sources
 The packages used by this application are specified in `requirements.txt`
-
-*Declare are other sources here, and remove this line*
