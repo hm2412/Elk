@@ -1,11 +1,13 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from datetime import time
 from django.contrib.messages import get_messages
 from tutorials.models import TutorAvailability
+from tutorials.views import TutorAvailabilityView
+from tutorials.forms import TutorAvailabilityForm
 
-class TutorAvailabilityTests(TestCase):
+class TutorAvailabilityFunctionViewTests(TestCase):
     fixtures = ['tutorials/tests/fixtures/other_users.json']
 
     def setUp(self):
@@ -149,3 +151,30 @@ class TutorAvailabilityTests(TestCase):
     def test_tutor_availability_redirect_on_get(self):
         response = self.client.get(reverse('tutor_availability'))
         self.assertRedirects(response, reverse('log_in') + '?next=' + reverse('tutor_availability'))
+
+class TutorAvailabilityViewTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = get_user_model().objects.create_user(username='@janedoe', password='Password123')
+        self.availability = TutorAvailability.objects.create(tutor=self.user, day='Monday', start_time='09:00', end_time='12:00')
+
+    def test_get_context_data(self):
+        request = self.factory.get(reverse('tutor_availability'))
+        request.user = self.user
+        
+        view = TutorAvailabilityView()
+        view.setup(request)
+        context = view.get_context_data()
+
+        self.assertIn('availability_slots', context)
+        self.assertIn('form', context)
+        
+        self.assertQuerySetEqual(
+            context['availability_slots'],
+            TutorAvailability.objects.filter(tutor=self.user),
+            transform=lambda x: x
+        )
+        
+        self.assertIsInstance(context['form'], TutorAvailabilityForm)
+
+
