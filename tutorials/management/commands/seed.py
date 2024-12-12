@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
-from tutorials.models import User, Meeting, Lesson, TutorProfile
+from django.utils import timezone
+from tutorials.models import User, Meeting, Lesson, TutorProfile, TutorAvailability
 from datetime import timedelta, datetime, time
 
 
@@ -38,6 +39,7 @@ class Command(BaseCommand):
     MEETING_COUNT = 10
     LESSON_COUNT = 10
     TUTOR_PROFILE_COUNT = 10
+    TUTOR_AVAILABILITY_COUNT = 10
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -50,6 +52,7 @@ class Command(BaseCommand):
         self.create_lessons()
         self.create_meetings()
         self.create_tutor_profiles()
+        self.create_tutor_availabilities()
     
     def create_users(self):
         self.generate_user_fixtures()
@@ -66,6 +69,10 @@ class Command(BaseCommand):
     def create_tutor_profiles(self):
         self.generate_tutor_profile_fixture()
         self.generate_random_tutor_profiles()
+
+    def create_tutor_availabilities(self):
+        self.generate_tutor_availability_fixture()
+        self.generate_random_tutor_availbilities()
 
  # dont need to insert random allocation logic for user_fixtures, as they have default roles
     def generate_user_fixtures(self):
@@ -168,15 +175,16 @@ class Command(BaseCommand):
         tutors = User.objects.filter(user_type='Tutor')
         students = User.objects.filter(user_type='Student')
         topics = ['C++', 'Scala', 'Java', 'Python', 'Ruby']
-
         tutor = random.choice(tutors)
         student = random.choice(students)
+
         start_time = time(random.randint(8, 19), random.choice([0, 15, 30, 45]))
         start_datetime = datetime.combine(self.faker.date_this_month(), start_time)
         date = start_datetime.date()
         day = start_datetime.strftime('%a').lower()
         end_time = (datetime.combine(datetime.today(), start_time) + timedelta(hours=1)).time()
         time_of_day = self.get_time_of_day(start_time)
+
         topic = random.choice(topics)
         status = "scheduled"
         notes = self.faker.sentence()
@@ -203,7 +211,8 @@ class Command(BaseCommand):
                 end_time=data['end_time']
             )
             if existing_meetings.exists():
-                return False
+                print('Meeting already exists')
+                return 
 
             Meeting.objects.create(
                 tutor=data['tutor'],
@@ -247,7 +256,7 @@ class Command(BaseCommand):
             'time_of_day': 'morning',
             'venue_preference': 'online',
             'approved': True,
-            'created_at': datetime(2024, 9, 1, 9, 30)
+            'created_at': timezone.make_aware(datetime(2024, 9, 1, 9, 30))
         }
 
         self.try_create_lesson(data)
@@ -272,21 +281,20 @@ class Command(BaseCommand):
         terms = [choice[0] for choice in Lesson.TERMS]
         durations = [choice[0] for choice in Lesson.DURATIONS]
         venue_preferences = [choice[0] for choice in Lesson.VENUE_PREFERENCES]
+        days = [choice[0] for choice in Lesson.DAY_CHOICES]
 
         student = random.choice(students)
         knowledge_area = random.choice(knowledge_areas)
         term = random.choice(terms)
-        start_time = time(random.randint(8, 19), 0, 0)
+        start_time = time(random.randint(8, 19), random.choice([0, 15, 30, 45]))
         start_datetime = datetime.combine(self.faker.date_this_month(), start_time)
-
         duration = random.choice(durations)
         end_time = (start_datetime + timedelta(minutes=duration)).time()
-        days = random.sample(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'], k=random.randint(1, 3))
+        days = random.sample(days, k=random.randint(1, 3))
         time_of_day=self.get_time_of_day(start_time)
-        end_time = (start_datetime + timedelta(minutes=duration)).time()
         venue_preference = random.choice(venue_preferences)
         approved = random.choice([True, False])
-        created_at = self.faker.date_time_between(start_date='-5m', end_date='now')
+        created_at = timezone.make_aware(self.faker.date_time_between(start_date='-10m', end_date='-1m'))
 
         self.try_create_lesson({
             'student': student,
@@ -304,6 +312,24 @@ class Command(BaseCommand):
 
     def try_create_lesson(self, data):
         try:
+            existing_lessons = Lesson.objects.filter(
+                student=data['student'],
+                knowledge_area=data['knowledge_area'],
+                term=data['term'],
+                start_time=data['start_time'],
+                duration=data['duration'],
+                end_time=data['end_time'],
+                days=data['days'],
+                time_of_day=data['time_of_day'],
+                venue_preference=data['venue_preference'],
+                approved=data['approved'],
+                created_at=data['created_at']
+            )
+
+            if existing_lessons.exists():
+                print('Lessons already exists')
+                return 
+
             Lesson.objects.create(
                 student=data['student'],
                 knowledge_area=data['knowledge_area'],
@@ -322,21 +348,17 @@ class Command(BaseCommand):
             print(f"Failed to create lesson: {data} with error message: {e}")
 
 
-        """ Seeder for Tutor Profiles"""
+    """ Seeder for Tutor Profiles"""
     def generate_tutor_profile_fixture(self):
         tutor = User.objects.get(username='@janedoe')
-        
-        if not TutorProfile.objects.filter(tutor=tutor).exists():
-            data = {
+
+        data = {
                 'tutor': tutor,
                 'hourly_rate': 30,
                 'subjects': ['C++', 'Python']
             }
-            self.try_create_tutor_profile(data)
-        else:
-            print(f"Tutor profile for {tutor.username} already exists. Skipping fixture creation.")
-
-
+        self.try_create_tutor_profile(data)
+        
     def generate_random_tutor_profiles(self):
         count = TutorProfile.objects.count()
 
@@ -367,6 +389,10 @@ class Command(BaseCommand):
 
     def try_create_tutor_profile(self, data):
         try:
+            if TutorProfile.objects.filter(tutor=data['tutor']).exists():
+                print('Tutor Profile already exists')
+                return
+
             TutorProfile.objects.create(
                 tutor=data['tutor'],
                 hourly_rate=data['hourly_rate'],
@@ -374,3 +400,70 @@ class Command(BaseCommand):
         )
         except Exception as e:
             print(f"Failed to create tutor profile: {e}")
+
+    """ Seeder for Tutor Availability"""
+
+    def generate_tutor_availability_fixture(self):
+        tutor = User.objects.get(username='@janedoe')
+
+        data = {
+                'tutor': tutor,
+                'day': 'Tuesday',
+                'start_time': '14:00:00',
+                'end_time': '17:00:00',
+                'is_available': True
+            }
+        
+        self.try_create_tutor_availability(data)
+
+    def generate_random_tutor_availbilities(self):
+        count = TutorAvailability.objects.count()
+
+        while count < self.TUTOR_AVAILABILITY_COUNT:
+            print(f"Seeding tutor availability {count}/{self.TUTOR_AVAILABILITY_COUNT}", end='\r')
+            self.generate_tutor_availability()
+            count = TutorAvailability.objects.count()
+        print("Tutor availability seeding complete.")
+
+    def generate_tutor_availability(self):
+        tutors = User.objects.filter(user_type='Tutor')
+        days = [choice[0] for choice in TutorAvailability.DAYS_OF_WEEK]
+
+        tutor = random.choice(tutors)
+        day = random.choice(days)
+        start_time = datetime.strptime(f"{random.randint(8, 19)}:{random.choice([0, 15, 30, 45]):02}", "%H:%M")
+        end_time = (start_time + timedelta(hours=1)).time()
+        is_available = random.choice([True, False])
+
+        self.try_create_tutor_availability({
+            'tutor': tutor, 
+            'day': day,
+            'start_time': start_time,
+            'end_time': end_time,
+            'is_available': is_available
+        })
+
+
+    def try_create_tutor_availability(self, data):
+        try:
+            existing_availabilities = TutorAvailability.objects.filter(
+                tutor=data['tutor'],
+                start_time=data['start_time'],
+                end_time=data['end_time'],
+                day=data['day'],
+                is_available=data['is_available']
+            )
+
+            if existing_availabilities.exists():
+                print(f"Availability already exists for {data['tutor']} on {data['day']}")
+                return
+
+            TutorAvailability.objects.create(
+                tutor=data['tutor'],
+                day=data['day'],
+                start_time=data['start_time'],
+                end_time=data['end_time'],
+                is_available=data['is_available']
+            )
+        except Exception as e:
+            print(f"Failed to create tutor availability: {e}")
