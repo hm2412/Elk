@@ -82,3 +82,5 @@ class SignUpViewTestCase(TestCase, LogInTester):
         print(reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN))  # Debugging
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+
+    

@@ -159,6 +159,7 @@ def dashboard(request):
 from django.shortcuts import render
 from .models import Review
 
+@login_prohibited
 def home(request):
     """Display the application's start/home screen."""
 
@@ -437,11 +438,17 @@ def create_lesson_request(request):
 
 @login_required
 def view_lesson_request(request):
-    lesson_request = Lesson.objects.filter(student=request.user)
-    paginator = Paginator(lesson_request, 10)  # 10 per page
+    lesson = Lesson.objects.filter(student=request.user).first()
+    
+    lesson_requests = Lesson.objects.filter(student=request.user).order_by('id')
+    paginator = Paginator(lesson_requests, 10)  # 10 per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'view_lesson_request.html', {'lesson_requests': lesson_request})
+    
+    return render(request, 'view_lesson_request.html', {
+        'lesson': lesson,
+        'lesson_requests': page_obj
+    })
 
 class TutorAvailabilityView(LoginRequiredMixin, TemplateView):
     template_name = 'tutor/availability.html'

@@ -59,7 +59,7 @@ class DashboardViewTests(TestCase):
         self.assertTemplateUsed(response, 'student/dashboard_student.html')
 
     def test_admin_dashboard(self):
-        self.client.login(username='@petrapickles', password='Password123')
+        self.client.login(username='@petrapickles', password='Password123')  # Change back to @petrapickles
         response = self.client.get(reverse('dashboard'))
         self.assertTemplateUsed(response, 'admin/dashboard_admin.html')
 
@@ -74,3 +74,14 @@ class DashboardViewTests(TestCase):
         self.client.login(username='invaliduser', password='Password123')
         response = self.client.get(reverse('dashboard'))
         self.assertTemplateUsed(response, 'student/dashboard_student.html')
+
+    def test_dashboard_not_logged_in(self):
+        response = self.client.get(reverse('dashboard'))
+        self.assertRedirects(response, reverse('log_in') + '?next=' + reverse('dashboard'))
+
+    def test_student_dashboard_with_no_lesson(self):
+        self.client.login(username='@charlie', password='Password123')
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'student/dashboard_student.html')
+        self.assertIsNone(response.context.get('lesson'))
