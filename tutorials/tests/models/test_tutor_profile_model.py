@@ -4,7 +4,7 @@ from tutorials.models import TutorProfile
 from django.contrib.auth import get_user_model
 
 class TutorProfileModelTestCase(TestCase):
-    fixtures = ['tutorials/tests/fixtures/other_users.json']  # Ensure the correct fixture path
+    fixtures = ['tutorials/tests/fixtures/other_users.json'] 
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='@janedoe')
