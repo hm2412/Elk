@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from tutorials.models import TutorProfile, TutorAvailability
-import json
 
 class TutorPathsViewsTest(TestCase):
     fixtures = ['tutorials/tests/fixtures/other_users.json']

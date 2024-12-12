@@ -24,8 +24,10 @@ from .models import (
     Lesson, 
     Meeting, 
     TutorProfile, 
-    TutorAvailability
+    TutorAvailability,
+    Review
 )
+
 from .forms import (
     LogInForm, 
     PasswordForm, 
@@ -35,7 +37,8 @@ from .forms import (
     LessonRequestForm,
     TutorAvailabilityForm,
     TutorHourlyRateForm,
-    TutorSubjectsForm
+    TutorSubjectsForm,
+    ReviewForm
 )
 from .helpers import (
     login_prohibited, 
@@ -60,13 +63,7 @@ from .calendar_utils import (
 )
 
 # Dashboard views
-from django.urls import reverse_lazy
 from django.http import JsonResponse
-import json
-from .calendar_utils import TutorCalendar
-from .forms import LessonRequestForm
-from .forms import Review
-from .forms import ReviewForm
 
 
 @login_required
@@ -155,9 +152,6 @@ def dashboard(request):
     
     return render(request, template, context)
 
-
-from django.shortcuts import render
-from .models import Review
 
 @login_prohibited
 def home(request):
@@ -274,7 +268,6 @@ class SignUpView(LoginProhibitedMixin, FormView):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 # Profile handling
-
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """Display user profile editing screen, and handle profile modifications."""
 
@@ -293,7 +286,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 # Tutor dashboard view functions
-
 @login_required
 def tutor_availability(request):
     if request.method == 'POST':
@@ -423,7 +415,9 @@ def set_availability(request):
     
 # Student dashboard view functions
 @login_required
+@user_role_required(['Student', 'Admin'])
 def create_lesson_request(request):
+    """Allow students and admins to create lesson requests"""
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
         if form.is_valid():
@@ -437,11 +431,14 @@ def create_lesson_request(request):
     return render(request, 'lesson_request.html', {'form': form})
 
 @login_required
+@user_role_required(['Student', 'Admin'])
 def view_lesson_request(request):
+    """Allow students and admins to view lesson requests"""
+    # Remove the student-only check since we use the decorator
     lesson = Lesson.objects.filter(student=request.user).first()
     
     lesson_requests = Lesson.objects.filter(student=request.user).order_by('id')
-    paginator = Paginator(lesson_requests, 10)  # 10 per page
+    paginator = Paginator(lesson_requests, 10)  # 10 per page 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -528,9 +525,10 @@ class TutorSubjectsView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Teaching subjects updated successfully.')
         return super().form_valid(form)
 
-# User list handling
+@login_required
 def user_list(request, list_type):
-    if request.user.user_type == 'Student':
+    """Handle user list viewing with proper access control"""
+    if not request.user.is_authenticated or request.user.user_type == 'Student':
         return HttpResponseForbidden("You do not have permission to access this page.")
 
     users, title, filters = [], "Invalid List Type", {}
@@ -546,7 +544,6 @@ def user_list(request, list_type):
     return render_user_list(request, users, title, filters)
 
 # Admin dashboard view functions
-
 @login_required
 @user_role_required('Admin')
 def schedule_session(request, student_id):
@@ -573,10 +570,6 @@ def schedule_session(request, student_id):
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
 
-from django.contrib import messages  # Import the messages framework
-from django.shortcuts import render, redirect
-from tutorials.forms import ReviewForm
-
 @login_required
 def submit_review(request):
     if request.method == 'POST':
@@ -586,7 +579,6 @@ def submit_review(request):
             review.student = request.user  # Ensure the logged-in user is assigned
             review.save()
 
-            # Add a success message
             messages.success(request, 'Thank you for your feedback!')
 
             return redirect('submit_review')  # Redirect to the same page to show the message

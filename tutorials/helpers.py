@@ -1,10 +1,17 @@
 from django.conf import settings
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.core.exceptions import PermissionDenied
-from .models import User, Lesson
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
-from .models import User, Meeting, TutorAvailability, TutorProfile
+from functools import wraps
+from datetime import datetime, timedelta, time
+from .models import (
+    User, 
+    Lesson, 
+    Meeting, 
+    TutorAvailability, 
+    TutorProfile
+)
 from .calendar_utils import TutorCalendar
 
 def login_prohibited(view_function):
@@ -17,16 +24,23 @@ def login_prohibited(view_function):
             return view_function(request)
     return modified_view_function
 
-def user_role_required(type):
-    """Decorator for view functions that denies permission if they are not the specified type"""
-    
-    def decorator(view_function):
-        def modified_view_function(request, *args, **kwargs):
-            if request.user.user_type == type:
-                return view_function(request, *args, **kwargs)
+def user_role_required(roles):
+    """
+    Decorator to check if user has required role(s).
+    Accepts a single role string or a list of roles.
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrap(request, *args, **kwargs):
+            if isinstance(roles, str):
+                allowed_roles = [roles]
             else:
-                raise PermissionDenied
-        return modified_view_function
+                allowed_roles = roles
+
+            if not request.user.is_authenticated or request.user.user_type not in allowed_roles:
+                return HttpResponseForbidden("You do not have permission to access this page.")
+            return view_func(request, *args, **kwargs)
+        return wrap
     return decorator
 
 def admin_dashboard_context():
@@ -144,8 +158,6 @@ def render_user_list(request, users, title, filters):
         'filters': filters,
         'subjects': get_subject_choices(),
     })
-
-from datetime import datetime, timedelta, time
 
 def get_lesson_times(lesson_request):
     if lesson_request:
