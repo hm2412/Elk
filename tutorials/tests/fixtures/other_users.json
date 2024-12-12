@@ -50,5 +50,18 @@
       "user_type": "Student",
       "is_active": true
     }
+  },
+  {
+    "model": "tutorials.user",
+    "pk": 6,
+    "fields": {
+      "first_name": "Leslie",
+      "last_name": "Lowe",
+      "username": "@leslielowe",
+      "email": "leslielowe@example.org",
+      "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+      "user_type": "Tutor",
+      "is_active": true
+    }
   }
 ]

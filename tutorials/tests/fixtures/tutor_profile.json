@@ -4,8 +4,17 @@
       "pk": 1,
       "fields": {
             "tutor": 2,
-            "hourly_rate": "10.50",
+            "hourly_rate": "17.50",
             "subjects": ["c++", "python", "java"]
+      }
+    },
+    {
+      "model": "tutorials.tutorprofile",
+      "pk": 2,
+      "fields": {
+            "tutor": 6,
+            "hourly_rate": "20.00",
+            "subjects": ["c++", "python", "java", "ruby"]
       }
     }
 ]

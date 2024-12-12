@@ -86,7 +86,9 @@ def get_all_students():
 
 def annotate_students_with_tutors(users):
     for user in users:
-        user.current_tutors = Meeting.objects.filter(student=user, status='scheduled').values_list('tutor__username', flat=True)
+        # user.current_tutors = list(Meeting.objects.filter(student=user, status='scheduled').values_list('tutor__username', flat=True).distinct())
+        tutor_usernames = Meeting.objects.filter(student=user, status='scheduled').values_list('tutor__username', flat=True)
+        user.current_tutors = list(set(tutor_usernames))
 
 def get_all_tutors():
     return User.objects.filter(user_type='Tutor').order_by('username')

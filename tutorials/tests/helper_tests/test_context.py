@@ -12,7 +12,7 @@ class AdminDashboardContextTests(TestCase):
         context = admin_dashboard_context()
         
         self.assertEqual(context['total_students'], 2)
-        self.assertEqual(context['total_tutors'], 1)
+        self.assertEqual(context['total_tutors'], 2)
         self.assertEqual(context['requests'].count(), 2)
         self.assertEqual(context['requests'].first().knowledge_area, 'python')  # Most recent lesson
 

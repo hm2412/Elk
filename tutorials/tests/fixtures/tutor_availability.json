@@ -9,5 +9,16 @@
             "end_time": "18:00:00",
             "is_available": true
       }
-    }
+    },
+    {
+        "model": "tutorials.tutoravailability",
+        "pk": 2,
+        "fields": {
+              "tutor": 6,
+              "day": "Tuesday",
+              "start_time": "10:00:00",
+              "end_time": "19:00:00",
+              "is_available": true
+        }
+      }
 ]

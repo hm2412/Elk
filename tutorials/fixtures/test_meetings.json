@@ -20,7 +20,7 @@
         "pk": 2,
         "fields": {
             "tutor": 2,
-            "student": 4,
+            "student": 5,
             "date": "2024-12-12",
             "start_time": "10:00:00",
             "end_time": "11:00:00",
@@ -52,7 +52,7 @@
         "pk": 4,
         "fields": {
             "tutor": 2,
-            "student": 4,
+            "student": 5,
             "date": "2024-12-20",
             "start_time": "13:00:00",
             "end_time": "14:00:00",
