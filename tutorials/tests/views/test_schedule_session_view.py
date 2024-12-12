@@ -10,7 +10,8 @@ class ScheduleSessionViewTests(TestCase):
     fixtures = ['tutorials/tests/fixtures/other_users.json', 'tutorials/tests/fixtures/lessons.json']
     def setUp(self):
         self.admin = User.objects.get(username='@petrapickles')
-        self.student = User.objects.get(username='@studentuser')
+        self.tutor = User.objects.get(username='@janedoe')
+        self.student = User.objects.get(username='@charlie')
         self.lesson = Lesson.objects.get(student=4)
         self.schedule_session_url = reverse('schedule_session', args=[self.student.id])
 
@@ -27,7 +28,7 @@ class ScheduleSessionViewTests(TestCase):
     
     def test_get_schedule_session(self):
         self.client.login(username=self.admin.username, password="Password123")
-        response = self.client.get(self.url)
+        response = self.client.get(self.schedule_session_url)
         form = response.context['form']
         self.assertTrue(isinstance(form, MeetingForm))
         self.assertEqual(form.initial['start_time'], self.lesson.start_time)
@@ -36,10 +37,17 @@ class ScheduleSessionViewTests(TestCase):
     def test_successful_schedule_meeting(self):
         self.client.login(username=self.admin.username, password="Password123")
         form_data = {
+            'tutor': self.tutor.id,
+            'date': '2024-12-12',
+            'day': 'thu',
             'start_time': self.lesson.start_time,
             'end_time': self.lesson.end_time,
+            'time_of_day': 'morning',
+            'topic': 'Test meeting',
+            'status': 'scheduled',
+            'notes': 'Test notes',
         }
-        response = self.client.post(self.url, form_data, follow=True)
+        response = self.client.post(self.schedule_session_url, form_data, follow=True)
         self.assertRedirects(response, reverse('dashboard'))
         self.assertEqual(Meeting.objects.count(), 1)
         meeting = Meeting.objects.first()
@@ -52,7 +60,7 @@ class ScheduleSessionViewTests(TestCase):
             'start_time': '',
             'end_time': ''
         }
-        response = self.client.post(self.url, form_data)
+        response = self.client.post(self.schedule_session_url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'admin/schedule_session.html')
         form = response.context['form']
