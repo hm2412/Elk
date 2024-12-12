@@ -31,6 +31,11 @@ class ReviewViewTest(TestCase):
         self.assertTrue(isinstance(form, ReviewForm))
         self.assertFalse(form.is_bound)
 
+    def test_review_view_requires_login(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertRedirects(response, reverse('log_in') + f'?next={self.url}')
+
     def test_review_post_in_setUp(self):
         self.client.post(self.url, self.form_data)
         self.assertTrue(Review.objects.filter(content='Great tutorial!', rating=4).exists())
@@ -64,6 +69,7 @@ class ReviewViewTest(TestCase):
         }
         response = self.client.post(self.url, invalid_form_data)
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'review.html')
         self.assertIn("review", response.context)
         form = response.context["review"]
         self.assertTrue(form.errors)

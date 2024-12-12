@@ -528,26 +528,7 @@ class TutorSubjectsView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Teaching subjects updated successfully.')
         return super().form_valid(form)
 
-class AddCustomSubjectView(LoginRequiredMixin, FormView):
-    template_name = 'tutor/custom_subject.html'
-    form_class = forms.Form
-    success_url = reverse_lazy('tutor_subjects')
-    
-    def get_form(self):
-        form = super().get_form()
-        form.fields['custom_subject'] = forms.CharField(max_length=100)
-        return form
-    
-    def form_valid(self, form):
-        profile, _ = TutorProfile.objects.get_or_create(tutor=self.request.user)
-        custom_subject = form.cleaned_data['custom_subject']
-        profile.subjects = list(profile.subjects) + [custom_subject]
-        profile.save()
-        messages.success(self.request, f'Added custom subject: {custom_subject}')
-        return super().form_valid(form)
-
 # User list handling
-
 def user_list(request, list_type):
     if request.user.user_type == 'Student':
         return HttpResponseForbidden("You do not have permission to access this page.")
@@ -596,6 +577,7 @@ from django.contrib import messages  # Import the messages framework
 from django.shortcuts import render, redirect
 from tutorials.forms import ReviewForm
 
+@login_required
 def submit_review(request):
     if request.method == 'POST':
         form = ReviewForm(request.POST)

@@ -83,4 +83,3 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'admin/dashboard_admin.html')
 
-    
