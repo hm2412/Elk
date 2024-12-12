@@ -4,27 +4,13 @@ from django.contrib.auth import get_user_model
 from datetime import time
 from django.contrib.messages import get_messages
 from tutorials.models import TutorAvailability
-from datetime import datetime, time
 
 class TutorAvailabilityTests(TestCase):
-    def setUp(self):
-        self.tutor_user = self.create_tutor_user()
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
 
-    def create_tutor_user(self):
-        return get_user_model().objects.create_user(
-            username='@janedoe',
-            email='jane.doe@example.org',
-            password='Password123',
-            user_type='Tutor'  
-        )
-    
-    def is_valid_time_format(time_string):
-        try:
-            datetime.strptime(time_string, '%H:%M')  
-            return True
-        except ValueError:
-            return False
-        
+    def setUp(self):
+        self.tutor_user = get_user_model().objects.get(username='@janedoe')
+
     def test_tutor_availability_create_valid(self):
         data = {
             'monday_enabled': 'on',
@@ -41,7 +27,6 @@ class TutorAvailabilityTests(TestCase):
         self.assertEqual(monday_availability.end_time, time(12, 0))
 
     def test_tutor_availability_clear_existing(self):
-    
         TutorAvailability.objects.create(
             tutor=self.tutor_user,
             day='Monday',
@@ -93,7 +78,6 @@ class TutorAvailabilityTests(TestCase):
         self.assertRedirects(response, reverse('log_in') + '?next=' + reverse('tutor_availability'))
 
     def test_tutor_availability_non_post_request(self):
-    
         response = self.client.get(reverse('tutor_availability'))
         self.assertRedirects(response, reverse('log_in') + '?next=' + reverse('tutor_availability'))
 
@@ -149,19 +133,19 @@ class TutorAvailabilityTests(TestCase):
         self.client.login(username='@janedoe', password='Password123')
         response = self.client.get(reverse('tutor_availability')) 
         self.assertRedirects(response, reverse('dashboard')) 
-        
+         
     def test_tutor_availability_post_request_no_start_time(self): 
         self.client.login(username='@janedoe', password='Password123')
         data = { 'monday_enabled': 'on', 'monday_start_time': '', 'monday_end_time': '12:00', } 
         response = self.client.post(reverse('tutor_availability'), data) 
         self.assertEqual(TutorAvailability.objects.filter(tutor=self.tutor_user).count(), 0) 
-        
+         
     def test_tutor_availability_post_request_no_end_time(self): 
         self.client.login(username='@janedoe', password='Password123')
         data = { 'monday_enabled': 'on', 'monday_start_time': '10:00', 'monday_end_time': '', } 
         response = self.client.post(reverse('tutor_availability'), data) 
         self.assertEqual(TutorAvailability.objects.filter(tutor=self.tutor_user).count(), 0) 
-        
+         
     def test_tutor_availability_redirect_on_get(self):
         response = self.client.get(reverse('tutor_availability'))
         self.assertRedirects(response, reverse('log_in') + '?next=' + reverse('tutor_availability'))

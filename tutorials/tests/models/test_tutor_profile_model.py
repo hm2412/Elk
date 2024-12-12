@@ -4,41 +4,27 @@ from tutorials.models import TutorProfile
 from django.contrib.auth import get_user_model
 
 class TutorProfileModelTestCase(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']  # Ensure the correct fixture path
 
     def setUp(self):
-       
-        self.User = get_user_model()
-
-        self.tutor_user = self.User.objects.create_user(
-           
-            username='@janedoe',
-            email='jane.doe@example.org',
-            password='Password123',
-            user_type='Tutor'
-        )
-
-        
+        self.user = get_user_model().objects.get(username='@janedoe')
         self.tutor_profile = TutorProfile.objects.create(
-            tutor=self.tutor_user,
+            tutor=self.user,
             hourly_rate=Decimal('9.50'),
             subjects=['Java', 'Scala']
         )
 
     def test_tutor_profile_str_method(self):
-
-        expected_str = f"{self.tutor_user.username}'s Profile"
+        expected_str = f"{self.user.username}'s Profile"
         self.assertEqual(str(self.tutor_profile), expected_str)
 
     def test_tutor_profile_fields(self):
-
         self.assertEqual(self.tutor_profile.tutor.username, '@janedoe')
         self.assertEqual(self.tutor_profile.hourly_rate, Decimal('9.50'))
         self.assertEqual(self.tutor_profile.subjects, ['Java', 'Scala'])
 
     def test_tutor_profile_optional_fields(self):
-       
-        tutor_without_profile = self.User.objects.create_user(
-
+        tutor_without_profile = get_user_model().objects.create_user(
             username='@joshdoe',
             email='joshdoe@example.org',
             password='Password123',

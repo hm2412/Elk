@@ -4,17 +4,11 @@ from django.contrib.auth import get_user_model
 from tutorials.forms import LessonRequestForm
 from tutorials.models import Lesson
 
-class CreateLessonRequestTests(TestCase):
-    def setUp(self):
-        self.student_user = self.create_student_user()
+class CreateLessonRequestViewTests(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
 
-    def create_student_user(self):
-        return get_user_model().objects.create_user(
-            username='@charlie',
-            email='charlie.johnson@example.org',
-            password='Password123',
-            user_type='Student'  
-        )
+    def setUp(self):
+        self.student_user = get_user_model().objects.get(username='@charlie')
 
     def test_create_lesson_request_post_valid(self):
         self.client.login(username='@charlie', password='Password123')

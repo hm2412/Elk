@@ -4,17 +4,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from tutorials.models import TutorProfile
 
-class TutorHourlyRateTests(TestCase):
-    def setUp(self):
-        self.tutor_user = self.create_tutor_user()
+class TutorHourlyRateViewTests(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
 
-    def create_tutor_user(self):
-        return get_user_model().objects.create_user(
-            username='@janedoe',
-            email='jane.doe@example.org',
-            password='Password123',
-            user_type='Tutor'  
-        )
+    def setUp(self):
+        self.tutor_user = get_user_model().objects.get(username='@janedoe')
 
     def test_tutor_hourly_rate_post_valid(self):
         self.client.login(username='@janedoe', password='Password123')

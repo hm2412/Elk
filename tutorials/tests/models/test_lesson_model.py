@@ -6,14 +6,10 @@ from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError 
 
 class LessonModelTestCase(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
 
     def setUp(self):
-        
-        self.user = get_user_model().objects.create_user(
-            username='@charlie',
-            email='charlie.johnson@example.org', 
-            password='Password123'
-        )
+        self.user = get_user_model().objects.get(username='@charlie')
 
     def test_lesson_save_sets_end_time_and_time_of_day(self):
         lesson = Lesson(

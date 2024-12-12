@@ -3,31 +3,16 @@ from datetime import time
 from tutorials.models import Meeting
 from django.contrib.auth import get_user_model
 
-
 class MeetingModelTestCase(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
 
     def setUp(self):
         self.User = get_user_model()
-
-        #tutor
-        self.tutor = self.User.objects.create_user(
-            username='@janedoe',
-            email='jane.doe@example.org',
-            password='Password123',
-            user_type='Tutor'
-        )
-
-        # student 
-        self.student = self.User.objects.create_user(
-            username='@charlie',
-            email='charlie.johnson@example.org',
-            password='Password123',
-            user_type='Student'
-        )
+        self.tutor = self.User.objects.get(username='@janedoe')
+        self.student = self.User.objects.get(username='@charlie')
 
     def test_meeting_str_method(self):
-       
-        meeting = Meeting(
+        meeting = Meeting.objects.create(
             tutor=self.tutor,
             student=self.student,
             date='2024-12-15',
@@ -37,13 +22,11 @@ class MeetingModelTestCase(TestCase):
             time_of_day='morning',
             topic='Java'
         )
-
         expected_str = f"Meeting: {self.tutor.username} with {self.student.username} on 2024-12-15"
         self.assertEqual(str(meeting), expected_str)
 
     def test_time_range_method(self):
-      
-        meeting = Meeting(
+        meeting = Meeting.objects.create(
             tutor=self.tutor,
             student=self.student,
             date='2024-12-15',
@@ -53,13 +36,11 @@ class MeetingModelTestCase(TestCase):
             time_of_day='morning',
             topic='Java'
         )
-
         expected_time_range = "10:00 - 11:00"
         self.assertEqual(meeting.time_range(), expected_time_range)
 
     def test_meeting_save_creates_correct_time_of_day(self):
-        
-        meeting_morning = Meeting(
+        meeting_morning = Meeting.objects.create(
             tutor=self.tutor,
             student=self.student,
             date='2024-12-15',
@@ -69,11 +50,9 @@ class MeetingModelTestCase(TestCase):
             time_of_day='morning',
             topic='Java'
         )
-
-        meeting_morning.save()
         self.assertEqual(meeting_morning.time_of_day, 'morning')
 
-        meeting_afternoon = Meeting(
+        meeting_afternoon = Meeting.objects.create(
             tutor=self.tutor,
             student=self.student,
             date='2024-12-15',
@@ -83,11 +62,9 @@ class MeetingModelTestCase(TestCase):
             time_of_day='afternoon',
             topic='Java'
         )
-
-        meeting_afternoon.save()
         self.assertEqual(meeting_afternoon.time_of_day, 'afternoon')
 
-        meeting_evening = Meeting(
+        meeting_evening = Meeting.objects.create(
             tutor=self.tutor,
             student=self.student,
             date='2024-12-15',
@@ -97,6 +74,4 @@ class MeetingModelTestCase(TestCase):
             time_of_day='evening',
             topic='Java'
         )
-
-        meeting_evening.save()
         self.assertEqual(meeting_evening.time_of_day, 'evening')
