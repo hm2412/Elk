@@ -4,7 +4,7 @@
         "pk": 1,
         "fields": {
           "tutor": 2,
-          "student": 3,
+          "student": 4,
           "date": "2024-12-09",
           "start_time": "14:00:00",
           "end_time": "15:00:00",
@@ -20,7 +20,7 @@
         "pk": 2,
         "fields": {
             "tutor": 2,
-            "student": 3,
+            "student": 4,
             "date": "2024-12-12",
             "start_time": "10:00:00",
             "end_time": "11:00:00",
@@ -36,7 +36,7 @@
         "pk": 3,
         "fields": {
             "tutor": 2,
-            "student": 3,
+            "student": 4,
             "date": "2024-12-16",
             "start_time": "15:30:00",
             "end_time": "16:30:00",
@@ -52,7 +52,7 @@
         "pk": 4,
         "fields": {
             "tutor": 2,
-            "student": 3,
+            "student": 4,
             "date": "2024-12-20",
             "start_time": "13:00:00",
             "end_time": "14:00:00",
@@ -68,7 +68,7 @@
         "pk": 5,
         "fields": {
             "tutor": 2,
-            "student": 3,
+            "student": 4,
             "date": "2024-12-23",
             "start_time": "11:30:00",
             "end_time": "12:30:00",

@@ -1,0 +1,11 @@
+[
+    {
+      "model": "tutorials.tutorprofile",
+      "pk": 1,
+      "fields": {
+            "tutor": 2,
+            "hourly_rate": "10.50",
+            "subjects": ["c++", "python", "java"]
+      }
+    }
+]

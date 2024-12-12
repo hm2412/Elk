@@ -213,21 +213,14 @@ class ReviewForm(forms.ModelForm):
             review.save()  # Now save the review
         return review
         fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
+
 class TutorSubjectsForm(forms.Form):
     SUBJECT_CHOICES = [
-        ('Mathematics', 'Mathematics'),
-        ('Computer Science', 'Computer Science'),
-        ('Physics', 'Physics'),
-        ('Chemistry', 'Chemistry'),
-        ('Biology', 'Biology'),
-        ('English', 'English'),
-        ('Spanish', 'Spanish'),
-        ('French', 'French'),
-        ('German', 'German'),
-        ('Geography', 'Geography'),
-        ('History', 'History'),
-        ('Philosophy', 'Philosophy'),
-        ('Religious Studies', 'Religious Studies'),
+        ('c++', 'C++'),
+        ('scala', 'Scala'),
+        ('java', 'Java'),
+        ('python', 'Python'),
+        ('ruby', 'Ruby'),
     ]
     subjects = forms.MultipleChoiceField(
         choices=SUBJECT_CHOICES,

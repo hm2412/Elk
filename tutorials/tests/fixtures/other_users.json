@@ -37,5 +37,18 @@
       "user_type": "Student",
       "is_active": true
     }
+  },
+  {
+    "model": "tutorials.user",
+    "pk": 5,
+    "fields": {
+      "first_name": "Mike",
+      "last_name": "Miles",
+      "username": "@mikemiles",
+      "email": "mikemiles@example.org",
+      "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+      "user_type": "Student",
+      "is_active": true
+    }
   }
 ]
