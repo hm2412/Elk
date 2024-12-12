@@ -18,7 +18,6 @@ class TutorAvailabilityTests(TestCase):
             user_type='Tutor'  
         )
     
-
     def is_valid_time_format(time_string):
         try:
             datetime.strptime(time_string, '%H:%M')  
@@ -65,9 +64,6 @@ class TutorAvailabilityTests(TestCase):
         self.assertEqual(monday_availability.start_time, time(10, 0))
         self.assertEqual(monday_availability.end_time, time(12, 0))
     
-        
-  
-
     def test_tutor_availability_success_message(self):
         self.client.login(username='@janedoe', password='Password123')
 
@@ -108,7 +104,6 @@ class TutorAvailabilityTests(TestCase):
             'monday_end_time': '',
         }
         response = self.client.post(reverse('tutor_availability'), data)
-      
         self.assertEqual(TutorAvailability.objects.filter(tutor=self.tutor_user, day='Monday').count(), 0)
 
     def test_tutor_availability_multiple_days(self):
