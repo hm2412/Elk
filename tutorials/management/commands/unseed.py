@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tutorials.models import User
+from tutorials.models import User, Lesson, Meeting
 
 class Command(BaseCommand):
     """Build automation command to unseed the database."""
@@ -10,3 +10,5 @@ class Command(BaseCommand):
         """Unseed the database."""
 
         User.objects.filter(is_staff=False).delete()
+        Lesson.objects.filter().delete()
+        Meeting.objects.filter().delete()
