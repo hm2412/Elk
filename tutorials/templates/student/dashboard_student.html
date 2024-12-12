@@ -10,24 +10,9 @@
     {% include 'partials/profile_info.html' %}
 
     <!-- boxes on the dashboard-->
-    <br>
-    <div class="dashboard-grid">
-       
-        <a href="{% url 'lesson_request' %}" class="dashboard-box">
-            <h2>Make Lesson Request</h2>
-            <p>Request a new lesson</p>
-        </a>
-        
-        <a href="{% url 'view_lesson_request' %}" class="dashboard-box">
-            <h2>Requested Lessons</h2>
-            <p>View all your lesson requests</p>
-        </a>
-    </div>
-    
     <div class="schedule-section">
         {% include 'partials/week_schedule.html' %}
     </div>
 </div>
-<br/>  
 
 {% endblock %}
