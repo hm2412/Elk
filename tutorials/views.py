@@ -421,7 +421,7 @@ def set_availability(request):
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
     
 # Student dashboard view functions
-
+@login_required
 def create_lesson_request(request):
     if request.method == 'POST':
         form = LessonRequestForm(request.POST)
@@ -435,6 +435,7 @@ def create_lesson_request(request):
 
     return render(request, 'lesson_request.html', {'form': form})
 
+@login_required
 def view_lesson_request(request):
     lesson_request = Lesson.objects.filter(student=request.user)
     paginator = Paginator(lesson_request, 10)  # 10 per page
