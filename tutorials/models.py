@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
 import hashlib
+from django.conf import settings
+from datetime import time, timedelta, datetime
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -53,9 +55,6 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
-    
-from django.conf import settings
-from datetime import time, timedelta, datetime
 
 class Lesson(models.Model):
     KNOWLEDGE_AREAS = [
@@ -284,10 +283,6 @@ class TutorAvailability(models.Model):
     
     def __str__(self):
         return f"{self.tutor.username}'s availability on {self.day}"
-    
-
-from django.db import models
-from django.conf import settings
 
 class Review(models.Model):
     student = models.ForeignKey(
