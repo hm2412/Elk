@@ -4,35 +4,36 @@ from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from tutorials.models import TutorProfile
 
-class TutorHourlyRateViewTests(TestCase):
+class TutorSubjectsViewTests(TestCase):
     fixtures = ['tutorials/tests/fixtures/other_users.json']
 
     def setUp(self):
         self.tutor_user = get_user_model().objects.get(username='@janedoe')
 
-    def test_tutor_hourly_rate_post_valid(self):
+    def test_tutor_subjects_post_valid(self):
         self.client.login(username='@janedoe', password='Password123')
         data = {
-            'hourly_rate': '9.50'
+            'subjects': ['Scala','Ruby']
         }
-        response = self.client.post(reverse('tutor_hourly_rate'), data)
+        response = self.client.post(reverse('tutor_subjects'), data)
         tutor_profile = TutorProfile.objects.get(tutor=self.tutor_user)
-        self.assertEqual(tutor_profile.hourly_rate, 9.50)
+        self.assertEqual(tutor_profile.subjects, ['Scala','Ruby'])
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), 'Hourly rate updated successfully')
+        self.assertEqual(str(messages[0]), 'Teaching subjects updated successfully')
         self.assertRedirects(response, reverse('dashboard'))
 
-    def test_tutor_hourly_rate_post_no_hourly_rate(self):
+    def test_tutor_subjects_post_no_subjects(self):
         self.client.login(username='@janedoe', password='Password123')
         data = {
-            'hourly_rate': ''
+            'subjects': []
         }
-        response = self.client.post(reverse('tutor_hourly_rate'), data)
-        self.assertFalse(TutorProfile.objects.filter(tutor=self.tutor_user).exists())
+        response = self.client.post(reverse('tutor_subjects'), data)
+        tutor_profile = TutorProfile.objects.get(tutor=self.tutor_user)
+        self.assertEqual(tutor_profile.subjects, [])
         self.assertRedirects(response, reverse('dashboard'))
 
-    def test_tutor_hourly_rate_get_request(self):
+    def test_tutor_subjects_get_request(self):
         self.client.login(username='@janedoe', password='Password123')
-        response = self.client.get(reverse('tutor_hourly_rate'))
+        response = self.client.get(reverse('tutor_subjects'))
         self.assertRedirects(response, reverse('dashboard'))
