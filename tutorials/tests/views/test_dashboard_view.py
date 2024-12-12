@@ -59,7 +59,7 @@ class DashboardViewTests(TestCase):
         self.assertTemplateUsed(response, 'student/dashboard_student.html')
 
     def test_admin_dashboard(self):
-        self.client.login(username='@petrapickles', password='Password123')  # Change back to @petrapickles
+        self.client.login(username='@petrapickles', password='Password123')
         response = self.client.get(reverse('dashboard'))
         self.assertTemplateUsed(response, 'admin/dashboard_admin.html')
 

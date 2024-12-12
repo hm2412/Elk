@@ -45,17 +45,6 @@ class ReviewViewTest(TestCase):
         message = list(storage)[0]  # Get the first message
         self.assertEqual(message.message, 'Thank you for your feedback!')
 
-    def test_invalid_form_submission(self):
-        invalid_form_data = {
-            'content': '',
-            'rating': 4
-        }
-        response = self.client.post(self.url, invalid_form_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("review", response.context)
-        form = response.context["review"]
-        self.assertTrue(form.errors)
-
     def test_review_association_with_user(self):
         self.client.post(self.url, self.form_data)
         review = Review.objects.get(content='Great tutorial!')
@@ -67,3 +56,25 @@ class ReviewViewTest(TestCase):
         storage = get_messages(response.wsgi_request)
         message = list(storage)[0]
         self.assertEqual(message.message, 'Thank you for your feedback!')
+
+    def test_review_empty_content(self):
+        invalid_form_data = {
+            'content': '',
+            'rating': 4
+        }
+        response = self.client.post(self.url, invalid_form_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("review", response.context)
+        form = response.context["review"]
+        self.assertTrue(form.errors)
+
+    def test_review_invalid_rating(self):
+        invalid_form_data = {
+            'content': 'Great tutorial!',
+            'rating': 6
+        }
+        response = self.client.post(self.url, invalid_form_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("review", response.context)
+        form = response.context["review"]
+        self.assertTrue(form.errors)

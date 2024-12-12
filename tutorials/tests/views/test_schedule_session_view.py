@@ -17,20 +17,20 @@ class ScheduleSessionViewTests(TestCase):
         self.student.user_type = 'Student'
         self.student.save()
 
-        # Then create tutor profile
+        # Create tutor profile
         self.tutor_profile = TutorProfile.objects.create(
             tutor=self.tutor,
             hourly_rate=50,
             subjects=['Ruby']
         )
 
-        # Set up availability for Monday
+        # Get next Monday
         next_monday = datetime.now()
         while next_monday.weekday() != 0:
             next_monday += timedelta(days=1)
         self.next_monday = next_monday
 
-        # Create availability after setting up users
+        # Create tutor availability
         self.availability = TutorAvailability.objects.create(
             tutor=self.tutor,
             day='Monday',
@@ -38,7 +38,7 @@ class ScheduleSessionViewTests(TestCase):
             end_time=time(12, 0)
         )
 
-        # Create a lesson for the student last
+        # Create lesson
         self.lesson = Lesson.objects.create(
             student=self.student,
             knowledge_area='Ruby',
