@@ -608,3 +608,15 @@ def submit_review(request):
         'review': form, 
         'is_review_page': True  # This will ensure 'review.css' is loaded
     })
+
+@login_required
+def save_lesson_notes(request):
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        notes = request.POST.get('notes')
+        meeting = get_object_or_404(Meeting, id=lesson_id)
+        meeting.notes = notes
+        meeting.save()
+        messages.success(request, 'Notes saved successfully')
+        return redirect('dashboard')
+    return redirect('dashboard')
