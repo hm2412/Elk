@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
-from tutorials.models import User, Meeting, Lesson
+from tutorials.models import User, Meeting, Lesson, TutorProfile
 from datetime import timedelta, datetime, time
 
 
@@ -34,9 +34,10 @@ def get_time_of_day(self, start_time):
 class Command(BaseCommand):
     """Build automation command to seed the database."""
 
-    USER_COUNT = 50
-    MEETING_COUNT = 20
+    USER_COUNT = 300
+    MEETING_COUNT = 10
     LESSON_COUNT = 10
+    TUTOR_PROFILE_COUNT = 10
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -46,8 +47,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.create_users()
-        self.create_meetings()
         self.create_lessons()
+        self.create_meetings()
+        self.create_tutor_profiles()
     
     def create_users(self):
         self.generate_user_fixtures()
@@ -60,6 +62,10 @@ class Command(BaseCommand):
     def create_lessons(self):
         self.generate_lesson_fixture()
         self.generate_random_lessons()
+
+    def create_tutor_profiles(self):
+        self.generate_tutor_profile_fixture()
+        self.generate_random_tutor_profiles()
 
  # dont need to insert random allocation logic for user_fixtures, as they have default roles
     def generate_user_fixtures(self):
@@ -143,12 +149,12 @@ class Command(BaseCommand):
             'time_of_day': "morning",
             'topic': "Python",
             'status': "scheduled",
-            'notes': ""
+            'notes': "Some notes"
         }
 
         self.try_create_meeting(data)
 
-    def generate_meetings(self):
+    def generate_random_meetings(self):
         count = Meeting.objects.count()
 
         while count < self.MEETING_COUNT:
@@ -157,70 +163,60 @@ class Command(BaseCommand):
             count = Meeting.objects.count()
         print("Meeting seeding complete.")
 
-    def generate_random_meetings(self):
-        count = Meeting.objects.count()
-        max_attempts = self.MEETING_COUNT * 5
-        attempts = 0
+    def generate_meeting(self):
 
         tutors = User.objects.filter(user_type='Tutor')
         students = User.objects.filter(user_type='Student')
         topics = ['C++', 'Scala', 'Java', 'Python', 'Ruby']
 
-        while count < self.MEETING_COUNT:
-            attempts += 1
-            # print(f"\nSeeding meeting {count}/{self.MEETING_COUNT} (attempt {attempts})")
-            
-            if attempts >= max_attempts:
-                print(f"\nWarning: Made {attempts} attempts but could only create {count} meetings")
-                print("You may need more tutors or available time slots")
-                break
+        tutor = random.choice(tutors)
+        student = random.choice(students)
+        start_time = time(random.randint(8, 19), random.choice([0, 15, 30, 45]))
+        start_datetime = datetime.combine(self.faker.date_this_month(), start_time)
+        date = start_datetime.date()
+        day = start_datetime.strftime('%a').lower()
+        end_time = (datetime.combine(datetime.today(), start_time) + timedelta(hours=1)).time()
+        time_of_day = self.get_time_of_day(start_time)
+        topic = random.choice(topics)
+        status = "scheduled"
+        notes = self.faker.sentence()
 
-            tutor = random.choice(tutors)
-            student = random.choice(students)
-            # Randomize the date within current month to reduce conflicts
-            start_time = time(random.randint(8, 19), random.choice([0, 15, 30, 45]))
-            start_datetime = datetime.combine(self.faker.date_this_month(), start_time)
-            date = start_datetime.date()
-            day = start_datetime.strftime('%a').lower()
-            end_time = (datetime.combine(datetime.today(), start_time) + timedelta(hours=1)).time()
-            time_of_day = self.get_time_of_day(start_time)
-            topic = random.choice(topics)
-            status = "scheduled"
-            notes = self.faker.sentence()
-
-            success = self.try_create_meeting({
-                'tutor': tutor,
-                'student': student,
-                'date': date,
-                'day': day,
-                'start_time': start_time,
-                'end_time': end_time,
-                'time_of_day': time_of_day,
-                'topic': topic,
-                'status': status,
-                'notes': notes
-            })
-            
-            if success:
-                count = Meeting.objects.count()
-
-        print(f"\nMeeting seeding complete. Created {count} meetings in {attempts} attempts")
+        self.try_create_meeting({
+            'tutor': tutor,
+            'student': student,
+            'date': date,
+            'day': day,
+            'start_time': start_time,
+            'end_time': end_time,
+            'time_of_day': time_of_day,
+            'topic': topic,
+            'status': status,
+            'notes': notes
+        })
 
     def try_create_meeting(self, data):
         try:
-            # Check for existing meetings at the same time slot for this tutor
             existing_meetings = Meeting.objects.filter(
                 tutor=data['tutor'],
                 date=data['date'],
                 start_time=data['start_time'],
                 end_time=data['end_time']
             )
-
             if existing_meetings.exists():
                 return False
 
-            Meeting.objects.create(**data)
-            return True
+            Meeting.objects.create(
+                tutor=data['tutor'],
+                student=data['student'],
+                date=data['date'],
+                day=data['day'],
+                start_time=data['start_time'],
+                end_time=data['end_time'],
+                time_of_day=data['time_of_day'],
+                topic=data['topic'],
+                status=['status'],
+                notes=data['notes']
+            )
 
         except Exception as e:
             print(f"Failed to create meeting: {e}")
@@ -267,6 +263,11 @@ class Command(BaseCommand):
 
     def generate_lesson(self):
         students = User.objects.filter(user_type='Student')
+
+        if not students.exists(): 
+            print("No students found. Skipping lesson generation.")
+            return
+        
         knowledge_areas = [choice[0] for choice in Lesson.KNOWLEDGE_AREAS]
         terms = [choice[0] for choice in Lesson.TERMS]
         durations = [choice[0] for choice in Lesson.DURATIONS]
@@ -278,7 +279,6 @@ class Command(BaseCommand):
         start_time = time(random.randint(8, 19), 0, 0)
         start_datetime = datetime.combine(self.faker.date_this_month(), start_time)
 
-        
         duration = random.choice(durations)
         end_time = (start_datetime + timedelta(minutes=duration)).time()
         days = random.sample(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'], k=random.randint(1, 3))
@@ -287,7 +287,6 @@ class Command(BaseCommand):
         venue_preference = random.choice(venue_preferences)
         approved = random.choice([True, False])
         created_at = self.faker.date_time_between(start_date='-5m', end_date='now')
-
 
         self.try_create_lesson({
             'student': student,
@@ -306,19 +305,72 @@ class Command(BaseCommand):
     def try_create_lesson(self, data):
         try:
             Lesson.objects.create(
-            student=data['student'],
-            knowledge_area=data['knowledge_area'],
-            term=data['term'],
-            start_time=data['start_time'],
-            duration=data['duration'],
-            end_time=data['end_time'],
-            days=data['days'],
-            time_of_day=data['time_of_day'],
-            venue_preference=data['venue_preference'],
-            approved=data['approved'],
-            created_at=data['created_at']
-        )
+                student=data['student'],
+                knowledge_area=data['knowledge_area'],
+                term=data['term'],
+                start_time=data['start_time'],
+                duration=data['duration'],
+                end_time=data['end_time'],
+                days=data['days'],
+                time_of_day=data['time_of_day'],
+                venue_preference=data['venue_preference'],
+                approved=data['approved'],
+                created_at=data['created_at']
+            )
 
         except Exception as e:
             print(f"Failed to create lesson: {data} with error message: {e}")
 
+
+        """ Seeder for Tutor Profiles"""
+    def generate_tutor_profile_fixture(self):
+        tutor = User.objects.get(username='@janedoe')
+        
+        if not TutorProfile.objects.filter(tutor=tutor).exists():
+            data = {
+                'tutor': tutor,
+                'hourly_rate': 30,
+                'subjects': ['C++', 'Python']
+            }
+            self.try_create_tutor_profile(data)
+        else:
+            print(f"Tutor profile for {tutor.username} already exists. Skipping fixture creation.")
+
+
+    def generate_random_tutor_profiles(self):
+        count = TutorProfile.objects.count()
+
+        while count < self.TUTOR_PROFILE_COUNT:
+            print(f"Seeding tutor profile {count}/{self.TUTOR_PROFILE_COUNT}", end='\r')
+            self.generate_tutor_profile()
+            count = TutorProfile.objects.count()
+        print("Tutor profile seeding complete.")
+
+    def generate_tutor_profile(self):
+        tutors = User.objects.filter(user_type='Tutor').exclude(tutor_profile__isnull=False)
+
+        if not tutors.exists():
+            print("No tutos found. Skipping profile generation.")
+            return
+    
+        subjects_list = ['C++', 'Scala', 'Java', 'Python', 'Ruby']
+
+        tutor = random.choice(tutors)
+        hourly_rate = round(random.uniform(20, 100), 2)
+        subjects = random.sample(subjects_list, k=random.randint(1, len(subjects_list)))
+
+        self.try_create_tutor_profile({
+                'tutor': tutor,
+                'hourly_rate': hourly_rate,
+                'subjects': subjects
+        })
+
+    def try_create_tutor_profile(self, data):
+        try:
+            TutorProfile.objects.create(
+                tutor=data['tutor'],
+                hourly_rate=data['hourly_rate'],
+                subjects=data['subjects']
+        )
+        except Exception as e:
+            print(f"Failed to create tutor profile: {e}")
