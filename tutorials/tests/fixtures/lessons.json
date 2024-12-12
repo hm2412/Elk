@@ -1,0 +1,20 @@
+[
+    {
+      "model": "tutorials.lesson",
+      "pk": 1,
+      "fields": {
+            "student": 4,
+            "knowledge_area": "python",
+            "term": "sept-dec",
+            "start_time": "10:00:00",
+            "duration": 60,
+            "end_time": "11:00:00",
+            "days": ["mon", "wed", "fri"],
+            "time_of_day": "morning",
+            "venue_preference": "online",
+            "approved": false,
+            "created_at": "2024-12-01T10:00:00Z",
+            "notes": "This is a test lesson for Python."
+      }
+    }
+  ]
