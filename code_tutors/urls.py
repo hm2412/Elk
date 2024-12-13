@@ -23,7 +23,7 @@ from tutorials import views
 urlpatterns = [
     # Common paths
     path('admin/', admin.site.urls),
-    path('', views.Home.as_view(), name='home'),
+    path('', views.home, name='home'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),

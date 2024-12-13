@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.test import TestCase
-from django.urls import reverse
+from django.http import HttpResponse
+from django.urls import reverse, path
 from tutorials.models import User
+from tutorials.helpers import login_prohibited
 
 class LoginProhibitedTests(TestCase):
     fixtures = ['tutorials/tests/fixtures/default_user.json']

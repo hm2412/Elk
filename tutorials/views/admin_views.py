@@ -35,15 +35,3 @@ def schedule_session(request, student_id):
                                     'end_time': lesson_end_time,})
 
     return render(request, 'admin/schedule_session.html', {'form': form, 'student': student, 'request': lesson_request})
-
-@login_required
-def save_lesson_notes(request):
-    if request.method == 'POST':
-        lesson_id = request.POST.get('lesson_id')
-        notes = request.POST.get('notes')
-        meeting = get_object_or_404(Meeting, id=lesson_id)
-        meeting.notes = notes
-        meeting.save()
-        messages.success(request, 'Notes saved successfully')
-        return redirect('dashboard')
-    return redirect('dashboard')

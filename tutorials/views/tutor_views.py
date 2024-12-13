@@ -3,10 +3,10 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 
-from tutorials.models import TutorProfile, TutorAvailability
+from tutorials.models import TutorProfile, TutorAvailability, Meeting
 
 
 # Dashboard views
@@ -139,3 +139,15 @@ def set_availability(request):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    
+@login_required
+def save_lesson_notes(request):
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        notes = request.POST.get('notes')
+        meeting = get_object_or_404(Meeting, id=lesson_id)
+        meeting.notes = notes
+        meeting.save()
+        messages.success(request, 'Notes saved successfully')
+        return redirect('dashboard')
+    return redirect('dashboard')

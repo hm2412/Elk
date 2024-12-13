@@ -2,11 +2,12 @@
 from .mixins import LoginProhibitedMixin
 from django.views.generic import TemplateView
 from .mixins import LoginProhibitedMixin
-from django.shortcuts import reverse
+from django.shortcuts import reverse, render
+from tutorials.helpers import login_prohibited
 
-class Home(LoginProhibitedMixin, TemplateView):
+
+@login_prohibited
+def home(request):
     """Display the application's start/home screen."""
-    template_name = 'home.html'
 
-    def get_redirect_when_logged_in_url(self):
-        return reverse('dashboard')
+    return render(request, 'home.html')

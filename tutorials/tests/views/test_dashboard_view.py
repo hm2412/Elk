@@ -28,7 +28,7 @@ class DashboardViewTests(TestCase):
              patch('builtins.print') as mock_print:  
             response = self.client.get(reverse('dashboard'))
 
-        mock_print.assert_any_call("Monday: 10:00:00 - 12:00:00")
+        mock_print.assert_any_call("Monday: 10:00:00 - 12:00:00") # remove??
 
     def test_print_meeting_details(self):
         Meeting.objects.create(
