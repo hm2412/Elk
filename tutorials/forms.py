@@ -2,11 +2,10 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from .models import User, Meeting
-from .models import TutorAvailability
-from .models import User
-from .models import Meeting
-from .models import Review
+from django.core.exceptions import ValidationError
+from .models import User, Lesson, Meeting, Review, TutorAvailability
+from datetime import datetime, time
+
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -127,9 +126,6 @@ class MeetingForm(forms.ModelForm):
         model = Meeting
         fields = ['tutor', 'date', 'day', 'start_time', 'end_time', 'time_of_day', 'topic', 'status', 'notes']
 
-from .models import Lesson 
-from datetime import datetime, time
-from django.core.exceptions import ValidationError
 
 class LessonRequestForm(forms.ModelForm):
     TIME_CHOICES = [
@@ -185,8 +181,6 @@ class LessonRequestForm(forms.ModelForm):
         model = Lesson  # Connect the form to the LessonRequest model
         fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
         
-from django import forms
-from .models import Review
 
 class ReviewForm(forms.ModelForm):
     rating = forms.FloatField(

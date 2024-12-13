@@ -17,7 +17,7 @@ class LogInTester:
         return '_auth_user_id' in self.client.session.keys()
 
 class MenuTesterMixin(AssertHTMLMixin):
-    """Class to extend tests with tools to check the presents of menu items."""
+    """Class to extend tests with tools to check the presence of menu items."""
 
     menu_urls = [
         reverse('password'), reverse('profile'), reverse('log_out')

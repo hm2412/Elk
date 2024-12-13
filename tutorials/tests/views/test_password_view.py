@@ -39,17 +39,17 @@ class PasswordViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_succesful_password_change(self):
+    def test_successful_password_change(self):
         self.client.login(username=self.user.username, password='Password123')
         response = self.client.post(self.url, self.form_input, follow=True)
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'admin/dashboard_admin.html')
         self.user.refresh_from_db()
         is_password_correct = check_password('NewPassword123', self.user.password)
         self.assertTrue(is_password_correct)
 
-    def test_password_change_unsuccesful_without_correct_old_password(self):
+    def test_password_change_unsuccessful_without_correct_old_password(self):
         self.client.login(username=self.user.username, password='Password123')
         self.form_input['password'] = 'WrongPassword123'
         response = self.client.post(self.url, self.form_input, follow=True)
@@ -61,7 +61,7 @@ class PasswordViewTest(TestCase):
         is_password_correct = check_password('Password123', self.user.password)
         self.assertTrue(is_password_correct)
 
-    def test_password_change_unsuccesful_without_password_confirmation(self):
+    def test_password_change_unsuccessful_without_password_confirmation(self):
         self.client.login(username=self.user.username, password='Password123')
         self.form_input['password_confirmation'] = 'WrongPassword123'
         response = self.client.post(self.url, self.form_input, follow=True)

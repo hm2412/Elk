@@ -4,15 +4,10 @@ from django.test import TestCase
 from tutorials.models import Review
 
 class ReviewTestCase(TestCase):
+    fixtures = ['tutorials/tests/fixtures/other_users.json']
+
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='@studentuser',
-            first_name='John',
-            last_name='Doe',
-            email='student@example.com',
-            password='password123',
-            user_type='Student'
-        )
+        self.user = get_user_model().objects.get(username='@charlie')
 
         content = 'This is a valid good website content.'
         review_text = 'This is a valid review text.'
