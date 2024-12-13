@@ -14,7 +14,7 @@
       "fields": {
             "tutor": 6,
             "hourly_rate": "20.00",
-            "subjects": ["c++", "python", "java", "ruby"]
+            "subjects": ["python", "java", "ruby"]
       }
     }
 ]

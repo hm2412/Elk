@@ -206,15 +206,17 @@ class ReviewForm(forms.ModelForm):
         if commit:
             review.save()  # Now save the review
         return review
-        fields = ['knowledge_area', 'term', 'duration', 'start_time', 'days', 'venue_preference']
 
 class TutorSubjectsForm(forms.Form):
     SUBJECT_CHOICES = [
-        ('c++', 'C++'),
-        ('scala', 'Scala'),
-        ('java', 'Java'),
-        ('python', 'Python'),
-        ('ruby', 'Ruby'),
+        ('Ruby', 'Ruby'),
+        ('Swift', 'Swift'),
+        ('Scala', 'Scala'),
+        ('Java', 'Java'),
+        ('Javascript/React', 'Javascript/React'),
+        ('Python/Tensorflow', 'Python/Tensorflow'),
+        ('C++', 'C++'),
+        ('C#', 'C#'),
     ]
     subjects = forms.MultipleChoiceField(
         choices=SUBJECT_CHOICES,

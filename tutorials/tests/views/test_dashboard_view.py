@@ -10,6 +10,44 @@ class DashboardViewTests(TestCase):
         self.student_user = get_user_model().objects.get(username='@charlie')
         self.admin_user = get_user_model().objects.get(username='@petrapickles')
 
+<<<<<<< HEAD
+=======
+    def test_print_availability_slots(self):
+        TutorAvailability.objects.create(
+            tutor=self.tutor_user,
+            day='Monday',
+            start_time=time(10, 0),
+            end_time=time(12, 0)
+        )
+
+        self.client.login(username='@janedoe', password='Password123')
+        with patch('tutorials.helpers.get_meetings_sorted', return_value=[]), \
+             patch('tutorials.helpers.tutor_dashboard_context', return_value={}), \
+             patch('tutorials.models.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
+             patch('builtins.print') as mock_print:  
+            response = self.client.get(reverse('dashboard'))
+
+        #mock_print.assert_any_call("Monday: 10:00:00 - 12:00:00") # remove??
+
+    def test_print_meeting_details(self):
+        Meeting.objects.create(
+            tutor=self.tutor_user,
+            student=self.student_user,
+            date=datetime.now().date(),
+            start_time=time(10, 0),
+            end_time=time(11, 0)
+        )
+
+        self.client.login(username='@janedoe', password='Password123')
+        with patch('tutorials.helpers.get_meetings_sorted', return_value=[]), \
+             patch('tutorials.helpers.tutor_dashboard_context', return_value={}), \
+             patch('tutorials.models.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
+             patch('builtins.print') as mock_print:  
+            response = self.client.get(reverse('dashboard'))
+
+        #mock_print.assert_any_call(f"Meeting on {datetime.now().date()}: 10:00:00-11:00:00")
+
+>>>>>>> test-cases
     def test_tutor_dashboard(self):
         self.client.login(username='@janedoe', password='Password123')
         response = self.client.get(reverse('dashboard'))

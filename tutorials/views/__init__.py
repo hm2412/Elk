@@ -10,9 +10,6 @@ from .tutor_views import(
     tutor_availability, 
     tutor_hourly_rate, 
     tutor_subjects, 
-    set_hourly_rate, 
-    set_availability, 
-    set_subjects,
     save_lesson_notes
 )
 from .tutor_classes import (

@@ -139,8 +139,10 @@ def handle_tutors_list(request):
     return users, title, filters
 
 def handle_invalid_or_forbidden_list(list_type, user_type):
-    if list_type not in ['students', 'tutors'] or user_type not in ['Tutor', 'Admin']:
+    if list_type not in ['students', 'tutors']:
         return [], "Invalid List Type", {}
+    if user_type not in ['Tutor', 'Admin']:
+        return [], "Access Denied", {}
     return [], "Access Denied", {}
 
 def get_subject_choices():

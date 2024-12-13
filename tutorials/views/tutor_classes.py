@@ -55,22 +55,6 @@ class TutorHourlyRateView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Hourly rate updated successfully.')
         return super().form_valid(form)
 
-class TutorSubjectsForm(forms.Form):
-    SUBJECT_CHOICES = [
-        ('Ruby', 'Ruby'),
-        ('Swift', 'Swift'),
-        ('Scala', 'Scala'),
-        ('Java', 'Java'),
-        ('Javascript/React', 'Javascript/React'),
-        ('Python/Tensorflow', 'Python/Tensorflow'),
-        ('C++', 'C++'),
-        ('C#', 'C#'),
-    ]
-    subjects = forms.MultipleChoiceField(
-        choices=SUBJECT_CHOICES,
-        widget=forms.CheckboxSelectMultiple
-    )
-
 class TutorSubjectsView(LoginRequiredMixin, FormView):
     template_name = 'tutor/subjects.html'
     form_class = TutorSubjectsForm
