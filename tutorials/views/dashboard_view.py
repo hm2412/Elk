@@ -40,39 +40,13 @@ def dashboard(request):
             date__month=month
         ).select_related('student')
         
-        # Add debug prints
-        print("=== Tutor Profile Debug Info ===")
-        print(f"Hourly Rate: {tutor_profile.hourly_rate}")
-        print(f"Subjects: {tutor_profile.subjects}")
-        
         availability_slots = TutorAvailability.objects.filter(tutor=request.user)
-
-        # More debug prints
-        print("\n=== Availability Slots ===")
-        for slot in availability_slots:
-            print(f"{slot.day}: {slot.start_time} - {slot.end_time}")
-        print("============================")
-        print("\n=== Meetings ===")
-        for meeting in meetings:
-            print(f"Meeting on {meeting.date}: {meeting.start_time}-{meeting.end_time}")
-        print("============================")
 
         calendar = TutorCalendar(year, month)
         calendar_data = calendar.get_calendar_data(
             meetings=meetings,
             availability_slots=availability_slots
         )
-
-        # Debug calendar data
-        print("\nCalendar Data:")
-        for week in calendar_data['weeks']:
-            for day in week:
-                if day['meetings']:
-                    print(f"Day {day['day']} has meetings:")
-                    for meeting in day['meetings']:
-                        print(f"- {meeting['start']} - {meeting['end']}: {meeting['topic']}")
-        
-        print("==================")
 
         subject_choices = {
             'Computer Programming' : ['Ruby', 'Swift', 'Scala', 'Java', 'Javascript/React', 'Python/Tensorflow', 'C++', 'C#'],
