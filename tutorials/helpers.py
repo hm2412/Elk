@@ -5,9 +5,9 @@ from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from functools import wraps
 from datetime import datetime, timedelta, time
-from .models import (
-    User, 
-    Lesson, 
+from .models import ( 
+    User,
+    Lesson,
     Meeting, 
     TutorAvailability, 
     TutorProfile

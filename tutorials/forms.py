@@ -3,12 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from .models import User, Meeting
-from .models import TutorAvailability
-from .models import User
-from .models import Meeting
-from .models import Review
-from .models import Lesson 
+from .models import User, Lesson, Meeting, Review, TutorAvailability
 from datetime import datetime, time
 
 

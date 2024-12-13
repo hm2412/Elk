@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
 from django.utils import timezone
-from tutorials.models import User, Meeting, Lesson, TutorProfile, TutorAvailability
+from tutorials.models import Meeting, TutorProfile, TutorAvailability, User, Lesson
 from datetime import timedelta, datetime, time
 
 

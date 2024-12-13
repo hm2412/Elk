@@ -20,8 +20,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, UpdateView
 
 from .models import (
-    User, 
-    Lesson, 
+    User,
+    Lesson,
     Meeting, 
     TutorProfile, 
     TutorAvailability,
