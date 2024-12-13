@@ -35,11 +35,11 @@ def get_time_of_day(self, start_time):
 class Command(BaseCommand):
     """Build automation command to seed the database."""
 
-    USER_COUNT = 300
-    MEETING_COUNT = 10
-    LESSON_COUNT = 10
-    TUTOR_PROFILE_COUNT = 10
-    TUTOR_AVAILABILITY_COUNT = 10
+    USER_COUNT = 600
+    MEETING_COUNT = 100
+    LESSON_COUNT = 150
+    TUTOR_PROFILE_COUNT = 100
+    TUTOR_AVAILABILITY_COUNT = 100
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
