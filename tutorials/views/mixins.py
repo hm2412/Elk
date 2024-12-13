@@ -1,4 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.shortcuts import redirect, reverse
+from django.conf import settings
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""

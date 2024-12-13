@@ -22,9 +22,9 @@ class DashboardViewTests(TestCase):
         )
 
         self.client.login(username='@janedoe', password='Password123')
-        with patch('tutorials.views.get_meetings_sorted', return_value=[]), \
-             patch('tutorials.views.tutor_dashboard_context', return_value={}), \
-             patch('tutorials.views.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
+        with patch('tutorials.helpers.get_meetings_sorted', return_value=[]), \
+             patch('tutorials.helpers.tutor_dashboard_context', return_value={}), \
+             patch('tutorials.models.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
              patch('builtins.print') as mock_print:  
             response = self.client.get(reverse('dashboard'))
 
@@ -40,9 +40,9 @@ class DashboardViewTests(TestCase):
         )
 
         self.client.login(username='@janedoe', password='Password123')
-        with patch('tutorials.views.get_meetings_sorted', return_value=[]), \
-             patch('tutorials.views.tutor_dashboard_context', return_value={}), \
-             patch('tutorials.views.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
+        with patch('tutorials.helpers.get_meetings_sorted', return_value=[]), \
+             patch('tutorials.helpers.tutor_dashboard_context', return_value={}), \
+             patch('tutorials.models.TutorProfile.objects.get_or_create', return_value=(TutorProfile(hourly_rate=50, subjects=['Scala']), True)), \
              patch('builtins.print') as mock_print:  
             response = self.client.get(reverse('dashboard'))
 
